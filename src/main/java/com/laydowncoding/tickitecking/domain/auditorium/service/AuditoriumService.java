@@ -1,12 +1,8 @@
 package com.laydowncoding.tickitecking.domain.auditorium.service;
 
-import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
 
-@Service
-@RequiredArgsConstructor
-public class AuditoriumService {
+public interface AuditoriumService {
 
-  private final AuditoriumRepository auditoriumRepository;
+  void createAuditorium(AuditoriumRequestDto auditoriumRequest);
 }
