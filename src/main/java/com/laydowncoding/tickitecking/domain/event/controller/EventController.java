@@ -27,7 +27,7 @@ public class EventController {
     userid=1l;
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(eventService.createEvent(1L,dto))
+        .body(eventService.createEvent(userid,dto))
         ;
   }
 

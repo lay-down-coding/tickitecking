@@ -24,7 +24,7 @@ private final EventRepository eventRepository;
     Event save = eventRepository.save(new Event(dto,userid));
     return CommonResponse
         .builder()
-        .data(new EventResponseDto(save))
+        .data(save.getId())
         .build();
   }
   public CommonResponse<Object> getEvents(){
@@ -63,13 +63,13 @@ private final EventRepository eventRepository;
     event.update(dto);
     return CommonResponse
         .builder()
-        .data(1L)
+        .data(event.getId())
         .build();
   }
   @Transactional
   public CommonResponse<?> delete(Long Userid,Long id) {
     Event event = eventRepository.findByIdAndUserid(id,Userid);
-    eventRepository.delete(event);
+    event.setDelete();
     return CommonResponse
         .builder()
         .data(1L)

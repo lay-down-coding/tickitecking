@@ -54,8 +54,12 @@ public class Event extends Timestamp {
   public void update(EventRequestDto dto){
     this.name = dto.getName();
     this.catagory = dto.getCatagory();
-    this.description = getDescription();
+    this.description = dto.getDescription();
     this.startAt = dto.getStart_date();
     this.auditoriumId = dto.getAuditorium_id();
+  }
+
+  public void setDelete() {
+    super.deletedAt = LocalDateTime.now();
   }
 }
