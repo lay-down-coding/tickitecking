@@ -1,6 +1,9 @@
 package com.laydowncoding.tickitecking.domain.auditorium.service;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
