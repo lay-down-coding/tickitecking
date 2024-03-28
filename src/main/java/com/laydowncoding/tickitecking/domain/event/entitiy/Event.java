@@ -7,5 +7,4 @@ import jakarta.persistence.Id;
 public class Event {
   @Id
   private Long event_id;
-
 }
