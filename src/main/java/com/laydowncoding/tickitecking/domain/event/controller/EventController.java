@@ -1,8 +1,12 @@
 package com.laydowncoding.tickitecking.domain.event.controller;
 
 import com.laydowncoding.tickitecking.domain.event.dto.EventRequestDto;
+import com.laydowncoding.tickitecking.domain.event.dto.EventResponseDto;
+import com.laydowncoding.tickitecking.domain.event.repository.projection.EventsInfoWithOutUserId;
 import com.laydowncoding.tickitecking.domain.event.service.EventService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
+import jakarta.validation.constraints.Null;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,57 +27,39 @@ public class EventController {
   private final EventService eventService;
 
   @PostMapping
-  public ResponseEntity<CommonResponse<?>> createEvent(Long userid,@RequestBody EventRequestDto dto){
-    userid=1l;
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(eventService.createEvent(userid,dto))
-        ;
+  public ResponseEntity<CommonResponse<Long>> createEvent(Long userId,@RequestBody EventRequestDto dto){
+    // 유저 jwt 구현 되기 전까지 임시로 만들어 놨습니다.
+    userId=1L;
+    return CommonResponse
+        .ok(eventService.createEvent(userId,dto));
   }
-  //
   @GetMapping
-  public ResponseEntity<CommonResponse<?>> getUpcomingEvents(){
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(eventService.getEvents())
-        ;
+  public ResponseEntity<CommonResponse<List<EventsInfoWithOutUserId>>> getUpcomingEvents(){
+    return CommonResponse
+        .ok(eventService.getEvents());
   }
-  @GetMapping("/{id}")
-  public ResponseEntity<CommonResponse<?>> getSelectedEvents(@PathVariable Long id){
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(eventService.getEventById(id))
-        ;
+  @GetMapping("/{userId}")
+  public ResponseEntity<CommonResponse<List<EventsInfoWithOutUserId>>> getSelectedEvents(@PathVariable Long userId){
+    return CommonResponse.ok(eventService.getEventByUser(userId));
   }
-
   @GetMapping("/my-events")
-  public ResponseEntity<CommonResponse<?>> getEvents(Long user_id){
-    user_id = 1l;
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(eventService.getEventByUser(user_id))
-        ;
+  public ResponseEntity<CommonResponse<List<EventsInfoWithOutUserId>>> getEvents(Long userId){
+    // 유저 jwt 구현 되기 전까지 임시로 만들어 놨습니다.
+    userId = 1L;
+    return CommonResponse
+        .ok(eventService.getEventByUser(userId));
   }
-  //
-  @PutMapping("/{id}")
-  public ResponseEntity<CommonResponse<?>> updateEvent(Long userid,@PathVariable Long id, @RequestBody EventRequestDto dto){
-
-    userid=1l;
-
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(eventService.update(userid,id,dto))
-        ;
+  @PutMapping("/{eventId}")
+  public ResponseEntity<CommonResponse<Void>> updateEvent(Long userId,@PathVariable Long eventId, @RequestBody EventRequestDto dto){
+    eventService.update(userId,eventId,dto);
+    return CommonResponse.ok(null);
   }
-  @DeleteMapping("/{id}")
-  public ResponseEntity<CommonResponse<?>> deleteEvent(Long userid,@PathVariable Long id){
-
-    userid=1l;
-
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .body(eventService.delete(userid,id))
-        ;
+  @DeleteMapping("/{eventId}")
+  public ResponseEntity<CommonResponse<Void>> deleteEvent(Long userId,@PathVariable Long eventId) {
+    // 유저 jwt 구현 되기 전까지 임시로 만들어 놨습니다.
+    userId = 1l;
+    eventService.delete(userId, eventId);
+    return CommonResponse.ok(null);
   }
 }
 

@@ -2,7 +2,7 @@ package com.laydowncoding.tickitecking.domain.event.repository.projection;
 
 import java.time.LocalDate;
 
-public interface Eventsinfo {
+public interface EventsInfoWithOutUserId {
    String getName();
    String getCatagory();
    String getDescription();

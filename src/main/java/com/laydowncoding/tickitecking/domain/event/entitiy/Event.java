@@ -24,41 +24,37 @@ public class Event extends Timestamp {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column
+  @Column(nullable = false)
   private String name;
-  @Column
+  @Column()
   private String description;
-  @Column
-  private String catagory;
-  @Column
+  @Column(nullable = false)
+  private String category;
+  @Column(nullable = false)
   private LocalDate startAt;
-  @Column
+  @Column(nullable = false)
   private Long auditoriumId;
-  @Column
+  @Column(nullable = false)
   private Long userid;
 
   public Event(EventRequestDto dto, Long userid) {
     this.name = dto.getName();
-    this.catagory = dto.getCatagory();
+    this.category = dto.getCategory();
     this.description = dto.getDescription();
     this.startAt = dto.getStart_date();
     this.auditoriumId = dto.getAuditorium_id();
     this.userid =userid;
   }
-
   public Event() {
-
-  }
-  //
-  @Transactional
-  public void update(EventRequestDto dto){
-    this.name = dto.getName();
-    this.catagory = dto.getCatagory();
-    this.description = dto.getDescription();
-    this.startAt = dto.getStart_date();
-    this.auditoriumId = dto.getAuditorium_id();
   }
 
+  public void update(EventRequestDto eventRequestDto){
+    this.name = eventRequestDto.getName();
+    this.category = eventRequestDto.getCategory();
+    this.description = eventRequestDto.getDescription();
+    this.startAt = eventRequestDto.getStart_date();
+    this.auditoriumId = eventRequestDto.getAuditorium_id();
+  }
   public void setDelete() {
     super.deletedAt = LocalDateTime.now();
   }

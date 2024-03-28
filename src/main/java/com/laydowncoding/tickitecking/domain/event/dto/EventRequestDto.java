@@ -8,17 +8,20 @@ import lombok.RequiredArgsConstructor;
 public class EventRequestDto {
   String name;
   String description;
-  String catagory;
+  String category;
   LocalDate start_date;
   Long auditorium_id;
-  public EventRequestDto(String name,
-  String description,
-  String catagory,
-  LocalDate start_date,
-  Long auditorium_id){
+  public EventRequestDto(
+      String name,
+      String description,
+      String category,
+      LocalDate start_date,
+      Long auditorium_id
+  )
+  {
     this.name=name;
     this.description=description;
-    this.catagory=catagory;
+    this.category=category;
     this.start_date=start_date;
     this.auditorium_id=auditorium_id;
   }

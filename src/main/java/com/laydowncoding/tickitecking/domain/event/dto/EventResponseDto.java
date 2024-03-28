@@ -1,7 +1,7 @@
 package com.laydowncoding.tickitecking.domain.event.dto;
 
 import com.laydowncoding.tickitecking.domain.event.entitiy.Event;
-import com.laydowncoding.tickitecking.domain.event.repository.projection.Eventsinfo;
+import com.laydowncoding.tickitecking.domain.event.repository.projection.EventsInfoWithOutUserId;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -19,16 +19,10 @@ public class EventResponseDto {
 
   public EventResponseDto(Event save) {
     this.name = save.getName();
-    description = save.getDescription();
-    catagory = save.getCatagory();
-    start_date = save.getStartAt();
-    auditorium_id = save.getAuditoriumId();
+    this.description = save.getDescription();
+    this.catagory = save.getCatagory();
+    this.start_date = save.getStartAt();
+    this.auditorium_id = save.getAuditoriumId();
   }
 
-  public EventResponseDto(Eventsinfo e) {
-    this.name = e.getName();
-    description = e.getDescription();
-    catagory = e.getCatagory();
-
-  }
 }
