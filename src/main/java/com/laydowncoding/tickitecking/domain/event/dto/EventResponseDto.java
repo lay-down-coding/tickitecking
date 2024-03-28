@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.event.dto;
 
 import com.laydowncoding.tickitecking.domain.event.entitiy.Event;
+import com.laydowncoding.tickitecking.domain.event.repository.projection.Eventsinfo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -22,6 +23,13 @@ public class EventResponseDto {
     description = save.getDescription();
     catagory = save.getCatagory();
     start_date = save.getStartAt();
-    auditorium_id = save.getAuditorium_id();
+    auditorium_id = save.getAuditoriumId();
+  }
+
+  public EventResponseDto(Eventsinfo e) {
+    this.name = e.getName();
+    description = e.getDescription();
+    catagory = e.getCatagory();
+
   }
 }

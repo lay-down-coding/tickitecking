@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @DynamicUpdate
@@ -32,20 +33,29 @@ public class Event extends Timestamp {
   @Column
   private LocalDate startAt;
   @Column
-  private Long auditorium_id;
+  private Long auditoriumId;
   @Column
-  private Long user_id;
+  private Long userid;
 
   public Event(EventRequestDto dto, Long userid) {
     this.name = dto.getName();
     this.catagory = dto.getCatagory();
     this.description = getDescription();
     this.startAt = dto.getStart_date();
-    this.auditorium_id = dto.getAuditorium_id();
-    this.user_id =userid;
+    this.auditoriumId = dto.getAuditorium_id();
+    this.userid =userid;
   }
 
   public Event() {
 
+  }
+  //
+  @Transactional
+  public void update(EventRequestDto dto){
+    this.name = dto.getName();
+    this.catagory = dto.getCatagory();
+    this.description = getDescription();
+    this.startAt = dto.getStart_date();
+    this.auditoriumId = dto.getAuditorium_id();
   }
 }

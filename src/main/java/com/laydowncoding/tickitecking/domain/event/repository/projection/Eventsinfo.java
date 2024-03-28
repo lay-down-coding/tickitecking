@@ -2,10 +2,10 @@ package com.laydowncoding.tickitecking.domain.event.repository.projection;
 
 import java.time.LocalDate;
 
-public interface eventsinfo {
+public interface Eventsinfo {
    String getName();
    String getCatagory();
    String getDescription();
-   LocalDate getStart_date();
-   Long getAuditorium_id();
+   LocalDate getStartAt();
+   Long getAuditoriumId();
 }

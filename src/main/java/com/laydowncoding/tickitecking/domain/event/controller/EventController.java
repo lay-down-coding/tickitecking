@@ -23,7 +23,8 @@ public class EventController {
   private final EventService eventService;
 
   @PostMapping
-  public ResponseEntity<CommonResponse<?>> createEvent(@RequestBody EventRequestDto dto){
+  public ResponseEntity<CommonResponse<?>> createEvent(Long userid,@RequestBody EventRequestDto dto){
+    userid=1l;
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(eventService.createEvent(1L,dto))
@@ -40,17 +41,23 @@ public class EventController {
 
   //
   @PutMapping("/{id}")
-  public ResponseEntity<CommonResponse<?>> updateEvent(@PathVariable Long id, @RequestBody EventRequestDto dto){
+  public ResponseEntity<CommonResponse<?>> updateEvent(Long userid,@PathVariable Long id, @RequestBody EventRequestDto dto){
+
+    userid=1l;
+
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(eventService.update(id,dto))
+        .body(eventService.update(userid,id,dto))
         ;
   }
   @DeleteMapping("/{id}")
   public ResponseEntity<CommonResponse<?>> deleteEvent(Long userid,@PathVariable Long id){
+
+    userid=1l;
+
     return ResponseEntity
         .status(HttpStatus.OK)
-        .body(eventService.delete())
+        .body(eventService.delete(userid,id))
         ;
   }
 }

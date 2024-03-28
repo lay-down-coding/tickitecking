@@ -4,14 +4,16 @@ import com.laydowncoding.tickitecking.domain.event.dto.EventRequestDto;
 import com.laydowncoding.tickitecking.domain.event.dto.EventResponseDto;
 import com.laydowncoding.tickitecking.domain.event.entitiy.Event;
 import com.laydowncoding.tickitecking.domain.event.repository.EventRepository;
-import com.laydowncoding.tickitecking.domain.event.repository.projection.eventsinfo;
+import com.laydowncoding.tickitecking.domain.event.repository.projection.Eventsinfo;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +28,27 @@ private final EventRepository eventRepository;
         .build();
   }
   public CommonResponse<Object> getEvents(){
-    List<Event> list = eventRepository.findByStartAtIsAfter(LocalDate.now());
+    List<Eventsinfo> list = eventRepository.findByStartAtIsAfter(LocalDate.now());
     List <EventResponseDto> ls=new ArrayList<>();
-    for (Event e : list){
+    for (Eventsinfo e : list){
+      ls.add(new EventResponseDto(e));
+    }
+    return CommonResponse
+        .builder()
+        .data(list)
+        .build();
+  }
+  public CommonResponse<Object> getEventById(Long id){
+    Event event = eventRepository.findById(id).orElseThrow(()-> new NoSuchElementException("해당 이벤트를 찾을수 없어요"));
+    return CommonResponse
+        .builder()
+        .data(event)
+        .build();
+  }
+  public CommonResponse<Object> getEventByIdAndUser(Long userid,Long id){
+    List<Eventsinfo> list = eventRepository.findAllByIdAndUserid(id,userid);
+    List <EventResponseDto> ls=new ArrayList<>();
+    for (Eventsinfo e : list){
       ls.add(new EventResponseDto(e));
     }
     return CommonResponse
@@ -37,10 +57,22 @@ private final EventRepository eventRepository;
         .build();
   }
 
-  public CommonResponse<?> update(Long id, EventRequestDto dto) {
-    return null;
+  @Transactional
+  public CommonResponse<Object> update(Long Userid,Long id, EventRequestDto dto) {
+    Event event = eventRepository.findByIdAndUserid(id,Userid);
+    event.update(dto);
+    return CommonResponse
+        .builder()
+        .data(1L)
+        .build();
   }
-  public CommonResponse<?> delete() {
-    return null;
+  @Transactional
+  public CommonResponse<?> delete(Long Userid,Long id) {
+    Event event = eventRepository.findByIdAndUserid(id,Userid);
+    eventRepository.delete(event);
+    return CommonResponse
+        .builder()
+        .data(1L)
+        .build();
   }
 }
