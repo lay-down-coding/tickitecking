@@ -22,12 +22,7 @@ public class AuditoriumController {
   public ResponseEntity<CommonResponse<Void>> createAuditorium(
       @RequestBody @Valid AuditoriumRequestDto auditoriumRequest
   ) {
-    auditoriumService.createAuditorium(
-        auditoriumRequest.getName(),
-        auditoriumRequest.getAddress(),
-        auditoriumRequest.getMaxColumn(),
-        auditoriumRequest.getMaxRow()
-    );
+    auditoriumService.createAuditorium(auditoriumRequest);
     return CommonResponse.ok(null);
   }
 }

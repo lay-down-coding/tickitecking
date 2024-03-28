@@ -34,12 +34,7 @@ public class AuditoriumServiceTest {
 
     when(auditoriumRepository.save(any(Auditorium.class))).thenReturn(new Auditorium());
 
-    auditoriumService.createAuditorium(
-        requestDto.getName(),
-        requestDto.getAddress(),
-        requestDto.getMaxColumn(),
-        requestDto.getMaxRow()
-    );
+    auditoriumService.createAuditorium(requestDto);
 
     verify(auditoriumRepository, times(1)).save(any(Auditorium.class));
   }
