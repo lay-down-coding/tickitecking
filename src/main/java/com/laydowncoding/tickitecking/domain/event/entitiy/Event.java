@@ -9,7 +9,4 @@ public class Event {
   @Id
   private Long event_id;
 
-  public Long getEvent_id() {
-    return event_id;
-  }
 }
