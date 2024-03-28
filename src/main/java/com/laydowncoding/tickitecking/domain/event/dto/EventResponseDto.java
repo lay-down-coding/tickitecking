@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 public class EventResponseDto {
   private String name;
