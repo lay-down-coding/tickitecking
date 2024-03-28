@@ -1,4 +1,4 @@
-package com.laydowncoding.tickitecking.domain.auditoriums.entity;
+package com.laydowncoding.tickitecking.domain.auditorium.entity;
 
 import com.laydowncoding.tickitecking.global.entity.Timestamp;
 import jakarta.persistence.Column;
