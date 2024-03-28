@@ -19,7 +19,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor
-@AllArgsConstructor
 @SQLRestriction(value = "deleted_at is NULL")
 public class User extends Timestamp {
 
@@ -44,7 +43,8 @@ public class User extends Timestamp {
     private UserRole role;
 
     @Builder
-    public User(String username, String password, String email, String nickname, UserRole role) {
+    public User(Long id, String username, String password, String email, String nickname, UserRole role) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
