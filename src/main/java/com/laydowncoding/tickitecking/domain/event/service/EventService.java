@@ -45,8 +45,8 @@ private final EventRepository eventRepository;
         .data(event)
         .build();
   }
-  public CommonResponse<Object> getEventByIdAndUser(Long userid,Long id){
-    List<Eventsinfo> list = eventRepository.findAllByIdAndUserid(id,userid);
+  public CommonResponse<Object> getEventByUser(Long userid){
+    List<Eventsinfo> list = eventRepository.findAllByUserid(userid);
     List <EventResponseDto> ls=new ArrayList<>();
     for (Eventsinfo e : list){
       ls.add(new EventResponseDto(e));

@@ -30,15 +30,30 @@ public class EventController {
         .body(eventService.createEvent(userid,dto))
         ;
   }
-
+  //
   @GetMapping
-  public ResponseEntity<CommonResponse<?>> getEvents(){
+  public ResponseEntity<CommonResponse<?>> getUpcomingEvents(){
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(eventService.getEvents())
         ;
   }
+  @GetMapping("/{id}")
+  public ResponseEntity<CommonResponse<?>> getSelectedEvents(@PathVariable Long id){
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(eventService.getEventById(id))
+        ;
+  }
 
+  @GetMapping("/my-events")
+  public ResponseEntity<CommonResponse<?>> getEvents(Long user_id){
+    user_id = 1l;
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(eventService.getEventByUser(user_id))
+        ;
+  }
   //
   @PutMapping("/{id}")
   public ResponseEntity<CommonResponse<?>> updateEvent(Long userid,@PathVariable Long id, @RequestBody EventRequestDto dto){
