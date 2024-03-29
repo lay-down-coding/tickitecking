@@ -33,14 +33,10 @@ public class AuditoriumServiceImpl implements AuditoriumService{
   @Override
   @Transactional
   public void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId) {
-    Auditorium auditorium = auditoriumRepository.findById(auditoriumId).orElseThrow(
-        () -> new NullPointerException("존재하지 않습니다.")
-    );
+    Auditorium auditorium = findAuditorium(auditoriumId);
 
     // 유저 검증 필요
-    if (!auditorium.getCompanyUserId().equals(1L)) {
-      throw new InvalidUserException("작성자가 아닙니다.");
-    }
+    checkWritingUser(auditorium.getCompanyUserId(), 1L);
 
     auditorium.update(
         auditoriumRequest.getName(),
@@ -48,5 +44,27 @@ public class AuditoriumServiceImpl implements AuditoriumService{
         auditoriumRequest.getMaxColumn(),
         auditoriumRequest.getMaxRow()
     );
+  }
+
+  @Override
+  @Transactional
+  public void deleteAuditorium(Long auditoriumId) {
+    Auditorium auditorium = findAuditorium(auditoriumId);
+
+    checkWritingUser(auditorium.getCompanyUserId(), 1L);
+
+    auditoriumRepository.delete(auditorium);
+  }
+
+  public Auditorium findAuditorium(Long auditoriumId) {
+    return auditoriumRepository.findById(auditoriumId).orElseThrow(
+        () -> new NullPointerException("존재하지 않습니다.")
+    );
+  }
+
+  public void checkWritingUser(Long writerId, Long userId) {
+    if (!userId.equals(writerId)) {
+      throw new InvalidUserException("작성자가 아닙니다.");
+    }
   }
 }

@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
@@ -16,6 +17,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(name = "auditoriums")
 @NoArgsConstructor
 @SQLRestriction(value = "deleted_at is NULL")
+@SQLDelete(sql = "update auditoriums set deleted_at = NOW() where id=?")
 public class Auditorium extends Timestamp {
 
   @Id

@@ -7,4 +7,6 @@ public interface AuditoriumService {
   void createAuditorium(AuditoriumRequestDto auditoriumRequest);
 
   void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId);
+
+  void deleteAuditorium(Long auditoriumId);
 }
