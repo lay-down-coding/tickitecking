@@ -60,11 +60,8 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
   @Override
   public List<AuditoriumResponseDto> getAuditoriums() {
+    // 유저 검증 필요
     List<Auditorium> auditoriumList = auditoriumRepository.findAllByCompanyUserId(1L);
-
-    if (auditoriumList.isEmpty()) {
-      throw new NullPointerException("존재하지 않습니다.");
-    }
 
     return auditoriumList.stream().map(auditorium -> new AuditoriumResponseDto(
         auditorium.getId(),
@@ -74,6 +71,20 @@ public class AuditoriumServiceImpl implements AuditoriumService {
         auditorium.getMaxRow(),
         auditorium.getCompanyUserId()
     )).collect(Collectors.toList());
+  }
+
+  @Override
+  public AuditoriumResponseDto getAuditorium(Long auditoriumId) {
+    Auditorium auditorium = findAuditorium(auditoriumId);
+
+    return new AuditoriumResponseDto(
+        auditorium.getId(),
+        auditorium.getName(),
+        auditorium.getAddress(),
+        auditorium.getMaxColumn(),
+        auditorium.getMaxRow(),
+        auditorium.getCompanyUserId()
+    );
   }
 
   public Auditorium findAuditorium(Long auditoriumId) {

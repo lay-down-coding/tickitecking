@@ -13,4 +13,6 @@ public interface AuditoriumService {
   void deleteAuditorium(Long auditoriumId);
 
   List<AuditoriumResponseDto> getAuditoriums();
+
+  AuditoriumResponseDto getAuditorium(Long auditoriumId);
 }

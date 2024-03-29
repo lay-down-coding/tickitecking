@@ -54,4 +54,12 @@ public class AuditoriumController {
     List<AuditoriumResponseDto> response = auditoriumService.getAuditoriums();
     return CommonResponse.ok(response);
   }
+
+  @GetMapping("/{auditoriumId}")
+  public ResponseEntity<CommonResponse<AuditoriumResponseDto>> getAuditorium(
+      @PathVariable Long auditoriumId
+  ) {
+    AuditoriumResponseDto response = auditoriumService.getAuditorium(auditoriumId);
+    return CommonResponse.ok(response);
+  }
 }
