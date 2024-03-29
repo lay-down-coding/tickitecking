@@ -5,11 +5,12 @@ import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertE
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
-import com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +65,21 @@ public class ConcertServiceImpl implements ConcertService {
                     .build()
             )
             .toList();
+    }
+
+    @Override
+    public void updateConcert(Long companyUserId, Long concertId,
+        ConcertUpdateRequestDto requestDto) {
+        Concert concert = findConcert(concertId);
+        validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
+
+        concert.update(requestDto);
+    }
+
+    private void validateCompanyUserId(Long origin, Long input) {
+        if (!Objects.equals(origin, input)) {
+            throw new CustomRuntimeException(INVALID_COMPANY_USER_ID.getMessage());
+        }
     }
 
     private Concert findConcert(Long concertId) {

@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 public enum ConcertErrorCode {
 
     NOT_FOUND_AUDITORIUM(HttpStatus.BAD_REQUEST, "[ERROR] 존재하지 않는 공연장입니다."),
-    NOT_FOUND_CONCERT(HttpStatus.BAD_REQUEST, "[ERROR] 존재하지 않는 콘서트입니다.");
+    NOT_FOUND_CONCERT(HttpStatus.BAD_REQUEST, "[ERROR] 존재하지 않는 콘서트입니다."),
+    INVALID_COMPANY_USER_ID(HttpStatus.BAD_REQUEST, "[ERROR] 회사유저 ID가 다릅니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

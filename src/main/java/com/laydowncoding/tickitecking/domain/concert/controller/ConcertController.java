@@ -2,6 +2,7 @@ package com.laydowncoding.tickitecking.domain.concert.controller;
 
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.service.ConcertService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.security.UserDetailsImpl;
@@ -13,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +49,15 @@ public class ConcertController {
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     List<ConcertResponseDto> response = concertService.getAllConcerts();
     return CommonResponse.ok(response);
+  }
+
+  @PutMapping("/{concertId}")
+  public ResponseEntity<CommonResponse<ConcertResponseDto>> updateConcert(
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @PathVariable Long concertId,
+      @RequestBody ConcertUpdateRequestDto requestDto) {
+    concertService.updateConcert(userDetails.getUser().getId(), concertId, requestDto);
+    return CommonResponse.ok(null);
   }
 }
 
