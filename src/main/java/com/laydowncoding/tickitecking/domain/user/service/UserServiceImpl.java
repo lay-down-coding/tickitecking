@@ -3,8 +3,10 @@ package com.laydowncoding.tickitecking.domain.user.service;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.DUPLICATE_EMAIL;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.DUPLICATE_NICKNAME;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.DUPLICATE_USERNAME;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
 
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
@@ -46,6 +48,18 @@ public class UserServiceImpl implements UserService{
             .role(UserRole.USER)
             .build();
         userRepository.save(user);
+    }
+
+    @Override
+    public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
+        User user = findUser(userId);
+        user.update(requestDto);
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+            () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
+        );
     }
 
     private void validateDuplicateUsername(String username) {

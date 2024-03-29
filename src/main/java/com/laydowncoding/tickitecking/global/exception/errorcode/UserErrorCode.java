@@ -8,7 +8,8 @@ public enum UserErrorCode {
 
     DUPLICATE_USERNAME(HttpStatus.BAD_REQUEST, "[ERROR] 이미 존재하는 이름입니다."),
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "[ERROR] 이미 존재하는 이메일입니다."),
-    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "[ERROR] 이미 존재하는 닉네임입니다.");
+    DUPLICATE_NICKNAME(HttpStatus.BAD_REQUEST, "[ERROR] 이미 존재하는 닉네임입니다."),
+    NOT_FOUND_USER(HttpStatus.BAD_REQUEST, "[ERROR] 존재하지 않는 유저입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

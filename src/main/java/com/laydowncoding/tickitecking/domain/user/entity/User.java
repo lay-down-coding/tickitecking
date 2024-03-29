@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.user.entity;
 
+import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.global.entity.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,5 +56,10 @@ public class User extends Timestamp {
         this.id = id;
         this.username = username;
         this.role = role;
+    }
+
+    public void update(UserUpdateRequestDto requestDto) {
+        this.email = requestDto.getEmail();
+        this.nickname = requestDto.getNickname();
     }
 }
