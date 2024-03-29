@@ -6,6 +6,7 @@ import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,6 +35,14 @@ public class AuditoriumController {
       @PathVariable Long auditoriumId
   ) {
     auditoriumService.updateAuditorium(auditoriumRequest, auditoriumId);
+    return CommonResponse.ok(null);
+  }
+
+  @DeleteMapping("/{auditoriumId}")
+  public ResponseEntity<CommonResponse<Void>> deleteAuditorium(
+    @PathVariable Long auditoriumId
+  ) {
+    auditoriumService.deleteAuditorium(auditoriumId);
     return CommonResponse.ok(null);
   }
 }
