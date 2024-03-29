@@ -4,6 +4,7 @@ import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertE
 
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
@@ -32,6 +33,25 @@ public class ConcertServiceImpl implements ConcertService {
             .auditoriumId(requestDto.getAuditoriumId())
             .build();
         concertRepository.save(concert);
+    }
+
+    @Override
+    public ConcertResponseDto getConcert(Long concertId) {
+        Concert concert = findConcert(concertId);
+        return ConcertResponseDto.builder()
+            .id(concert.getId())
+            .name(concert.getName())
+            .description(concert.getDescription())
+            .startTime(concert.getStartTime())
+            .companyUserId(concert.getCompanyUserId())
+            .auditoriumId(concert.getAuditoriumId())
+            .build();
+    }
+
+    private Concert findConcert(Long concertId) {
+        return concertRepository.findById(concertId).orElseThrow(
+            () -> new CustomRuntimeException(NOT_FOUND_CONCERT.getMessage())
+        );
     }
 
     private void validateAuditoriumId(Long auditoriumId) {

@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.concert.controller;
 
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.service.ConcertService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.security.UserDetailsImpl;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +30,15 @@ public class ConcertController {
       @RequestBody ConcertCreateRequestDto requestDto) {
     concertService.createConcert(userDetails.getUser().getId(), requestDto);
     return CommonResponse.ok(null);
+  }
+
+  //@Secured("ROLE_COMPANY_USER")
+  @GetMapping("/{concertId}")
+  public ResponseEntity<CommonResponse<ConcertResponseDto>> getConcert(
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @PathVariable Long concertId) {
+    ConcertResponseDto responseDto = concertService.getConcert(concertId);
+    return CommonResponse.ok(responseDto);
   }
 }
 
