@@ -4,6 +4,7 @@ import com.laydowncoding.tickitecking.global.entity.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class Auditorium extends Timestamp {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column
@@ -27,12 +28,20 @@ public class Auditorium extends Timestamp {
   @Column
   private String address;
 
-  @Column
-  private String max_column;
+  @Column(name = "max_column")
+  private String maxColumn;
 
-  @Column
-  private String max_row;
+  @Column(name = "max_row")
+  private String maxRow;
 
   @Column(nullable = false)
-  private Long company_user_id;
+  private Long companyUserId;
+
+  public Auditorium(String name, String address, String maxColumn, String maxRow, Long companyUserId) {
+    this.name = name;
+    this.address = address;
+    this.maxColumn = maxColumn;
+    this.maxRow = maxRow;
+    this.companyUserId = companyUserId;
+  }
 }
