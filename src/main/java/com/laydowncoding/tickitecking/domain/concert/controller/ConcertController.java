@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,6 +58,14 @@ public class ConcertController {
       @PathVariable Long concertId,
       @RequestBody ConcertUpdateRequestDto requestDto) {
     concertService.updateConcert(userDetails.getUser().getId(), concertId, requestDto);
+    return CommonResponse.ok(null);
+  }
+
+  @DeleteMapping("/{concertId}")
+  public ResponseEntity<CommonResponse<Void>> deleteConcert(
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @PathVariable Long concertId) {
+    concertService.deleteConcert(userDetails.getUser().getId(), concertId);
     return CommonResponse.ok(null);
   }
 }

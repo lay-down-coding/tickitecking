@@ -76,6 +76,14 @@ public class ConcertServiceImpl implements ConcertService {
         concert.update(requestDto);
     }
 
+    @Override
+    public void deleteConcert(Long companyUserId, Long concertId) {
+        Concert concert = findConcert(concertId);
+        validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
+
+        concertRepository.delete(concert);
+    }
+
     private void validateCompanyUserId(Long origin, Long input) {
         if (!Objects.equals(origin, input)) {
             throw new CustomRuntimeException(INVALID_COMPANY_USER_ID.getMessage());
