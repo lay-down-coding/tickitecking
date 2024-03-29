@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +48,12 @@ public class User extends Timestamp {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
+        this.role = role;
+    }
+
+    public User(Long id, String username, UserRole role) {
+        this.id = id;
+        this.username = username;
         this.role = role;
     }
 }

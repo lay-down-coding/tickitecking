@@ -2,6 +2,7 @@ package com.laydowncoding.tickitecking.global.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
+import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,11 +45,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
-        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        UserRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
+//        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+//        UserRole role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
-        String token = jwtUtil.createToken(username, role);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        String accessToken = jwtUtil.createToken(user.getId(), user.getUsername(), user.getRole());
+//        String token = jwtUtil.createToken(username, role);
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
     }
 
     @Override

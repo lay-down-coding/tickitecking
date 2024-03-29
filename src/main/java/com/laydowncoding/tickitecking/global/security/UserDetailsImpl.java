@@ -16,6 +16,10 @@ public class UserDetailsImpl implements UserDetails {
         this.user = user;
     }
 
+    public UserDetailsImpl(Long userId, String username, UserRole role) {
+        this.user = new User(userId, username, role);
+    }
+
     public User getUser() {
         return user;
     }
