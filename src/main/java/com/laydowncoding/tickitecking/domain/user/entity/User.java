@@ -52,10 +52,9 @@ public class User extends Timestamp {
         this.role = role;
     }
 
-    public User(Long id, String username, UserRole role) {
+    public User(Long id, String username) {
         this.id = id;
         this.username = username;
-        this.role = role;
     }
 
     public void update(UserUpdateRequestDto requestDto) {

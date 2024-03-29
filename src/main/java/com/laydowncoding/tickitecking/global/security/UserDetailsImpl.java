@@ -16,8 +16,9 @@ public class UserDetailsImpl implements UserDetails {
         this.user = user;
     }
 
-    public UserDetailsImpl(Long userId, String username, UserRole role) {
-        this.user = new User(userId, username, role);
+    //토큰 방식으로 이후 변경시
+    public UserDetailsImpl(Long userId, String username) {
+        this.user = new User(userId, username);
     }
 
     public User getUser() {
