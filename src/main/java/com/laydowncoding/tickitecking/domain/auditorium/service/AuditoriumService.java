@@ -5,4 +5,6 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRe
 public interface AuditoriumService {
 
   void createAuditorium(AuditoriumRequestDto auditoriumRequest);
+
+  void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId);
 }

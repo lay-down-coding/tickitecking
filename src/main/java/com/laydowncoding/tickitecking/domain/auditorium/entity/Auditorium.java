@@ -44,4 +44,11 @@ public class Auditorium extends Timestamp {
     this.maxRow = maxRow;
     this.companyUserId = companyUserId;
   }
+
+  public void update(String name, String address, String maxColumn, String maxRow) {
+    this.name = name;
+    this.address = address;
+    this.maxColumn = maxColumn;
+    this.maxRow = maxRow;
+  }
 }
