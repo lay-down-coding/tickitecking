@@ -1,17 +1,19 @@
 package com.laydowncoding.tickitecking.domain.auditorium.service;
 
 import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
+import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuditoriumServiceImpl implements AuditoriumService{
+public class AuditoriumServiceImpl implements AuditoriumService {
 
   private final AuditoriumRepository auditoriumRepository;
 
@@ -54,6 +56,35 @@ public class AuditoriumServiceImpl implements AuditoriumService{
     checkWritingUser(auditorium.getCompanyUserId(), 1L);
 
     auditoriumRepository.delete(auditorium);
+  }
+
+  @Override
+  public List<AuditoriumResponseDto> getAuditoriums() {
+    // 유저 검증 필요
+    List<Auditorium> auditoriumList = auditoriumRepository.findAllByCompanyUserId(1L);
+
+    return auditoriumList.stream().map(auditorium -> new AuditoriumResponseDto(
+        auditorium.getId(),
+        auditorium.getName(),
+        auditorium.getAddress(),
+        auditorium.getMaxColumn(),
+        auditorium.getMaxRow(),
+        auditorium.getCompanyUserId()
+    )).collect(Collectors.toList());
+  }
+
+  @Override
+  public AuditoriumResponseDto getAuditorium(Long auditoriumId) {
+    Auditorium auditorium = findAuditorium(auditoriumId);
+
+    return new AuditoriumResponseDto(
+        auditorium.getId(),
+        auditorium.getName(),
+        auditorium.getAddress(),
+        auditorium.getMaxColumn(),
+        auditorium.getMaxRow(),
+        auditorium.getCompanyUserId()
+    );
   }
 
   public Auditorium findAuditorium(Long auditoriumId) {
