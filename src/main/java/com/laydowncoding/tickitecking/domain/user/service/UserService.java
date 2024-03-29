@@ -1,8 +1,11 @@
 package com.laydowncoding.tickitecking.domain.user.service;
 
-import org.springframework.stereotype.Service;
+import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 
-@Service
-public class UserService {
+public interface UserService {
 
+    void signup(SignupRequestDto requestDto);
+
+    void updateUser(Long userId, UserUpdateRequestDto requestDto);
 }
