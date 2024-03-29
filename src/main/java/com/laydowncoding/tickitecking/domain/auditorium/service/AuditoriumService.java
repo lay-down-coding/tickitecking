@@ -1,6 +1,8 @@
 package com.laydowncoding.tickitecking.domain.auditorium.service;
 
 import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
+import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
+import java.util.List;
 
 public interface AuditoriumService {
 
@@ -9,4 +11,6 @@ public interface AuditoriumService {
   void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId);
 
   void deleteAuditorium(Long auditoriumId);
+
+  List<AuditoriumResponseDto> getAuditoriums();
 }

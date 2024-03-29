@@ -1,12 +1,15 @@
 package com.laydowncoding.tickitecking.domain.auditorium.controller;
 
 import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
+import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.service.AuditoriumService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -44,5 +47,11 @@ public class AuditoriumController {
   ) {
     auditoriumService.deleteAuditorium(auditoriumId);
     return CommonResponse.ok(null);
+  }
+
+  @GetMapping
+  public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums() {
+    List<AuditoriumResponseDto> response = auditoriumService.getAuditoriums();
+    return CommonResponse.ok(response);
   }
 }
