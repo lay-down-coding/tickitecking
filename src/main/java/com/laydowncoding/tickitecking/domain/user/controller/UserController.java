@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -43,5 +44,12 @@ public class UserController {
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserResponseDto responseDto = userService.getUser(userDetails.getUser().getId());
         return CommonResponse.ok(responseDto);
+    }
+
+    @DeleteMapping("/my")
+    public ResponseEntity<CommonResponse<Void>> deleteUser(
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteUser(userDetails.getUser().getId());
+        return CommonResponse.ok(null);
     }
 }

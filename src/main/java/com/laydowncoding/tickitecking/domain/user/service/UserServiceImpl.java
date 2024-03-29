@@ -63,6 +63,12 @@ public class UserServiceImpl implements UserService{
         return new UserResponseDto(user.getUsername(), user.getEmail(), user.getNickname());
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+        User user = findUser(userId);
+        userRepository.delete(user);
+    }
+
     private User findUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(
             () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
