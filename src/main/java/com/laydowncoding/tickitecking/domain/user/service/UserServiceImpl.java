@@ -6,6 +6,7 @@ import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErro
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
 
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
@@ -54,6 +55,12 @@ public class UserServiceImpl implements UserService{
     public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
         User user = findUser(userId);
         user.update(requestDto);
+    }
+
+    @Override
+    public UserResponseDto getUser(Long userId) {
+        User user = findUser(userId);
+        return new UserResponseDto(user.getUsername(), user.getEmail(), user.getNickname());
     }
 
     private User findUser(Long userId) {
