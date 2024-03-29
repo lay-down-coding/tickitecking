@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.user.service;
 
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 
 public interface UserService {
@@ -8,4 +9,6 @@ public interface UserService {
     void signup(SignupRequestDto requestDto);
 
     void updateUser(Long userId, UserUpdateRequestDto requestDto);
+
+    UserResponseDto getUser(Long userId);
 }
