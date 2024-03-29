@@ -27,4 +27,12 @@ public class GlobalExceptionHandler {
     }
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
   }
+
+  @ExceptionHandler(InvalidUserException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidUserException(
+      InvalidUserException e
+  ) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 }
