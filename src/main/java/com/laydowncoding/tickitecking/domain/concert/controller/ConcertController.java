@@ -5,6 +5,7 @@ import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.service.ConcertService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.security.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -37,8 +38,15 @@ public class ConcertController {
   public ResponseEntity<CommonResponse<ConcertResponseDto>> getConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId) {
-    ConcertResponseDto responseDto = concertService.getConcert(concertId);
-    return CommonResponse.ok(responseDto);
+    ConcertResponseDto response = concertService.getConcert(concertId);
+    return CommonResponse.ok(response);
+  }
+
+  @GetMapping
+  public ResponseEntity<CommonResponse<List<ConcertResponseDto>>> getAllConcerts(
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    List<ConcertResponseDto> response = concertService.getAllConcerts();
+    return CommonResponse.ok(response);
   }
 }
 
