@@ -8,6 +8,7 @@ import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
@@ -138,5 +139,56 @@ public class ConcertServiceTest {
 
         //then
         assertThat(response).hasSize(0);
+    }
+
+    @DisplayName("콘서트 수정 - 성공")
+    @Test
+    void update_success() {
+        //given
+        Concert concert1 = Concert.builder()
+            .name("concertname")
+            .description("description")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+
+        ConcertUpdateRequestDto requestDto = ConcertUpdateRequestDto.builder()
+            .name("updateName")
+            .description("updateDescription")
+            .startTime(LocalDateTime.now())
+            .auditoriumId(1L)
+            .build();
+        //when
+        ConcertResponseDto response = concertService.updateConcert(1L, 1L, requestDto);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getName()).isEqualTo("updateName");
+    }
+
+    @DisplayName("콘서트 수정 - 실패 회사유저 id가 다름")
+    @Test
+    void update_fail() {
+        //given
+        Concert concert1 = Concert.builder()
+            .name("concertname")
+            .description("description")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+
+        ConcertUpdateRequestDto requestDto = ConcertUpdateRequestDto.builder()
+            .name("updateName")
+            .description("updateDescription")
+            .startTime(LocalDateTime.now())
+            .auditoriumId(1L)
+            .build();
+        //when & then
+        assertThatThrownBy(() ->
+            concertService.updateConcert(2L, 1L, requestDto))
+            .isInstanceOf(CustomRuntimeException.class);
     }
 }
