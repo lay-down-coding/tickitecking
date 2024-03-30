@@ -191,4 +191,40 @@ public class ConcertServiceTest {
             concertService.updateConcert(2L, 1L, requestDto))
             .isInstanceOf(CustomRuntimeException.class);
     }
+
+    @DisplayName("콘서트 삭제 - 성공")
+    @Test
+    void delete_success() {
+        //given
+        Concert concert1 = Concert.builder()
+            .name("concertname")
+            .description("description")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+
+        //when & then
+        assertDoesNotThrow(() -> concertService.deleteConcert(1L, 1L));
+        verify(concertRepository, times(1)).delete(any(Concert.class));
+    }
+
+    @DisplayName("콘서트 삭제 - 실패 회사유저 id가 다름")
+    @Test
+    void delete_fail() {
+        //given
+        Concert concert1 = Concert.builder()
+            .name("concertname")
+            .description("description")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+
+        //when & then
+        assertThatThrownBy(() -> concertService.deleteConcert(2L, 1L))
+            .isInstanceOf(CustomRuntimeException.class);
+    }
 }
