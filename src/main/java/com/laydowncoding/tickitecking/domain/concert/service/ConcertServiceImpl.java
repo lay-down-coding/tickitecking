@@ -68,12 +68,20 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public void updateConcert(Long companyUserId, Long concertId,
+    public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
         ConcertUpdateRequestDto requestDto) {
         Concert concert = findConcert(concertId);
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
 
         concert.update(requestDto);
+        return ConcertResponseDto.builder()
+            .id(concert.getId())
+            .name(concert.getName())
+            .description(concert.getDescription())
+            .startTime(concert.getStartTime())
+            .companyUserId(concert.getCompanyUserId())
+            .auditoriumId(concert.getAuditoriumId())
+            .build();
     }
 
     @Override

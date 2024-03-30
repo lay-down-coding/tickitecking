@@ -57,8 +57,9 @@ public class ConcertController {
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId,
       @RequestBody ConcertUpdateRequestDto requestDto) {
-    concertService.updateConcert(userDetails.getUser().getId(), concertId, requestDto);
-    return CommonResponse.ok(null);
+    ConcertResponseDto responseDto = concertService.updateConcert(userDetails.getUser().getId(),
+        concertId, requestDto);
+    return CommonResponse.ok(responseDto);
   }
 
   @DeleteMapping("/{concertId}")

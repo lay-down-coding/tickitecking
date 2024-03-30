@@ -13,7 +13,7 @@ public interface ConcertService {
 
     List<ConcertResponseDto> getAllConcerts();
 
-    void updateConcert(Long companyUserId, Long concertId, ConcertUpdateRequestDto requestDto);
+    ConcertResponseDto updateConcert(Long companyUserId, Long concertId, ConcertUpdateRequestDto requestDto);
 
     void deleteConcert(Long id, Long concertId);
 }
