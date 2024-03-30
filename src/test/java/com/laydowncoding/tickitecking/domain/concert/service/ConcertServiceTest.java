@@ -12,6 +12,8 @@ import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -90,17 +92,51 @@ public class ConcertServiceTest {
     @Test
     void get_fail() {
         //given
-        Concert concert = Concert.builder()
+        given(concertRepository.findById(any())).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> concertService.getConcert(1L))
+            .isInstanceOf(CustomRuntimeException.class);
+    }
+
+    @DisplayName("콘서트 전체 조회 - 성공")
+    @Test
+    void getAll_success() {
+        //given
+        Concert concert1 = Concert.builder()
             .name("concertname")
             .description("description")
             .startTime(LocalDateTime.now())
             .companyUserId(1L)
             .auditoriumId(1L)
             .build();
-        given(concertRepository.findById(any())).willReturn(Optional.empty());
 
-        //when & then
-        assertThatThrownBy(() -> concertService.getConcert(1L))
-            .isInstanceOf(CustomRuntimeException.class);
+        Concert concert2 = Concert.builder()
+            .name("concertname2")
+            .description("description2")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
+        given(concertRepository.findAll()).willReturn(List.of(concert1, concert2));
+
+        //when
+        List<ConcertResponseDto> response = concertService.getAllConcerts();
+
+        //then
+        assertThat(response).hasSize(2);
+    }
+
+    @DisplayName("콘서트 전체 조회 - 실패")
+    @Test
+    void getAll_fail() {
+        //given
+        given(concertRepository.findAll()).willReturn(Collections.emptyList());
+
+        //when
+        List<ConcertResponseDto> response = concertService.getAllConcerts();
+
+        //then
+        assertThat(response).hasSize(0);
     }
 }
