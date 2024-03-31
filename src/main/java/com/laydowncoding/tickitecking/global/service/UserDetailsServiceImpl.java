@@ -1,4 +1,4 @@
-package com.laydowncoding.tickitecking.global.security;
+package com.laydowncoding.tickitecking.global.service;
 
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;

@@ -22,77 +22,77 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public void signup(SignupRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        String email = requestDto.getEmail();
-        String nickname = requestDto.getNickname();
+  @Override
+  public void signup(SignupRequestDto requestDto) {
+    String username = requestDto.getUsername();
+    String password = passwordEncoder.encode(requestDto.getPassword());
+    String email = requestDto.getEmail();
+    String nickname = requestDto.getNickname();
 
-        validateDuplicateUsername(username);
-        validateDuplicateEmail(email);
+    validateDuplicateUsername(username);
+    validateDuplicateEmail(email);
 
-        if (Objects.nonNull(nickname)) {
-            validateDuplicateNickname(nickname);
-        }
-
-        User user = User.builder()
-            .username(username)
-            .password(password)
-            .email(email)
-            .nickname(requestDto.getNickname())
-            .role(UserRole.USER)
-            .build();
-        userRepository.save(user);
+    if (Objects.nonNull(nickname)) {
+      validateDuplicateNickname(nickname);
     }
 
-    @Override
-    public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
-        User user = findUser(userId);
-        user.update(requestDto);
-    }
+    User user = User.builder()
+        .username(username)
+        .password(password)
+        .email(email)
+        .nickname(requestDto.getNickname())
+        .role(UserRole.USER)
+        .build();
+    userRepository.save(user);
+  }
 
-    @Override
-    public UserResponseDto getUser(Long userId) {
-        User user = findUser(userId);
-        return new UserResponseDto(user.getUsername(), user.getEmail(), user.getNickname());
-    }
+  @Override
+  public void updateUser(Long userId, UserUpdateRequestDto requestDto) {
+    User user = findUser(userId);
+    user.update(requestDto);
+  }
 
-    @Override
-    public void deleteUser(Long userId) {
-        User user = findUser(userId);
-        userRepository.delete(user);
-    }
+  @Override
+  public UserResponseDto getUser(Long userId) {
+    User user = findUser(userId);
+    return new UserResponseDto(user.getUsername(), user.getEmail(), user.getNickname());
+  }
 
-    private User findUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-            () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
-        );
-    }
+  @Override
+  public void deleteUser(Long userId) {
+    User user = findUser(userId);
+    userRepository.delete(user);
+  }
 
-    private void validateDuplicateUsername(String username) {
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new CustomRuntimeException(DUPLICATE_USERNAME.getMessage());
-        }
-    }
+  private User findUser(Long userId) {
+    return userRepository.findById(userId).orElseThrow(
+        () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
+    );
+  }
 
-    private void validateDuplicateEmail(String email) {
-        Optional<User> checkEmail = userRepository.findByEmail(email);
-        if (checkEmail.isPresent()) {
-            throw new CustomRuntimeException(DUPLICATE_EMAIL.getMessage());
-        }
+  private void validateDuplicateUsername(String username) {
+    Optional<User> checkUsername = userRepository.findByUsername(username);
+    if (checkUsername.isPresent()) {
+      throw new CustomRuntimeException(DUPLICATE_USERNAME.getMessage());
     }
+  }
 
-    private void validateDuplicateNickname(String nickname) {
-        Optional<User> checkNickname = userRepository.findByNickname(nickname);
-        if (checkNickname.isPresent()) {
-            throw new CustomRuntimeException(DUPLICATE_NICKNAME.getMessage());
-        }
+  private void validateDuplicateEmail(String email) {
+    Optional<User> checkEmail = userRepository.findByEmail(email);
+    if (checkEmail.isPresent()) {
+      throw new CustomRuntimeException(DUPLICATE_EMAIL.getMessage());
     }
+  }
+
+  private void validateDuplicateNickname(String nickname) {
+    Optional<User> checkNickname = userRepository.findByNickname(nickname);
+    if (checkNickname.isPresent()) {
+      throw new CustomRuntimeException(DUPLICATE_NICKNAME.getMessage());
+    }
+  }
 }
