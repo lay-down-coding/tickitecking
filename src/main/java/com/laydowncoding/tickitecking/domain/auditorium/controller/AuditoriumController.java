@@ -28,7 +28,7 @@ public class AuditoriumController {
   private final AuditoriumService auditoriumService;
 
   @PostMapping
-  @Secured({"ROLE_COMPANY", "ROLE_ADMIN"})
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> createAuditorium(
       @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
       @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -50,7 +50,7 @@ public class AuditoriumController {
   }
 
   @DeleteMapping("/{auditoriumId}")
-  @Secured({"ROLE_COMPANY", "ROLE_ADMIN"})
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> deleteAuditorium(
       @PathVariable Long auditoriumId,
       @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -60,7 +60,7 @@ public class AuditoriumController {
   }
 
   @GetMapping
-  @Secured({"ROLE_COMPANY"})
+  @Secured({"ROLE_COMPANY_USER"})
   public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums(
       @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {

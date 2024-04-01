@@ -3,7 +3,7 @@ package com.laydowncoding.tickitecking.domain.user.entity;
 public enum UserRole {
 
     USER(Authority.USER),
-    COMPANY(Authority.COMPANY),
+    COMPANY_USER(Authority.COMPANY_USER),
     ADMIN(Authority.ADMIN);
 
     private final String authority;
@@ -19,7 +19,7 @@ public enum UserRole {
     public static class Authority {
         public static final String USER = "ROLE_USER";
 
-        public static final String COMPANY = "ROLE_COMPANY";
+        public static final String COMPANY_USER = "ROLE_COMPANY_USER";
         public static final String ADMIN = "ROLE_ADMIN";
     }
 }
