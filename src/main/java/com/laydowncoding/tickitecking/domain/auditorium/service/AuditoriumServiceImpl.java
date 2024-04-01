@@ -94,7 +94,7 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
     auditoriumRepository.delete(auditorium);
 
-    List<Seat> seatList = seatRepository.findAllByAuditoriumId(auditoriumId);
+    List<Seat> seatList = seatRepository.findAllByAuditoriumId(auditorium.getId());
 
     seatRepository.deleteAll(seatList);
   }
