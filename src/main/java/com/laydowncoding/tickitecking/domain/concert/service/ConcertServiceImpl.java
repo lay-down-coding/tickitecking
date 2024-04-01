@@ -3,11 +3,12 @@ package com.laydowncoding.tickitecking.domain.concert.service;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.*;
 
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
+import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
+import com.laydowncoding.tickitecking.domain.seat.service.SeatService;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.List;
 import java.util.Objects;
@@ -22,9 +23,10 @@ public class ConcertServiceImpl implements ConcertService {
 
     private final ConcertRepository concertRepository;
     private final AuditoriumRepository auditoriumRepository;
+    private final SeatService seatService;
 
     @Override
-    public void createConcert(Long companyUserId, ConcertCreateRequestDto requestDto) {
+    public void createConcert(Long companyUserId, ConcertRequestDto requestDto) {
         validateAuditoriumId(requestDto.getAuditoriumId());
 
         Concert concert = Concert.builder()
@@ -34,7 +36,9 @@ public class ConcertServiceImpl implements ConcertService {
             .companyUserId(companyUserId)
             .auditoriumId(requestDto.getAuditoriumId())
             .build();
-        concertRepository.save(concert);
+        Concert saved = concertRepository.save(concert);
+        SeatPriceDto seatPriceDto = requestDto.from();
+        seatService.createSeatPrices(saved.getId(), seatPriceDto);
     }
 
     @Override

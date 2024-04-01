@@ -20,10 +20,10 @@ public class Seat {
   private Long id;
 
   @Column
-  private String column;
+  private String vertical;
 
   @Column
-  private String row;
+  private String horizontal;
 
   @Column
   private char availability;

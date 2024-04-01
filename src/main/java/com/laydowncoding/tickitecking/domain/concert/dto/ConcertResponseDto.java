@@ -18,4 +18,7 @@ public class ConcertResponseDto {
     private LocalDateTime startTime;
     private Long companyUserId;
     private Long auditoriumId;
+    private double goldPrice;
+    private double silverPrice;
+    private double bronzePrice;
 }

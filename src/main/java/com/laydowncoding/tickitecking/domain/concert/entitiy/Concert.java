@@ -52,7 +52,7 @@ public class Concert extends Timestamp {
     this.auditoriumId = auditoriumId;
   }
 
-  public void update(ConcertUpdateRequestDto requestDto) {
+  public void update(ConcertRequestDto requestDto) {
     this.name = requestDto.getName();
     this.description = requestDto.getDescription();
     this.startTime = requestDto.getStartTime();

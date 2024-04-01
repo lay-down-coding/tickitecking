@@ -1,13 +1,12 @@
 package com.laydowncoding.tickitecking.domain.concert.service;
 
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import java.util.List;
 
 public interface ConcertService {
 
-    void createConcert(Long companyUserId, ConcertCreateRequestDto requestDto);
+    void createConcert(Long companyUserId, ConcertRequestDto requestDto);
 
     ConcertResponseDto getConcert(Long concertId);
 
