@@ -22,17 +22,20 @@ public class ReservationServiceImpl implements ReservationService {
     private final SeatRepository seatRepository;
 
     @Override
-    public ReservationResponseDto createReservation(Long userId, Long eventId,
+    public ReservationResponseDto createReservation(Long userId, Long concertId,
         ReservationRequestDto requestDto) {
 
-        Seat seat = findSeat(requestDto.getSeatId());
-        checkAvailability(seat.getAvailability());
+        if (!isReservable(concertId, requestDto.getHorizontal(), requestDto.getVertical())) {
+            throw new CustomRuntimeException("예약 불가능한 좌석입니다.");
+        }
+        Long seatId = seatRepository.findSeatId(concertId, requestDto.getHorizontal(),
+            requestDto.getVertical());
 
         Reservation reservation = Reservation.builder()
             .status("Y")
             .userId(userId)
-            .eventId(eventId)
-            .seatId(requestDto.getSeatId())
+            .concertId(concertId)
+            .seatId(seatId)
             .build();
         Reservation save = reservationRepository.save(reservation);
 
@@ -40,15 +43,13 @@ public class ReservationServiceImpl implements ReservationService {
             .id(save.getId())
             .status(save.getStatus())
             .userId(save.getUserId())
-            .eventId(save.getEventId())
+            .concertId(save.getConcertId())
             .seatId(save.getSeatId())
             .build();
     }
 
-    private void checkAvailability(String availability) {
-        if (availability.equals("N")) {
-            throw new CustomRuntimeException(NOT_AVAILABLE_SEAT.getMessage());
-        }
+    private boolean isReservable(Long eventId, String horizontal, String vertical) {
+        return seatRepository.isReservable(eventId, horizontal, vertical);
     }
 
     private Seat findSeat(Long seatId) {
