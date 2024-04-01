@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AllUserResponseDto {
+public class AdminUserResponseDto {
 
   private Long userId;
   private String username;

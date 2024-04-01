@@ -1,10 +1,14 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
-import com.laydowncoding.tickitecking.domain.admin.dto.response.AllUserResponseDto;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
+
+import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
+import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
@@ -67,12 +71,30 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
-  public List<AllUserResponseDto> getUsers() {
+  public List<AdminUserResponseDto> getUsers() {
     List<User> userList = userRepository.findAll();
 
     return userList.stream().map(
-        user -> new AllUserResponseDto(user.getId(), user.getUsername(), user.getEmail(), user.getNickname(),
+        user -> new AdminUserResponseDto(user.getId(), user.getUsername(), user.getEmail(), user.getNickname(),
             user.getRole().getAuthority())).collect(
         Collectors.toList());
+  }
+
+  @Override
+  @Transactional
+  public void updateUser(Long userId, AdminUserUpdateRequestDto userUpdateRequest) {
+    User user = userRepository.findById(userId).orElseThrow(
+        () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
+    );
+
+    String encryptedPassword = passwordEncoder.encode(userUpdateRequest.getPassword());
+
+    user.forceUpdate(
+        userUpdateRequest.getUsername(),
+        encryptedPassword,
+        userUpdateRequest.getNickname(),
+        userUpdateRequest.getEmail(),
+        userUpdateRequest.getRole().name()
+    );
   }
 }

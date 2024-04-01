@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.admin.controller;
 
-import com.laydowncoding.tickitecking.domain.admin.dto.response.AllUserResponseDto;
+import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.service.AdminService;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
@@ -12,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +33,6 @@ public class AdminController {
   ) {
     String accessToken = adminService.login(loginRequest);
 
-
     HttpHeaders headers = new HttpHeaders();
     headers.add(JwtUtil.AUTHORIZATION_HEADER, accessToken);
     return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
@@ -38,8 +40,18 @@ public class AdminController {
 
   @GetMapping("/users")
   @Secured({"ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<List<AllUserResponseDto>>> getUsers() {
-    List<AllUserResponseDto> response = adminService.getUsers();
+  public ResponseEntity<CommonResponse<List<AdminUserResponseDto>>> getUsers() {
+    List<AdminUserResponseDto> response = adminService.getUsers();
     return CommonResponse.ok(response);
+  }
+
+  @PutMapping("/users/{userId}")
+  @Secured({"ROLE_ADMIN"})
+  public ResponseEntity<CommonResponse<Void>> updateUser(
+      @PathVariable Long userId,
+      @RequestBody AdminUserUpdateRequestDto userUpdateRequest
+  ) {
+    adminService.updateUser(userId, userUpdateRequest);
+    return CommonResponse.ok(null);
   }
 }

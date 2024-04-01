@@ -65,4 +65,12 @@ public class User extends Timestamp {
     this.email = requestDto.getEmail();
     this.nickname = requestDto.getNickname();
   }
+
+  public void forceUpdate(String username, String password, String nickname, String email, String role) {
+    this.username = username;
+    this.password = password;
+    this.nickname = nickname;
+    this.email = email;
+    this.role = UserRole.valueOf(role);
+  }
 }
