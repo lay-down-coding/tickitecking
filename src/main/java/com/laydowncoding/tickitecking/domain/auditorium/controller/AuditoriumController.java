@@ -50,10 +50,12 @@ public class AuditoriumController {
   }
 
   @DeleteMapping("/{auditoriumId}")
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> deleteAuditorium(
-      @PathVariable Long auditoriumId
+      @PathVariable Long auditoriumId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    auditoriumService.deleteAuditorium(auditoriumId);
+    auditoriumService.deleteAuditorium(auditoriumId, userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 

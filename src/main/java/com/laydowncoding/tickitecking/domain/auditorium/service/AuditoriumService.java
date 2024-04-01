@@ -10,7 +10,7 @@ public interface AuditoriumService {
 
   void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId, Long userId);
 
-  void deleteAuditorium(Long auditoriumId);
+  void deleteAuditorium(Long auditoriumId, Long userId);
 
   List<AuditoriumResponseDto> getAuditoriums();
 

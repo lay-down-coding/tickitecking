@@ -87,12 +87,16 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
   @Override
   @Transactional
-  public void deleteAuditorium(Long auditoriumId) {
+  public void deleteAuditorium(Long auditoriumId, Long userId) {
     Auditorium auditorium = findAuditorium(auditoriumId);
 
-    checkWritingUser(auditorium.getCompanyUserId(), 1L);
+    checkWritingUser(auditorium.getCompanyUserId(), userId);
 
     auditoriumRepository.delete(auditorium);
+
+    List<Seat> seatList = seatRepository.findAllByAuditoriumId(auditoriumId);
+
+    seatRepository.deleteAll(seatList);
   }
 
   @Override
