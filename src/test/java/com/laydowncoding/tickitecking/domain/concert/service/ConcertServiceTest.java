@@ -6,9 +6,8 @@ import static org.mockito.BDDMockito.*;
 
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
@@ -17,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,7 +39,7 @@ public class ConcertServiceTest {
     void create_success() {
         //given
         given(auditoriumRepository.findById(any())).willReturn(Optional.of(new Auditorium()));
-        ConcertCreateRequestDto request = ConcertCreateRequestDto.builder()
+        ConcertRequestDto request = ConcertRequestDto.builder()
             .name("concertname")
             .description("description")
             .startTime(LocalDateTime.now())
@@ -58,7 +56,7 @@ public class ConcertServiceTest {
     void create_fail() {
         //given
         given(auditoriumRepository.findById(any())).willReturn(Optional.empty());
-        ConcertCreateRequestDto request = ConcertCreateRequestDto.builder()
+        ConcertRequestDto request = ConcertRequestDto.builder()
             .name("concertname")
             .description("description")
             .startTime(LocalDateTime.now())
@@ -154,7 +152,7 @@ public class ConcertServiceTest {
             .build();
         given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
 
-        ConcertUpdateRequestDto requestDto = ConcertUpdateRequestDto.builder()
+        ConcertRequestDto requestDto = ConcertRequestDto.builder()
             .name("updateName")
             .description("updateDescription")
             .startTime(LocalDateTime.now())
@@ -180,7 +178,7 @@ public class ConcertServiceTest {
             .build();
         given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
 
-        ConcertUpdateRequestDto requestDto = ConcertUpdateRequestDto.builder()
+        ConcertRequestDto requestDto = ConcertRequestDto.builder()
             .name("updateName")
             .description("updateDescription")
             .startTime(LocalDateTime.now())

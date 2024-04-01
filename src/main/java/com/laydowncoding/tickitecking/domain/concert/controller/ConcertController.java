@@ -30,7 +30,7 @@ public class ConcertController {
   @PostMapping
   public ResponseEntity<CommonResponse<Void>> createConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @RequestBody ConcertCreateRequestDto requestDto) {
+      @RequestBody ConcertRequestDto requestDto) {
     concertService.createConcert(userDetails.getUser().getId(), requestDto);
     return CommonResponse.ok(null);
   }
@@ -55,7 +55,7 @@ public class ConcertController {
   public ResponseEntity<CommonResponse<ConcertResponseDto>> updateConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId,
-      @RequestBody ConcertUpdateRequestDto requestDto) {
+      @RequestBody ConcertRequestDto requestDto) {
     ConcertResponseDto responseDto = concertService.updateConcert(userDetails.getUser().getId(),
         concertId, requestDto);
     return CommonResponse.ok(responseDto);

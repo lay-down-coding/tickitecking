@@ -1,6 +1,6 @@
 package com.laydowncoding.tickitecking.domain.concert.entitiy;
 
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.global.entity.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

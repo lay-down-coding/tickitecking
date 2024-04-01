@@ -69,7 +69,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
-        ConcertUpdateRequestDto requestDto) {
+        ConcertRequestDto requestDto) {
         Concert concert = findConcert(concertId);
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
 
