@@ -4,7 +4,11 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRe
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
+import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
+import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
+import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +20,40 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuditoriumServiceImpl implements AuditoriumService {
 
   private final AuditoriumRepository auditoriumRepository;
+  private final SeatRepository seatRepository;
 
   @Override
   @Transactional
-  public void createAuditorium(AuditoriumRequestDto auditoriumRequest) {
-    // 유저 아이디 임시
+  public void createAuditorium(AuditoriumRequestDto auditoriumRequest, Long userId) {
     Auditorium auditorium = new Auditorium(
         auditoriumRequest.getName(),
         auditoriumRequest.getAddress(),
         auditoriumRequest.getMaxColumn(),
         auditoriumRequest.getMaxRow(),
-        1L
+        userId
     );
 
     auditoriumRepository.save(auditorium);
+
+    List<Seat> seatList = new ArrayList<>();
+
+    for (SeatRequestDto seatRequest : auditoriumRequest.getSeatList()) {
+      for (String horizontal : seatRequest.getHorizontals()) {
+        for (int vertical = 1; vertical <= Integer.parseInt(auditoriumRequest.getMaxColumn());
+            vertical++) {
+          Seat seat = new Seat(
+              String.valueOf(vertical),
+              horizontal,
+              auditoriumRequest.getAvailability(),
+              seatRequest.getGrade(),
+              auditorium.getId()
+          );
+          seatList.add(seat);
+        }
+      }
+    }
+
+    seatRepository.saveAll(seatList);
   }
 
   @Override

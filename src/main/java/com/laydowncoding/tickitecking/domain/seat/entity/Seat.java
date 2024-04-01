@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DialectOverride.ColumnDefault;
 
 @Entity
 @Table(name = "seats")
@@ -20,17 +21,25 @@ public class Seat {
   private Long id;
 
   @Column
-  private String column;
+  private String vertical;
 
   @Column
-  private String row;
+  private String horizontal;
 
-  @Column
-  private char availability;
+  @Column(columnDefinition = "CHAR(1) default 'Y'")
+  private String availability;
 
-  @Column
-  private char grade;
+  @Column(columnDefinition = "CHAR(1)")
+  private String grade;
 
   @Column(nullable = false)
   private Long auditoriumId;
+
+  public Seat(String vertical, String horizontal, String availability, String grade, Long auditoriumId) {
+    this.vertical = vertical;
+    this.horizontal = horizontal;
+    this.availability = availability;
+    this.grade = grade;
+    this.auditoriumId = auditoriumId;
+  }
 }

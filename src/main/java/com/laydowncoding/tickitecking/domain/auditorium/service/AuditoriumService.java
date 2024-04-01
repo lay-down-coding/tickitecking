@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AuditoriumService {
 
-  void createAuditorium(AuditoriumRequestDto auditoriumRequest);
+  void createAuditorium(AuditoriumRequestDto auditoriumRequest, Long userId);
 
   void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId);
 

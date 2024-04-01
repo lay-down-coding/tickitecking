@@ -4,10 +4,13 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRe
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.service.AuditoriumService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
+import com.laydowncoding.tickitecking.global.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +28,12 @@ public class AuditoriumController {
   private final AuditoriumService auditoriumService;
 
   @PostMapping
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> createAuditorium(
-      @RequestBody @Valid AuditoriumRequestDto auditoriumRequest
+      @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    auditoriumService.createAuditorium(auditoriumRequest);
+    auditoriumService.createAuditorium(auditoriumRequest, userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 
