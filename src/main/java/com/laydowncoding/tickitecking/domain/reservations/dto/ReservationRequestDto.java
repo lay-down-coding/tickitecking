@@ -7,5 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationRequestDto {
 
-    private Long seatId;
+    private String vertical;
+    private String horizontal;
 }

@@ -14,6 +14,6 @@ public class ReservationResponseDto {
     private Long id;
     private String status;
     private Long userId;
-    private Long eventId;
+    private Long concertId;
     private Long seatId;
 }

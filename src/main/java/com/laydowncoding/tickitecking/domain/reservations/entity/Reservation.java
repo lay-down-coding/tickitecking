@@ -32,16 +32,16 @@ public class Reservation extends Timestamp {
     private Long userId;
 
     @Column(nullable = false)
-    private Long eventId;
+    private Long concertId;
 
     @Column(nullable = false)
     private Long seatId;
 
     @Builder
-    public Reservation(String status, Long userId, Long eventId, Long seatId) {
+    public Reservation(String status, Long userId, Long concertId, Long seatId) {
         this.status = status;
         this.userId = userId;
-        this.eventId = eventId;
+        this.concertId = concertId;
         this.seatId = seatId;
     }
 }
