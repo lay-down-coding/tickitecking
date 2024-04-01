@@ -1,13 +1,17 @@
 package com.laydowncoding.tickitecking.domain.admin.controller;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AllUserResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.service.AdminService;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +34,12 @@ public class AdminController {
     HttpHeaders headers = new HttpHeaders();
     headers.add(JwtUtil.AUTHORIZATION_HEADER, accessToken);
     return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
+  }
+
+  @GetMapping("/users")
+  @Secured({"ROLE_ADMIN"})
+  public ResponseEntity<CommonResponse<List<AllUserResponseDto>>> getUsers() {
+    List<AllUserResponseDto> response = adminService.getUsers();
+    return CommonResponse.ok(response);
   }
 }

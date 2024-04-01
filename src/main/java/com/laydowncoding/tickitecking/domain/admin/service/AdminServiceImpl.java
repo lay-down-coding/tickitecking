@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AllUserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
@@ -8,6 +9,8 @@ import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
 import jakarta.annotation.PostConstruct;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,7 +53,8 @@ public class AdminServiceImpl implements AdminService {
     String password = loginRequest.getPassword();
     User user = userRepository.findByUsername(loginRequest.getUsername())
         .orElseThrow(() -> new NullPointerException("해당 유저는 존재하지 않습니다."));
-    if (!passwordEncoder.matches(password, user.getPassword()) || !user.getRole().equals(UserRole.ADMIN)) {
+    if (!passwordEncoder.matches(password, user.getPassword()) || !user.getRole()
+        .equals(UserRole.ADMIN)) {
       throw new InvalidUserException("허용되지 않은 권한입니다.");
     }
 
@@ -60,5 +64,15 @@ public class AdminServiceImpl implements AdminService {
     redisService.setValuesWithTimeout(user.getUsername(), refreshToken, 7L);
 
     return accessToken;
+  }
+
+  @Override
+  public List<AllUserResponseDto> getUsers() {
+    List<User> userList = userRepository.findAll();
+
+    return userList.stream().map(
+        user -> new AllUserResponseDto(user.getId(), user.getUsername(), user.getEmail(), user.getNickname(),
+            user.getRole().getAuthority())).collect(
+        Collectors.toList());
   }
 }
