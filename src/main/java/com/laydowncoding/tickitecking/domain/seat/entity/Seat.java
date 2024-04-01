@@ -42,4 +42,8 @@ public class Seat {
     this.grade = grade;
     this.auditoriumId = auditoriumId;
   }
+
+  public void update(String grade) {
+    this.grade = grade;
+  }
 }

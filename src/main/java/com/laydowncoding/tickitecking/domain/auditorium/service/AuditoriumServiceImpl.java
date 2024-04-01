@@ -58,11 +58,11 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
   @Override
   @Transactional
-  public void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId) {
+  public void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId,
+      Long userId) {
     Auditorium auditorium = findAuditorium(auditoriumId);
 
-    // 유저 검증 필요
-    checkWritingUser(auditorium.getCompanyUserId(), 1L);
+    checkWritingUser(auditorium.getCompanyUserId(), userId);
 
     auditorium.update(
         auditoriumRequest.getName(),
@@ -70,6 +70,19 @@ public class AuditoriumServiceImpl implements AuditoriumService {
         auditoriumRequest.getMaxColumn(),
         auditoriumRequest.getMaxRow()
     );
+
+    for (SeatRequestDto seatRequest : auditoriumRequest.getSeatList()) {
+      for (String horizontal : seatRequest.getHorizontals()) {
+        for (int vertical = 1; vertical <= Integer.parseInt(auditoriumRequest.getMaxColumn());
+            vertical++) {
+          Seat seat = seatRepository.findByAuditoriumIdAndHorizontalAndVertical(auditoriumId,
+              horizontal, String.valueOf(vertical));
+          if (seat != null) {
+            seat.update(seatRequest.getGrade());
+          }
+        }
+      }
+    }
   }
 
   @Override

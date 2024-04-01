@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SeatRepository extends JpaRepository<Seat, Long> {
 
+  Seat findByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal,
+      String vertical);
 }

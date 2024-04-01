@@ -38,17 +38,20 @@ public class AuditoriumController {
   }
 
   @PutMapping("/{auditoriumId}")
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> updateAuditorium(
       @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
-      @PathVariable Long auditoriumId
+      @PathVariable Long auditoriumId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    auditoriumService.updateAuditorium(auditoriumRequest, auditoriumId);
+    auditoriumService.updateAuditorium(auditoriumRequest, auditoriumId,
+        userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 
   @DeleteMapping("/{auditoriumId}")
   public ResponseEntity<CommonResponse<Void>> deleteAuditorium(
-    @PathVariable Long auditoriumId
+      @PathVariable Long auditoriumId
   ) {
     auditoriumService.deleteAuditorium(auditoriumId);
     return CommonResponse.ok(null);
