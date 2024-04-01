@@ -12,6 +12,7 @@ import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepositor
 import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
 import com.laydowncoding.tickitecking.domain.seat.service.SeatService;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -64,18 +65,26 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public List<ConcertResponseDto> getAllConcerts() {
         List<Concert> concerts = concertRepository.findAll();
-        return concerts.stream()
-            .map(concert ->
-                ConcertResponseDto.builder()
-                    .id(concert.getId())
-                    .name(concert.getName())
-                    .description(concert.getDescription())
-                    .startTime(concert.getStartTime())
-                    .companyUserId(concert.getCompanyUserId())
-                    .auditoriumId(concert.getAuditoriumId())
-                    .build()
-            )
-            .toList();
+
+        List<ConcertResponseDto> concertResponseDtos = new ArrayList<>();
+        for (Concert concert : concerts) {
+            SeatPriceDto seatPriceDto = seatService.getSeatPrices(concert.getId());
+
+            ConcertResponseDto concertResponseDto = ConcertResponseDto.builder()
+                .id(concert.getId())
+                .name(concert.getName())
+                .description(concert.getDescription())
+                .startTime(concert.getStartTime())
+                .companyUserId(concert.getCompanyUserId())
+                .auditoriumId(concert.getAuditoriumId())
+                .goldPrice(seatPriceDto.getGoldPrice())
+                .silverPrice(seatPriceDto.getSilverPrice())
+                .bronzePrice(seatPriceDto.getBronzePrice())
+                .build();
+
+            concertResponseDtos.add(concertResponseDto);
+        }
+        return concertResponseDtos;
     }
 
     @Override

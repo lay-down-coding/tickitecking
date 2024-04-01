@@ -61,9 +61,9 @@ public class SeatServiceImpl implements SeatService {
         }
 
         return SeatPriceDto.builder()
-            .goldPrice(seatPricesMap.get('G'))
-            .silverPrice(seatPricesMap.get('S'))
-            .bronzePrice(seatPricesMap.get('B'))
+            .goldPrice(seatPricesMap.getOrDefault('G', 0.0))
+            .silverPrice(seatPricesMap.getOrDefault('S', 0.0))
+            .bronzePrice(seatPricesMap.getOrDefault('B', 0.0))
             .build();
     }
 
