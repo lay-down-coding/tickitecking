@@ -1,8 +1,7 @@
 package com.laydowncoding.tickitecking.domain.concert.controller;
 
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.service.ConcertService;
 import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.service.UserDetailsImpl;
@@ -30,7 +29,7 @@ public class ConcertController {
   @PostMapping
   public ResponseEntity<CommonResponse<Void>> createConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @RequestBody ConcertCreateRequestDto requestDto) {
+      @RequestBody ConcertRequestDto requestDto) {
     concertService.createConcert(userDetails.getUser().getId(), requestDto);
     return CommonResponse.ok(null);
   }
@@ -55,9 +54,10 @@ public class ConcertController {
   public ResponseEntity<CommonResponse<ConcertResponseDto>> updateConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId,
-      @RequestBody ConcertUpdateRequestDto requestDto) {
-    concertService.updateConcert(userDetails.getUser().getId(), concertId, requestDto);
-    return CommonResponse.ok(null);
+      @RequestBody ConcertRequestDto requestDto) {
+    ConcertResponseDto responseDto = concertService.updateConcert(userDetails.getUser().getId(),
+        concertId, requestDto);
+    return CommonResponse.ok(responseDto);
   }
 
   @DeleteMapping("/{concertId}")

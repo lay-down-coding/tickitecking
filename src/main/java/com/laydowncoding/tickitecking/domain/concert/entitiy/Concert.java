@@ -1,6 +1,6 @@
 package com.laydowncoding.tickitecking.domain.concert.entitiy;
 
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.global.entity.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,7 +52,7 @@ public class Concert extends Timestamp {
     this.auditoriumId = auditoriumId;
   }
 
-  public void update(ConcertUpdateRequestDto requestDto) {
+  public void update(ConcertRequestDto requestDto) {
     this.name = requestDto.getName();
     this.description = requestDto.getDescription();
     this.startTime = requestDto.getStartTime();

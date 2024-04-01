@@ -1,14 +1,18 @@
 package com.laydowncoding.tickitecking.domain.concert.service;
 
-import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.*;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.INVALID_COMPANY_USER_ID;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_AUDITORIUM;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_CONCERT;
 
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertCreateRequestDto;
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
-import com.laydowncoding.tickitecking.domain.concert.dto.ConcertUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
+import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
+import com.laydowncoding.tickitecking.domain.seat.service.SeatService;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +26,10 @@ public class ConcertServiceImpl implements ConcertService {
 
     private final ConcertRepository concertRepository;
     private final AuditoriumRepository auditoriumRepository;
+    private final SeatService seatService;
 
     @Override
-    public void createConcert(Long companyUserId, ConcertCreateRequestDto requestDto) {
+    public void createConcert(Long companyUserId, ConcertRequestDto requestDto) {
         validateAuditoriumId(requestDto.getAuditoriumId());
 
         Concert concert = Concert.builder()
@@ -34,12 +39,16 @@ public class ConcertServiceImpl implements ConcertService {
             .companyUserId(companyUserId)
             .auditoriumId(requestDto.getAuditoriumId())
             .build();
-        concertRepository.save(concert);
+        Concert saved = concertRepository.save(concert);
+        SeatPriceDto seatPriceDto = requestDto.getSeatPriceDto();
+        seatService.createSeatPrices(saved.getId(), seatPriceDto);
     }
 
     @Override
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
+        SeatPriceDto seatPriceDto = seatService.getSeatPrices(concert.getId());
+
         return ConcertResponseDto.builder()
             .id(concert.getId())
             .name(concert.getName())
@@ -47,33 +56,57 @@ public class ConcertServiceImpl implements ConcertService {
             .startTime(concert.getStartTime())
             .companyUserId(concert.getCompanyUserId())
             .auditoriumId(concert.getAuditoriumId())
+            .goldPrice(seatPriceDto.getGoldPrice())
+            .silverPrice(seatPriceDto.getSilverPrice())
+            .bronzePrice(seatPriceDto.getBronzePrice())
             .build();
     }
 
     @Override
     public List<ConcertResponseDto> getAllConcerts() {
         List<Concert> concerts = concertRepository.findAll();
-        return concerts.stream()
-            .map(concert ->
-                ConcertResponseDto.builder()
-                    .id(concert.getId())
-                    .name(concert.getName())
-                    .description(concert.getDescription())
-                    .startTime(concert.getStartTime())
-                    .companyUserId(concert.getCompanyUserId())
-                    .auditoriumId(concert.getAuditoriumId())
-                    .build()
-            )
-            .toList();
+
+        List<ConcertResponseDto> concertResponseDtos = new ArrayList<>();
+        for (Concert concert : concerts) {
+            SeatPriceDto seatPriceDto = seatService.getSeatPrices(concert.getId());
+
+            ConcertResponseDto concertResponseDto = ConcertResponseDto.builder()
+                .id(concert.getId())
+                .name(concert.getName())
+                .description(concert.getDescription())
+                .startTime(concert.getStartTime())
+                .companyUserId(concert.getCompanyUserId())
+                .auditoriumId(concert.getAuditoriumId())
+                .goldPrice(seatPriceDto.getGoldPrice())
+                .silverPrice(seatPriceDto.getSilverPrice())
+                .bronzePrice(seatPriceDto.getBronzePrice())
+                .build();
+
+            concertResponseDtos.add(concertResponseDto);
+        }
+        return concertResponseDtos;
     }
 
     @Override
-    public void updateConcert(Long companyUserId, Long concertId,
-        ConcertUpdateRequestDto requestDto) {
+    public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
+        ConcertRequestDto requestDto) {
         Concert concert = findConcert(concertId);
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
 
         concert.update(requestDto);
+        SeatPriceDto seatPriceDto = seatService.updateSeatPrices(concertId,
+            requestDto.getSeatPriceDto());
+        return ConcertResponseDto.builder()
+            .id(concert.getId())
+            .name(concert.getName())
+            .description(concert.getDescription())
+            .startTime(concert.getStartTime())
+            .companyUserId(concert.getCompanyUserId())
+            .auditoriumId(concert.getAuditoriumId())
+            .goldPrice(seatPriceDto.getGoldPrice())
+            .silverPrice(seatPriceDto.getSilverPrice())
+            .bronzePrice(seatPriceDto.getBronzePrice())
+            .build();
     }
 
     @Override
