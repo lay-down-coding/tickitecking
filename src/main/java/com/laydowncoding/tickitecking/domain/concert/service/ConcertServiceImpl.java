@@ -1,6 +1,8 @@
 package com.laydowncoding.tickitecking.domain.concert.service;
 
-import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.*;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.INVALID_COMPANY_USER_ID;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_AUDITORIUM;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_CONCERT;
 
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
@@ -37,7 +39,7 @@ public class ConcertServiceImpl implements ConcertService {
             .auditoriumId(requestDto.getAuditoriumId())
             .build();
         Concert saved = concertRepository.save(concert);
-        SeatPriceDto seatPriceDto = requestDto.from();
+        SeatPriceDto seatPriceDto = requestDto.getSeatPriceDto();
         seatService.createSeatPrices(saved.getId(), seatPriceDto);
     }
 
@@ -78,6 +80,8 @@ public class ConcertServiceImpl implements ConcertService {
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
 
         concert.update(requestDto);
+        SeatPriceDto seatPriceDto = seatService.updateSeatPrices(concertId,
+            requestDto.getSeatPriceDto());
         return ConcertResponseDto.builder()
             .id(concert.getId())
             .name(concert.getName())
@@ -85,6 +89,9 @@ public class ConcertServiceImpl implements ConcertService {
             .startTime(concert.getStartTime())
             .companyUserId(concert.getCompanyUserId())
             .auditoriumId(concert.getAuditoriumId())
+            .goldPrice(seatPriceDto.getGoldPrice())
+            .silverPrice(seatPriceDto.getSilverPrice())
+            .bronzePrice(seatPriceDto.getBronzePrice())
             .build();
     }
 

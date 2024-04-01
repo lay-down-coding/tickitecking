@@ -21,7 +21,7 @@ public class ConcertRequestDto {
     private double silverPrice;
     private double bronzePrice;
 
-    public SeatPriceDto from() {
+    public SeatPriceDto getSeatPriceDto() {
         return SeatPriceDto.builder()
             .goldPrice(this.goldPrice)
             .silverPrice(this.silverPrice)

@@ -35,4 +35,9 @@ public class SeatPrice {
         this.grade = grade;
         this.concertId = concertId;
     }
+
+    public void update(char grade, double price) {
+        this.grade = grade;
+        this.price = price;
+    }
 }
