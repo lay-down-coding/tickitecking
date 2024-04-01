@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -24,8 +25,8 @@ public class Reservation extends Timestamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private char status;
+    @Column(columnDefinition = "CHAR(1) default 'Y'")
+    private String status;
 
     @Column(nullable = false)
     private Long userId;
@@ -34,5 +35,13 @@ public class Reservation extends Timestamp {
     private Long eventId;
 
     @Column(nullable = false)
-    private Long seat_id;
+    private Long seatId;
+
+    @Builder
+    public Reservation(String status, Long userId, Long eventId, Long seatId) {
+        this.status = status;
+        this.userId = userId;
+        this.eventId = eventId;
+        this.seatId = seatId;
+    }
 }
