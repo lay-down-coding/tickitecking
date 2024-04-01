@@ -60,8 +60,12 @@ public class AuditoriumController {
   }
 
   @GetMapping
-  public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums() {
-    List<AuditoriumResponseDto> response = auditoriumService.getAuditoriums();
+  @Secured({"ROLE_COMPANY_USER"})
+  public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums(
+      @AuthenticationPrincipal UserDetailsImpl userDetails
+  ) {
+    List<AuditoriumResponseDto> response = auditoriumService.getAuditoriums(
+        userDetails.getUser().getId());
     return CommonResponse.ok(response);
   }
 

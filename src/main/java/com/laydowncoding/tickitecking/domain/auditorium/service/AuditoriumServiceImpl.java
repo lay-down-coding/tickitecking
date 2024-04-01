@@ -100,9 +100,9 @@ public class AuditoriumServiceImpl implements AuditoriumService {
   }
 
   @Override
-  public List<AuditoriumResponseDto> getAuditoriums() {
+  public List<AuditoriumResponseDto> getAuditoriums(Long userId) {
     // 유저 검증 필요
-    List<Auditorium> auditoriumList = auditoriumRepository.findAllByCompanyUserId(1L);
+    List<Auditorium> auditoriumList = auditoriumRepository.findAllByCompanyUserId(userId);
 
     return auditoriumList.stream().map(auditorium -> new AuditoriumResponseDto(
         auditorium.getId(),
