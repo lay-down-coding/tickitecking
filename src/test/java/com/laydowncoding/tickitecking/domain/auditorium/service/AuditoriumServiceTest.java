@@ -34,7 +34,7 @@ public class AuditoriumServiceTest {
 
     when(auditoriumRepository.save(any(Auditorium.class))).thenReturn(new Auditorium());
 
-    auditoriumService.createAuditorium(requestDto);
+    auditoriumService.createAuditorium(requestDto, 1L);
 
     verify(auditoriumRepository, times(1)).save(any(Auditorium.class));
   }

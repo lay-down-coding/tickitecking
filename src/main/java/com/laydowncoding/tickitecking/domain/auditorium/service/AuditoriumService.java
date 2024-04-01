@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface AuditoriumService {
 
-  void createAuditorium(AuditoriumRequestDto auditoriumRequest);
+  void createAuditorium(AuditoriumRequestDto auditoriumRequest, Long userId);
 
-  void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId);
+  void updateAuditorium(AuditoriumRequestDto auditoriumRequest, Long auditoriumId, Long userId);
 
-  void deleteAuditorium(Long auditoriumId);
+  void deleteAuditorium(Long auditoriumId, Long userId);
 
-  List<AuditoriumResponseDto> getAuditoriums();
+  List<AuditoriumResponseDto> getAuditoriums(Long userId);
 
   AuditoriumResponseDto getAuditorium(Long auditoriumId);
 }
