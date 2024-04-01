@@ -4,6 +4,7 @@ import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
 import com.laydowncoding.tickitecking.domain.seat.entity.SeatPrice;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatPriceRepository;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,21 @@ public class SeatServiceImpl implements SeatService {
         seatPrices.forEach(seatPrice -> {
             seatPrice.update(seatPrice.getGrade(), seatPricesMap.get(seatPrice.getGrade()));
         });
+
+        return SeatPriceDto.builder()
+            .goldPrice(seatPricesMap.get('G'))
+            .silverPrice(seatPricesMap.get('S'))
+            .bronzePrice(seatPricesMap.get('B'))
+            .build();
+    }
+
+    @Override
+    public SeatPriceDto getSeatPrices(Long concertId) {
+        List<SeatPrice> seatPrices = seatPriceRepository.findAllByConcertId(concertId);
+        Map<Character, Double> seatPricesMap = new HashMap<>();
+        for (SeatPrice seatPrice : seatPrices) {
+            seatPricesMap.put(seatPrice.getGrade(), seatPrice.getPrice());
+        }
 
         return SeatPriceDto.builder()
             .goldPrice(seatPricesMap.get('G'))

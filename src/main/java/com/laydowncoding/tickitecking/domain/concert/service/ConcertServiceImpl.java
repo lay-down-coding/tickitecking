@@ -46,6 +46,8 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
+        SeatPriceDto seatPriceDto = seatService.getSeatPrices(concert.getId());
+
         return ConcertResponseDto.builder()
             .id(concert.getId())
             .name(concert.getName())
@@ -53,6 +55,9 @@ public class ConcertServiceImpl implements ConcertService {
             .startTime(concert.getStartTime())
             .companyUserId(concert.getCompanyUserId())
             .auditoriumId(concert.getAuditoriumId())
+            .goldPrice(seatPriceDto.getGoldPrice())
+            .silverPrice(seatPriceDto.getSilverPrice())
+            .bronzePrice(seatPriceDto.getBronzePrice())
             .build();
     }
 
