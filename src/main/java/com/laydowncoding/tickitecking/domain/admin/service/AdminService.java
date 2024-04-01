@@ -15,4 +15,6 @@ public interface AdminService {
   void updateUser(Long userId, AdminUserUpdateRequestDto userUpdateRequest);
 
   List<AuditoriumResponseDto> getAuditoriums();
+
+  void lockSeat(Long auditoriumId, Long seatId);
 }

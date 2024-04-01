@@ -7,6 +7,8 @@ import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserRespons
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
+import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
+import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
@@ -33,6 +35,7 @@ public class AdminServiceImpl implements AdminService {
   private final JwtUtil jwtUtil;
   private final RedisService redisService;
   private final AuditoriumRepository auditoriumRepository;
+  private final SeatRepository seatRepository;
 
 
   @Value("${admin.username}")
@@ -111,5 +114,14 @@ public class AdminServiceImpl implements AdminService {
             auditorium.getAddress(), auditorium.getMaxColumn(), auditorium.getMaxRow(),
             auditorium.getCompanyUserId())).collect(
         Collectors.toList());
+  }
+
+  @Override
+  @Transactional
+  public void lockSeat(Long auditoriumId, Long seatId) {
+    Seat seat = seatRepository.findByIdAndAuditoriumId(seatId, auditoriumId);
+    if (seat != null) {
+      seat.togleLock();
+    }
   }
 }

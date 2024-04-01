@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -61,5 +62,15 @@ public class AdminController {
   public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums() {
     List<AuditoriumResponseDto> response = adminService.getAuditoriums();
     return CommonResponse.ok(response);
+  }
+
+  @PatchMapping("/auditoriums/{auditoriumId}/seats/{seatId}")
+  @Secured({"ROLE_ADMIN"})
+  public ResponseEntity<CommonResponse<Void>> lockSeat(
+      @PathVariable Long auditoriumId,
+      @PathVariable Long seatId
+  ) {
+    adminService.lockSeat(auditoriumId, seatId);
+    return CommonResponse.ok(null);
   }
 }
