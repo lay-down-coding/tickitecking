@@ -14,6 +14,8 @@ import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,13 +68,26 @@ public class ReservationServiceImpl implements ReservationService {
             .build();
     }
 
+    @Override
+    public void deleteReservation(Long userId, Long reservationId) {
+        Reservation reservation = findReservation(reservationId);
+        validateUserId(reservation.getUserId(), userId);
+        reservationRepository.delete(reservation);
+    }
+
     private boolean isReservable(Long eventId, String horizontal, String vertical) {
         return seatRepository.isReservable(eventId, horizontal, vertical);
     }
 
-    private Seat findSeat(Long seatId) {
-        return seatRepository.findById(seatId).orElseThrow(
-            () -> new CustomRuntimeException(NOT_FOUND_SEAT.getMessage())
+    private Reservation findReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId).orElseThrow(
+            () -> new CustomRuntimeException(NOT_FOUND_RESERVATION.getMessage())
         );
+    }
+
+    private void validateUserId(Long origin, Long input) {
+        if (!Objects.equals(origin, input)) {
+            throw new CustomRuntimeException(INVALID_USER_ID.getMessage());
+        }
     }
 }

@@ -9,4 +9,6 @@ public interface ReservationService {
     ReservationResponseDto createReservation(Long userId, Long concertId, ReservationRequestDto requestDto);
 
     ConcertSeatResponseDto getConcertSeats(Long concertId);
+
+    void deleteReservation(Long id, Long reservationId);
 }
