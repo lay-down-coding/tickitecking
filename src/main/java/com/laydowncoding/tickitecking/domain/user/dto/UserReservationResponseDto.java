@@ -1,5 +1,7 @@
 package com.laydowncoding.tickitecking.domain.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@JsonInclude(Include.NON_NULL)
 public class UserReservationResponseDto {
 
     private Long concertId;
@@ -21,11 +24,13 @@ public class UserReservationResponseDto {
     private String horizontal;
     private String grade;
     private Double price;
+    private String status;
+    private LocalDateTime deletedAt;
 
     @QueryProjection
     public UserReservationResponseDto(Long concertId, String concertName, String concertDescription,
         LocalDateTime concertStartDate, Long auditoriumId, String auditoriumName, String auditoriumAddress,
-        Long seatId, String vertical, String horizontal, String grade, Double price) {
+        Long seatId, String vertical, String horizontal, String grade, Double price, String status, LocalDateTime deletedAt) {
         this.concertId = concertId;
         this.concertName = concertName;
         this.concertDescription = concertDescription;
@@ -38,5 +43,7 @@ public class UserReservationResponseDto {
         this.horizontal = horizontal;
         this.grade = grade;
         this.price = price;
+        this.status = status;
+        this.deletedAt = deletedAt;
     }
 }

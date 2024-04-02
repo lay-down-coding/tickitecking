@@ -95,7 +95,9 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
                     seat.vertical,
                     seat.horizontal,
                     seat.grade,
-                    seatPrice.price)
+                    seatPrice.price,
+                    reservation.status,
+                    reservation.deletedAt)
             )
             .from(reservation)
             .innerJoin(concert).on(reservation.concertId.eq(concert.id))

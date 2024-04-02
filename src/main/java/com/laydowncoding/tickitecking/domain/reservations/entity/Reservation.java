@@ -17,8 +17,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @Table(name = "reservations")
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE reservations SET status = 'N' WHERE id = ?")
-@SQLRestriction(value = "status = 'Y'")
+@SQLDelete(sql = "UPDATE reservations SET status = 'N', deleted_at = NOW() WHERE id = ?")
 public class Reservation extends Timestamp {
 
     @Id
