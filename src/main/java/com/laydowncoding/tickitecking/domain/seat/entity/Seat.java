@@ -46,4 +46,12 @@ public class Seat {
   public void update(String grade) {
     this.grade = grade;
   }
+
+  public void togleLock() {
+    if ("Y".equals(availability)) {
+      this.availability = "N";
+    } else {
+      this.availability = "Y";
+    }
+  }
 }

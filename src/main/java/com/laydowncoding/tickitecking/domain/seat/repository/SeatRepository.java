@@ -10,4 +10,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
       String vertical);
 
   List<Seat> findAllByAuditoriumId(Long auditoriumId);
+
+  Seat findByIdAndAuditoriumId(Long seatId, Long auditoriumId);
 }

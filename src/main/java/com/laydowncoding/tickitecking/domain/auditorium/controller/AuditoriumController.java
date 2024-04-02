@@ -28,7 +28,7 @@ public class AuditoriumController {
   private final AuditoriumService auditoriumService;
 
   @PostMapping
-//  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> createAuditorium(
       @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
       @AuthenticationPrincipal UserDetailsImpl userDetails
