@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.user.controller;
 
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.service.UserService;
@@ -8,6 +9,7 @@ import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.service.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,5 +65,14 @@ public class UserController {
   ) {
     redisService.deleteValues(userDetails.getUser().getUsername());
     return CommonResponse.ok(null);
+  }
+
+  @GetMapping("/my/reservations")
+  public ResponseEntity<CommonResponse<List<UserReservationResponseDto>>> getReservations(
+      @AuthenticationPrincipal UserDetailsImpl userDetails
+  ) {
+    List<UserReservationResponseDto> response = userService.getReservations(
+        userDetails.getUser().getId());
+    return CommonResponse.ok(response);
   }
 }

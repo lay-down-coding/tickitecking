@@ -9,6 +9,7 @@ import com.laydowncoding.tickitecking.global.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +40,13 @@ public class ReservationController {
         @PathVariable Long concertId) {
         ConcertSeatResponseDto response = reservationService.getConcertSeats(concertId);
         return CommonResponse.ok(response);
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<CommonResponse<Void>> deleteReservations(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long reservationId) {
+        reservationService.deleteReservation(userDetails.getUser().getId(), reservationId);
+        return CommonResponse.ok(null);
     }
 }

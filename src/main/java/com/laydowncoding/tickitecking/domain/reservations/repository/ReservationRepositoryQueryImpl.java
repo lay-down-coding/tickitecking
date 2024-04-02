@@ -4,9 +4,12 @@ import static com.laydowncoding.tickitecking.domain.auditorium.entity.QAuditoriu
 import static com.laydowncoding.tickitecking.domain.concert.entitiy.QConcert.*;
 import static com.laydowncoding.tickitecking.domain.reservations.entity.QReservation.*;
 import static com.laydowncoding.tickitecking.domain.seat.entity.QSeat.*;
+import static com.laydowncoding.tickitecking.domain.seat.entity.QSeatPrice.*;
 
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertCapacityDto;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
+import com.laydowncoding.tickitecking.domain.user.dto.QUserReservationResponseDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -75,6 +78,34 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
             .maxColumn(tuple.get(auditorium.maxColumn))
             .maxRow(tuple.get(auditorium.maxRow))
             .build();
+    }
+
+    @Override
+    public List<UserReservationResponseDto> findReservations(Long userId) {
+        return jpaQueryFactory
+            .select(
+                new QUserReservationResponseDto(concert.id,
+                    concert.name,
+                    concert.description,
+                    concert.startTime,
+                    auditorium.id,
+                    auditorium.name,
+                    auditorium.address,
+                    seat.id,
+                    seat.vertical,
+                    seat.horizontal,
+                    seat.grade,
+                    seatPrice.price,
+                    reservation.status,
+                    reservation.deletedAt)
+            )
+            .from(reservation)
+            .innerJoin(concert).on(reservation.concertId.eq(concert.id))
+            .innerJoin(auditorium).on(auditorium.id.eq(concert.auditoriumId))
+            .innerJoin(seat).on(seat.id.eq(reservation.seatId))
+            .innerJoin(seatPrice).on(seatPrice.concertId.eq(concert.id).and(seatPrice.grade.eq(seat.grade)))
+            .where(reservation.userId.eq(userId))
+            .fetch();
     }
 
     @Override

@@ -21,22 +21,22 @@ public class SeatPrice {
     private Long id;
 
     @Column(nullable = false)
-    private double price;
+    private Double price;
 
-    @Column(nullable = false)
-    private char grade;
+    @Column(nullable = false, columnDefinition = "CHAR(1)")
+    private String grade;
 
     @Column(nullable = false)
     private Long concertId;
 
     @Builder
-    public SeatPrice(double price, char grade, Long concertId) {
+    public SeatPrice(Double price, String grade, Long concertId) {
         this.price = price;
         this.grade = grade;
         this.concertId = concertId;
     }
 
-    public void update(char grade, double price) {
+    public void update(String grade, Double price) {
         this.grade = grade;
         this.price = price;
     }
