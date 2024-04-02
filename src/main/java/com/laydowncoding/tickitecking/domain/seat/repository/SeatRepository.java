@@ -4,7 +4,7 @@ import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SeatRepository extends JpaRepository<Seat, Long> {
+public interface SeatRepository extends JpaRepository<Seat, Long>, SeatRepositoryQuery {
 
   Seat findByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal,
       String vertical);
