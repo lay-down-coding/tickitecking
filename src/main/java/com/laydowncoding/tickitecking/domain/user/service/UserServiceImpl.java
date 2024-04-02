@@ -64,7 +64,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponseDto getUser(Long userId) {
     User user = findUser(userId);
-    return new UserResponseDto(user.getUsername(), user.getEmail(), user.getNickname());
+    return new UserResponseDto(user.getId(), user.getUsername(), user.getEmail(),
+        user.getNickname());
   }
 
   @Override

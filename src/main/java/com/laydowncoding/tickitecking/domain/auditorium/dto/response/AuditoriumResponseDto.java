@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.auditorium.dto.response;
 
+import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,5 @@ public class AuditoriumResponseDto {
 
   private String maxRow;
 
-  private Long companyUserId;
+  private UserResponseDto companyUser;
 }
