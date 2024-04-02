@@ -6,6 +6,7 @@ import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRe
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
+import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumQueryRepository;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
@@ -36,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
   private final RedisService redisService;
   private final AuditoriumRepository auditoriumRepository;
   private final SeatRepository seatRepository;
+  private final AuditoriumQueryRepository auditoriumQueryRepository;
 
 
   @Value("${admin.username}")
@@ -108,12 +110,7 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   public List<AuditoriumResponseDto> getAuditoriums() {
-    List<Auditorium> auditoriumList = auditoriumRepository.findAll();
-    return auditoriumList.stream().map(
-        auditorium -> new AuditoriumResponseDto(auditorium.getId(), auditorium.getName(),
-            auditorium.getAddress(), auditorium.getMaxColumn(), auditorium.getMaxRow(),
-            auditorium.getCompanyUserId())).collect(
-        Collectors.toList());
+    return auditoriumQueryRepository.findAll();
   }
 
   @Override
