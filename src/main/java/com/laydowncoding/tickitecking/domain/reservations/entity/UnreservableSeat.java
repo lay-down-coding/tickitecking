@@ -12,5 +12,5 @@ public class UnreservableSeat {
     private final String horizontal;
     private final String vertical;
     private final boolean isReserved;
-    private final boolean isAvailable;
+    private final boolean isLocked;
 }
