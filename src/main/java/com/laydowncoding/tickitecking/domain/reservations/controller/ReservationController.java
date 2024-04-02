@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.controller;
 
+import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRequestDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.service.ReservationService;
@@ -29,6 +30,14 @@ public class ReservationController {
         @RequestBody ReservationRequestDto requestDto) {
         ReservationResponseDto response = reservationService.createReservation(
             userDetails.getUser().getId(), concertId, requestDto);
+        return CommonResponse.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<CommonResponse<ConcertSeatResponseDto>> getConcertSeats(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @PathVariable Long concertId) {
+        ConcertSeatResponseDto response = reservationService.getConcertSeats(concertId);
         return CommonResponse.ok(response);
     }
 }

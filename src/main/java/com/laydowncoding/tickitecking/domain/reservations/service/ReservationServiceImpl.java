@@ -2,13 +2,18 @@ package com.laydowncoding.tickitecking.domain.reservations.service;
 
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.*;
 
+import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
+import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertCapacityDto;
+import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRequestDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.entity.Reservation;
+import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +50,19 @@ public class ReservationServiceImpl implements ReservationService {
             .userId(save.getUserId())
             .concertId(save.getConcertId())
             .seatId(save.getSeatId())
+            .build();
+    }
+
+    @Override
+    public ConcertSeatResponseDto getConcertSeats(Long concertId) {
+        List<UnreservableSeat> unreservableSeats = reservationRepository.findUnreservableSeats(
+            concertId);
+        ConcertCapacityDto capacity = reservationRepository.findCapacity(concertId);
+        return ConcertSeatResponseDto.builder()
+            .concertId(concertId)
+            .maxColumn(capacity.getMaxColumn())
+            .maxRow(capacity.getMaxRow())
+            .unreservableSeats(unreservableSeats)
             .build();
     }
 
