@@ -16,9 +16,8 @@ public class AuditoriumQueryRepositoryImpl implements AuditoriumQueryRepository 
 
   private final JPAQueryFactory query;
 
-
   @Override
-  public List<AuditoriumResponseDto> findAllByCompanyUserId(Long companyUserId) {
+  public List<AuditoriumResponseDto> getAuditoriumAllByCompanyUserId(Long companyUserId) {
     QAuditorium auditorium = QAuditorium.auditorium;
     QUser user = QUser.user;
 
@@ -47,7 +46,7 @@ public class AuditoriumQueryRepositoryImpl implements AuditoriumQueryRepository 
   }
 
   @Override
-  public List<AuditoriumResponseDto> findAll() {
+  public List<AuditoriumResponseDto> getAuditoriumAll() {
     QAuditorium auditorium = QAuditorium.auditorium;
     QUser user = QUser.user;
 
@@ -75,7 +74,7 @@ public class AuditoriumQueryRepositoryImpl implements AuditoriumQueryRepository 
   }
 
   @Override
-  public AuditoriumResponseDto findByAuditoriumId(Long auditoriumId) {
+  public AuditoriumResponseDto getAuditoriumByAuditoriumId(Long auditoriumId) {
     QAuditorium auditorium = QAuditorium.auditorium;
     QUser user = QUser.user;
 

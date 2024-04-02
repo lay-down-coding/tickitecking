@@ -22,7 +22,6 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
   private final AuditoriumRepository auditoriumRepository;
   private final SeatRepository seatRepository;
-  private final AuditoriumQueryRepository auditoriumQueryRepository;
 
   @Override
   @Transactional
@@ -103,12 +102,12 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
   @Override
   public List<AuditoriumResponseDto> getAuditoriums(Long userId) {
-    return auditoriumQueryRepository.findAllByCompanyUserId(userId);
+    return auditoriumRepository.getAuditoriumAllByCompanyUserId(userId);
   }
 
   @Override
   public AuditoriumResponseDto getAuditorium(Long auditoriumId) {
-    return auditoriumQueryRepository.findByAuditoriumId(auditoriumId);
+    return auditoriumRepository.getAuditoriumByAuditoriumId(auditoriumId);
   }
 
   public Auditorium findAuditorium(Long auditoriumId) {

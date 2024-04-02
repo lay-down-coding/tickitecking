@@ -5,8 +5,6 @@ import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErro
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
-import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
-import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumQueryRepository;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
@@ -37,7 +35,6 @@ public class AdminServiceImpl implements AdminService {
   private final RedisService redisService;
   private final AuditoriumRepository auditoriumRepository;
   private final SeatRepository seatRepository;
-  private final AuditoriumQueryRepository auditoriumQueryRepository;
 
 
   @Value("${admin.username}")
@@ -110,7 +107,7 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   public List<AuditoriumResponseDto> getAuditoriums() {
-    return auditoriumQueryRepository.findAll();
+    return auditoriumRepository.getAuditoriumAll();
   }
 
   @Override

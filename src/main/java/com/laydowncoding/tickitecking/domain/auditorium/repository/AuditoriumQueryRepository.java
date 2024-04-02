@@ -5,9 +5,9 @@ import java.util.List;
 
 public interface AuditoriumQueryRepository {
 
-  List<AuditoriumResponseDto> findAllByCompanyUserId(Long companyUserId);
+  List<AuditoriumResponseDto> getAuditoriumAllByCompanyUserId(Long companyUserId);
 
-  List<AuditoriumResponseDto> findAll();
+  List<AuditoriumResponseDto> getAuditoriumAll();
 
-  AuditoriumResponseDto findByAuditoriumId(Long auditoriumId);
+  AuditoriumResponseDto getAuditoriumByAuditoriumId(Long auditoriumId);
 }
