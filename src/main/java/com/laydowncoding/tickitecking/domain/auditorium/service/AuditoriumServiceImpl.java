@@ -3,6 +3,7 @@ package com.laydowncoding.tickitecking.domain.auditorium.service;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
+import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumQueryRepository;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
@@ -101,31 +102,12 @@ public class AuditoriumServiceImpl implements AuditoriumService {
 
   @Override
   public List<AuditoriumResponseDto> getAuditoriums(Long userId) {
-    // 유저 검증 필요
-    List<Auditorium> auditoriumList = auditoriumRepository.findAllByCompanyUserId(userId);
-
-    return auditoriumList.stream().map(auditorium -> new AuditoriumResponseDto(
-        auditorium.getId(),
-        auditorium.getName(),
-        auditorium.getAddress(),
-        auditorium.getMaxColumn(),
-        auditorium.getMaxRow(),
-        auditorium.getCompanyUserId()
-    )).collect(Collectors.toList());
+    return auditoriumRepository.getAuditoriumAllByCompanyUserId(userId);
   }
 
   @Override
   public AuditoriumResponseDto getAuditorium(Long auditoriumId) {
-    Auditorium auditorium = findAuditorium(auditoriumId);
-
-    return new AuditoriumResponseDto(
-        auditorium.getId(),
-        auditorium.getName(),
-        auditorium.getAddress(),
-        auditorium.getMaxColumn(),
-        auditorium.getMaxRow(),
-        auditorium.getCompanyUserId()
-    );
+    return auditoriumRepository.getAuditoriumByAuditoriumId(auditoriumId);
   }
 
   public Auditorium findAuditorium(Long auditoriumId) {
