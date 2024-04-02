@@ -5,13 +5,16 @@ import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErro
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.DUPLICATE_USERNAME;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
 
+import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final ReservationRepository reservationRepository;
 
   @Override
   public void signup(SignupRequestDto requestDto) {
@@ -67,6 +71,11 @@ public class UserServiceImpl implements UserService {
   public void deleteUser(Long userId) {
     User user = findUser(userId);
     userRepository.delete(user);
+  }
+
+  @Override
+  public List<UserReservationResponseDto> getReservations(Long userId) {
+    return reservationRepository.findReservations(userId);
   }
 
   private User findUser(Long userId) {
