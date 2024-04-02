@@ -38,7 +38,7 @@ public class AuditoriumController {
   }
 
   @PutMapping("/{auditoriumId}")
-  @Secured({"ROLE_COMPANY", "ROLE_ADMIN"})
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> updateAuditorium(
       @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
       @PathVariable Long auditoriumId,
