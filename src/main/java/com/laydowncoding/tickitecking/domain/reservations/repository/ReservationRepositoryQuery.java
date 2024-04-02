@@ -1,6 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.repository;
 
-import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertCapacityDto;
+import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
 import com.querydsl.core.Tuple;
@@ -14,7 +14,7 @@ public interface ReservationRepositoryQuery {
 
     List<Tuple> findReservedSeats(Long concertId);
 
-    ConcertCapacityDto findCapacity(Long concertId);
+    ConcertInfoDto findConcertInfo(Long concertId);
 
     List<UserReservationResponseDto> findReservations(Long userId);
 }
