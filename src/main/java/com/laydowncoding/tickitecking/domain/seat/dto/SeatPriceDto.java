@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SeatPriceDto {
 
-    private double goldPrice;
-    private double silverPrice;
-    private double bronzePrice;
+    private Double goldPrice;
+    private Double silverPrice;
+    private Double bronzePrice;
 }
