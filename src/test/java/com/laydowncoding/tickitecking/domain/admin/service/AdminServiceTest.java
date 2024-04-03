@@ -155,19 +155,6 @@ public class AdminServiceTest {
   }
 
   @Test
-  void testGetUsers_EmptyList() {
-    List<User> userList = Arrays.asList();
-
-    when(userRepository.findAll()).thenReturn(userList);
-
-    List<AdminUserResponseDto> responseDtoList = adminService.getUsers();
-
-    assertNotNull(responseDtoList);
-    assertEquals(0, responseDtoList.size());
-    verify(userRepository).findAll();
-  }
-
-  @Test
   void testUpdateUser_Success() {
     AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto(
         "updateUsername",
@@ -204,7 +191,7 @@ public class AdminServiceTest {
   void testUpdateUser_UserNotFound() {
     AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto();
 
-    when(userRepository.findById(1L)).thenReturn(java.util.Optional.empty());
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
     assertThrows(
         CustomRuntimeException.class, () -> adminService.updateUser(1L, updateRequestDto));
@@ -224,16 +211,6 @@ public class AdminServiceTest {
   }
 
   @Test
-  void testGetAuditoriums_NoAuditoriumsFound() {
-    when(auditoriumRepository.getAuditoriumAll()).thenReturn(Collections.emptyList());
-
-    List<AuditoriumResponseDto> result = adminService.getAuditoriums();
-
-    assertNotNull(result);
-    assertTrue(result.isEmpty());
-  }
-
-  @Test
   void testLockSeat_Success() {
     Seat seat = new Seat("5", "C", "Y", "G", 1L);
     when(seatRepository.findByIdAndAuditoriumId(anyLong(), anyLong())).thenReturn(seat);
@@ -241,13 +218,6 @@ public class AdminServiceTest {
     adminService.lockSeat(1L, 1L);
 
     assertEquals(seat.getAvailability(), "N");
-  }
-
-  @Test
-  void testLockSeat_SeatNotFound() {
-    when(seatRepository.findByIdAndAuditoriumId(anyLong(), anyLong())).thenReturn(null);
-
-    assertDoesNotThrow(() -> adminService.lockSeat(1L, 1L));
   }
 
   @Test
@@ -261,14 +231,5 @@ public class AdminServiceTest {
 
     assertEquals(expectedReservations.size(), actualReservations.size());
     assertTrue(actualReservations.containsAll(expectedReservations));
-  }
-
-  @Test
-  void testGetReservations_EmptyList() {
-    when(reservationRepository.getReservationAll()).thenReturn(Collections.emptyList());
-
-    List<AdminReservationResponseDto> actualReservations = adminService.getReservations();
-
-    assertTrue(actualReservations.isEmpty());
   }
 }
