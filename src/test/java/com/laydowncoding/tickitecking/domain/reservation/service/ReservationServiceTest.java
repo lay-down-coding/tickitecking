@@ -18,6 +18,7 @@ import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -125,6 +126,7 @@ public class ReservationServiceTest {
             .willReturn(List.of(unreservableSeat1, unreservableSeat2));
         given(reservationRepository.findConcertInfo(any()))
             .willReturn(concertInfoDto);
+        given(concertRepository.existsById(any())).willReturn(true);
 
         //when
         ConcertSeatResponseDto response = reservationService.getConcertSeats(1L);
@@ -144,5 +146,26 @@ public class ReservationServiceTest {
         assertThatThrownBy(() ->
             reservationService.getConcertSeats(1L))
             .isInstanceOf(CustomRuntimeException.class);
+    }
+
+    @DisplayName("예매 삭제 - 성공")
+    @Test
+    void delete_reservation_success() {
+        //given
+        given(reservationRepository.findById(any())).willReturn(Optional.of(reservation));
+
+        //when & then
+        assertDoesNotThrow(() -> reservationService.deleteReservation(1L, 1L));
+        verify(reservationRepository, times(1)).delete(any(Reservation.class));
+    }
+
+    @DisplayName("예매 삭제 - 실패 없는 예매 id")
+    @Test
+    void delete_reservation_fail() {
+        //given
+        given(reservationRepository.findById(any())).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> reservationService.deleteReservation(1L, 1L));
     }
 }
