@@ -138,4 +138,32 @@ public class UserServiceTest {
         assertThatThrownBy(() -> userService.getUser(1L))
             .isInstanceOf(CustomRuntimeException.class);
     }
+
+    @DisplayName("회원 삭제 요청 성공")
+    @Test
+    void delete_success() {
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(User.builder()
+            .username("username")
+            .password("password")
+            .email("email@com")
+            .nickname("nickname")
+            .role(UserRole.USER)
+            .build()));
+
+        //when & then
+        assertDoesNotThrow(() -> userService.deleteUser(1L));
+        verify(userRepository, times(1)).delete(any(User.class));
+    }
+
+    @DisplayName("회원 삭제 요청 실패")
+    @Test
+    void delete_fail() {
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> userService.deleteUser(1L))
+            .isInstanceOf(CustomRuntimeException.class);
+    }
 }
