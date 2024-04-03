@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.*;
 
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
@@ -104,6 +105,37 @@ public class UserServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.updateUser(1L, requestDto))
+            .isInstanceOf(CustomRuntimeException.class);
+    }
+
+    @DisplayName("회원 조회 요청 성공")
+    @Test
+    void get_success() {
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(User.builder()
+            .username("username")
+            .password("password")
+            .email("email@com")
+            .nickname("nickname")
+            .role(UserRole.USER)
+            .build()));
+
+        //when
+        UserResponseDto response = userService.getUser(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getUsername()).isEqualTo("username");
+    }
+
+    @DisplayName("회원 조회 요청 실패")
+    @Test
+    void get_fail() {
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> userService.getUser(1L))
             .isInstanceOf(CustomRuntimeException.class);
     }
 }
