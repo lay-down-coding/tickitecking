@@ -8,6 +8,7 @@ import com.laydowncoding.tickitecking.global.service.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +26,8 @@ public class ConcertController {
 
   private final ConcertService concertService;
 
-//  @Secured("ROLE_COMPANY_USER")
   @PostMapping
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> createConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @RequestBody ConcertRequestDto requestDto) {
@@ -34,7 +35,6 @@ public class ConcertController {
     return CommonResponse.ok(null);
   }
 
-  //@Secured("ROLE_COMPANY_USER")
   @GetMapping("/{concertId}")
   public ResponseEntity<CommonResponse<ConcertResponseDto>> getConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -51,6 +51,7 @@ public class ConcertController {
   }
 
   @PutMapping("/{concertId}")
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<ConcertResponseDto>> updateConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId,
@@ -61,6 +62,7 @@ public class ConcertController {
   }
 
   @DeleteMapping("/{concertId}")
+  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> deleteConcert(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId) {
