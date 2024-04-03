@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.*;
 
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
+import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.Optional;
@@ -66,6 +68,42 @@ public class UserServiceTest {
 
         //when && then
         assertThatThrownBy(() -> userService.signup(requestDto))
+            .isInstanceOf(CustomRuntimeException.class);
+    }
+
+    @DisplayName("회원 수정 요청 성공")
+    @Test
+    void update_success() {
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(User.builder()
+            .username("username")
+            .password("password")
+            .email("email@com")
+            .nickname("nickname")
+            .role(UserRole.USER)
+            .build()));
+        UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
+            .email("update@com")
+            .nickname("updateNickname")
+            .build();
+
+        //when & then
+        assertDoesNotThrow(() ->
+            userService.updateUser(1L, requestDto));
+    }
+
+    @DisplayName("회원 수정 요청 실패")
+    @Test
+    void update_fail() {
+        //given
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+        UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
+            .email("update@com")
+            .nickname("updateNickname")
+            .build();
+
+        //when & then
+        assertThatThrownBy(() -> userService.updateUser(1L, requestDto))
             .isInstanceOf(CustomRuntimeException.class);
     }
 }
