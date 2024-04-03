@@ -4,13 +4,16 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.*;
 
+import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
+import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +34,9 @@ public class UserServiceTest {
 
     @Mock
     PasswordEncoder passwordEncoder;
+
+    @Mock
+    ReservationRepository reservationRepository;
 
     @DisplayName("회원 가입 요청 성공")
     @Test
@@ -165,5 +171,20 @@ public class UserServiceTest {
         //when & then
         assertThatThrownBy(() -> userService.deleteUser(1L))
             .isInstanceOf(CustomRuntimeException.class);
+    }
+
+    @DisplayName("회원 예매 조회 요청")
+    @Test
+    void get_reservation_success() {
+        //given
+        given(reservationRepository.findReservations(anyLong()))
+            .willReturn(List.of(new UserReservationResponseDto(), new UserReservationResponseDto()));
+
+        //when
+        List<UserReservationResponseDto> response = userService.getReservations(1L);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response).hasSize(2);
     }
 }
