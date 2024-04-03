@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -39,6 +40,7 @@ public class Auditorium extends Timestamp {
   @Column(nullable = false)
   private Long companyUserId;
 
+  @Builder
   public Auditorium(String name, String address, String maxColumn, String maxRow, Long companyUserId) {
     this.name = name;
     this.address = address;
