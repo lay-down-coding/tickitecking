@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.admin.controller;
 
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.service.AdminService;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
@@ -72,5 +73,12 @@ public class AdminController {
   ) {
     adminService.lockSeat(auditoriumId, seatId);
     return CommonResponse.ok(null);
+  }
+
+  @GetMapping("/reservations")
+  @Secured({"ROLE_ADMIN"})
+  public ResponseEntity<CommonResponse<List<AdminReservationResponseDto>>> getReservations() {
+    List<AdminReservationResponseDto> response = adminService.getReservations();
+    return CommonResponse.ok(response);
   }
 }
