@@ -10,12 +10,14 @@ import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
+import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
+import com.laydowncoding.tickitecking.domain.seat.service.SeatServiceImpl;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 public class ConcertServiceTest {
 
     @InjectMocks
@@ -36,21 +37,56 @@ public class ConcertServiceTest {
     @Mock
     AuditoriumRepository auditoriumRepository;
 
-    @DisplayName("콘서트 생성 - 성공")
-    @Test
-    void create_success() {
-        //given
-        given(auditoriumRepository.findById(any())).willReturn(Optional.of(new Auditorium()));
-        ConcertRequestDto request = ConcertRequestDto.builder()
+    @Mock
+    SeatServiceImpl seatService;
+
+    Concert concert;
+    SeatPriceDto seatPriceDto;
+    Auditorium auditorium;
+    ConcertRequestDto concertRequestDto;
+    @BeforeEach
+    void setup() {
+        concert = Concert.builder()
+            .name("concertname")
+            .description("description")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
+        seatPriceDto = SeatPriceDto.builder()
+            .goldPrice(10000.0)
+            .silverPrice(5000.0)
+            .bronzePrice(1000.0)
+            .build();
+        auditorium = Auditorium.builder()
+            .name("auditoriumName")
+            .address("강남구")
+            .maxRow("Z")
+            .maxColumn("10")
+            .companyUserId(1L)
+            .build();
+        concertRequestDto = ConcertRequestDto.builder()
             .name("concertname")
             .description("description")
             .startTime(LocalDateTime.now())
             .auditoriumId(1L)
+            .goldPrice(10000.0)
+            .silverPrice(5000.0)
+            .bronzePrice(1000.0)
             .build();
+    }
+
+    @DisplayName("콘서트 생성 - 성공")
+    @Test
+    void create_success() {
+        //given
+        given(auditoriumRepository.findById(any())).willReturn(Optional.of(auditorium));
+        given(concertRepository.save(any(Concert.class))).willReturn(concert);
 
         //when & then
-        assertDoesNotThrow(() -> concertService.createConcert(1L, request));
+        assertDoesNotThrow(() -> concertService.createConcert(1L, concertRequestDto));
         verify(concertRepository, times(1)).save(any(Concert.class));
+        verify(seatService, times(1)).createSeatPrices(any(), any(SeatPriceDto.class));
     }
 
     @DisplayName("콘서트 생성 - 실패")
@@ -58,14 +94,8 @@ public class ConcertServiceTest {
     void create_fail() {
         //given
         given(auditoriumRepository.findById(any())).willReturn(Optional.empty());
-        ConcertRequestDto request = ConcertRequestDto.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .auditoriumId(1L)
-            .build();
         //when & then
-        assertThatThrownBy(() -> concertService.createConcert(1L, request))
+        assertThatThrownBy(() -> concertService.createConcert(1L, concertRequestDto))
             .isInstanceOf(CustomRuntimeException.class);
     }
 
@@ -73,14 +103,10 @@ public class ConcertServiceTest {
     @Test
     void get_success() {
         //given
-        Concert concert = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
         given(concertRepository.findById(any())).willReturn(Optional.of(concert));
+        given(seatService.getSeatPrices(any())).willReturn(seatPriceDto);
+        given(auditoriumRepository.findById(any())).willReturn(Optional.of(auditorium));
+
         //when
         ConcertResponseDto response = concertService.getConcert(1L);
 
@@ -104,14 +130,6 @@ public class ConcertServiceTest {
     @Test
     void getAll_success() {
         //given
-        Concert concert1 = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
-
         Concert concert2 = Concert.builder()
             .name("concertname2")
             .description("description2")
@@ -119,7 +137,9 @@ public class ConcertServiceTest {
             .companyUserId(1L)
             .auditoriumId(1L)
             .build();
-        given(concertRepository.findAll()).willReturn(List.of(concert1, concert2));
+        given(concertRepository.findAll()).willReturn(List.of(concert, concert2));
+        given(seatService.getSeatPrices(any())).willReturn(seatPriceDto);
+        given(auditoriumRepository.findById(any())).willReturn(Optional.of(auditorium));
 
         //when
         List<ConcertResponseDto> response = concertService.getAllConcerts();
@@ -145,15 +165,8 @@ public class ConcertServiceTest {
     @Test
     void update_success() {
         //given
-        Concert concert1 = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
-        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
-
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert));
+        given(seatService.updateSeatPrices(any(), any())).willReturn(seatPriceDto);
         ConcertRequestDto requestDto = ConcertRequestDto.builder()
             .name("updateName")
             .description("updateDescription")
@@ -171,14 +184,7 @@ public class ConcertServiceTest {
     @Test
     void update_fail() {
         //given
-        Concert concert1 = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
-        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert));
 
         ConcertRequestDto requestDto = ConcertRequestDto.builder()
             .name("updateName")
@@ -196,14 +202,7 @@ public class ConcertServiceTest {
     @Test
     void delete_success() {
         //given
-        Concert concert1 = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
-        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert));
 
         //when & then
         assertDoesNotThrow(() -> concertService.deleteConcert(1L, 1L));
@@ -214,14 +213,7 @@ public class ConcertServiceTest {
     @Test
     void delete_fail() {
         //given
-        Concert concert1 = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
-        given(concertRepository.findById(any())).willReturn(Optional.of(concert1));
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert));
 
         //when & then
         assertThatThrownBy(() -> concertService.deleteConcert(2L, 1L))
