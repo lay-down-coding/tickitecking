@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.reservations.service;
 
-import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.*;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.INVALID_USER_ID;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.NOT_FOUND_RESERVATION;
 
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;

@@ -12,7 +12,6 @@ import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRespons
 import com.laydowncoding.tickitecking.domain.reservations.entity.Reservation;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
-import com.laydowncoding.tickitecking.domain.reservations.service.ReservationService;
 import com.laydowncoding.tickitecking.domain.reservations.service.ReservationServiceImpl;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties.Git;
 
 @ExtendWith(MockitoExtension.class)
 public class ReservationServiceTest {
