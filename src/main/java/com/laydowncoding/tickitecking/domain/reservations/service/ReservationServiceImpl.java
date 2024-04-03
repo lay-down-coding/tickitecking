@@ -2,6 +2,7 @@ package com.laydowncoding.tickitecking.domain.reservations.service;
 
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.*;
 
+import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRequestDto;
@@ -11,6 +12,7 @@ import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSea
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
+    private final ConcertRepository concertRepository;
 
     @Override
     public ReservationResponseDto createReservation(Long userId, Long concertId,
@@ -54,6 +57,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ConcertSeatResponseDto getConcertSeats(Long concertId) {
+        validateConcertId(concertId);
         List<UnreservableSeat> unreservableSeats = reservationRepository.findUnreservableSeats(
             concertId);
         ConcertInfoDto concertInfoDto = reservationRepository.findConcertInfo(concertId);
@@ -83,6 +87,12 @@ public class ReservationServiceImpl implements ReservationService {
     private void validateUserId(Long origin, Long input) {
         if (!Objects.equals(origin, input)) {
             throw new CustomRuntimeException(INVALID_USER_ID.getMessage());
+        }
+    }
+
+    private void validateConcertId(Long concertId) {
+        if (!concertRepository.existsById(concertId)) {
+            throw new CustomRuntimeException(ConcertErrorCode.NOT_FOUND_CONCERT.getMessage());
         }
     }
 }
