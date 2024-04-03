@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.repository;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
@@ -17,4 +18,6 @@ public interface ReservationRepositoryQuery {
     ConcertInfoDto findConcertInfo(Long concertId);
 
     List<UserReservationResponseDto> findReservations(Long userId);
+
+    List<AdminReservationResponseDto> getReservationAll();
 }

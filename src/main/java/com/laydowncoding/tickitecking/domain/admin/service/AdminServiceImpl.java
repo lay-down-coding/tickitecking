@@ -3,9 +3,11 @@ package com.laydowncoding.tickitecking.domain.admin.service;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
 
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
+import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
+import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
@@ -35,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
   private final RedisService redisService;
   private final AuditoriumRepository auditoriumRepository;
   private final SeatRepository seatRepository;
+  private final ReservationRepository reservationRepository;
 
 
   @Value("${admin.username}")
@@ -117,5 +120,10 @@ public class AdminServiceImpl implements AdminService {
     if (seat != null) {
       seat.togleLock();
     }
+  }
+
+  @Override
+  public List<AdminReservationResponseDto> getReservations() {
+    return reservationRepository.getReservationAll();
   }
 }
