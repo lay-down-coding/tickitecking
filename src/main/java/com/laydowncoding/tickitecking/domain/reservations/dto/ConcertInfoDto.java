@@ -1,8 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

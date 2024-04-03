@@ -1,7 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.dto;
 
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
