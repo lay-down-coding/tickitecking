@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonInclude(Include.NON_NULL)
 public class ConcertResponseDto {
 
     private Long id;
