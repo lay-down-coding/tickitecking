@@ -1,8 +1,12 @@
 package com.laydowncoding.tickitecking.domain.seat.service;
 
+import com.laydowncoding.tickitecking.domain.seat.dto.AuditoriumCapacityDto;
 import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
+import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
+import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.entity.SeatPrice;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatPriceRepository;
+import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +21,56 @@ import org.springframework.transaction.annotation.Transactional;
 public class SeatServiceImpl implements SeatService {
 
     private final SeatPriceRepository seatPriceRepository;
+    private final SeatRepository seatRepository;
+
+    @Override
+    public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+        AuditoriumCapacityDto capacityDto) {
+        List<Seat> seatList = new ArrayList<>();
+
+        for (SeatRequestDto seatRequest : seatRequestDtos) {
+            for (String horizontal : seatRequest.getHorizontals()) {
+                for (int vertical = 1; vertical <= Integer.parseInt(capacityDto.getMaxColumn());
+                    vertical++) {
+                    Seat seat = Seat.builder()
+                        .vertical(String.valueOf(vertical))
+                        .horizontal(horizontal)
+                        .grade(seatRequest.getGrade())
+                        .auditoriumId(capacityDto.getAuditoriumId())
+                        .concertId(concertId)
+                        .reserved("N")
+                        .build();
+                    seatList.add(seat);
+                }
+            }
+        }
+
+        seatRepository.saveAll(seatList);
+    }
+
+    @Override
+    public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+        AuditoriumCapacityDto capacityDto) {
+        for (SeatRequestDto seatRequest : seatRequestDtos) {
+            for (String horizontal : seatRequest.getHorizontals()) {
+                for (int vertical = 1; vertical <= Integer.parseInt(capacityDto.getMaxColumn());
+                    vertical++) {
+                    Seat seat = seatRepository.findByConcertIdAndHorizontalAndVertical(
+                        concertId, horizontal, String.valueOf(vertical));
+                    if (seat != null) {
+                        seat.update(seatRequest.getGrade());
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deleteSeats(Long concertId) {
+        List<Seat> seatList = seatRepository.findAllByConcertId(concertId);
+
+        seatRepository.deleteAll(seatList);
+    }
 
     @Override
     public void createSeatPrices(Long concertId, SeatPriceDto seatPriceDto) {

@@ -12,4 +12,8 @@ public interface SeatRepository extends JpaRepository<Seat, Long>, SeatRepositor
   List<Seat> findAllByAuditoriumId(Long auditoriumId);
 
   Seat findByIdAndAuditoriumId(Long seatId, Long auditoriumId);
+
+  List<Seat> findAllByConcertId(Long concertId);
+
+  Seat findByConcertIdAndHorizontalAndVertical(Long concertId, String horizontal, String vertical);
 }

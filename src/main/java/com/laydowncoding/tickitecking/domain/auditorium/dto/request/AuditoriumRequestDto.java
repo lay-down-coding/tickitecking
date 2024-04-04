@@ -26,9 +26,5 @@ public class AuditoriumRequestDto {
   @NotBlank
   @Pattern(regexp = "[A-Z]", message = "알파벳 대문자(A-Z)만 입력하세요.")
   private String maxRow;
-
-  private String availability = "Y";
-
-  private List<SeatRequestDto> seatList;
 }
 

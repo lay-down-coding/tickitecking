@@ -1,7 +1,9 @@
 package com.laydowncoding.tickitecking.domain.concert.dto;
 
 import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
+import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +22,7 @@ public class ConcertRequestDto {
     private double goldPrice;
     private double silverPrice;
     private double bronzePrice;
+    private List<SeatRequestDto> seatList;
 
     public SeatPriceDto getSeatPriceDto() {
         return SeatPriceDto.builder()
