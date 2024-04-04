@@ -6,6 +6,7 @@ import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertE
 
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
+import com.laydowncoding.tickitecking.domain.concert.dto.AllConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
@@ -79,32 +80,8 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    public List<ConcertResponseDto> getAllConcerts() {
-        List<Concert> concerts = concertRepository.findAll();
-
-        List<ConcertResponseDto> concertResponseDtos = new ArrayList<>();
-        for (Concert concert : concerts) {
-            SeatPriceDto seatPriceDto = seatService.getSeatPrices(concert.getId());
-            Auditorium auditorium = findAuditorium(concert.getAuditoriumId());
-            ConcertResponseDto concertResponseDto = ConcertResponseDto.builder()
-                .id(concert.getId())
-                .name(concert.getName())
-                .description(concert.getDescription())
-                .startTime(concert.getStartTime())
-                .companyUserId(concert.getCompanyUserId())
-                .auditoriumId(concert.getAuditoriumId())
-                .auditoriumName(auditorium.getName())
-                .auditoriumAddress(auditorium.getAddress())
-                .auditoriumMaxColumn(auditorium.getMaxColumn())
-                .auditoriumMaxRow(auditorium.getMaxRow())
-                .goldPrice(seatPriceDto.getGoldPrice())
-                .silverPrice(seatPriceDto.getSilverPrice())
-                .bronzePrice(seatPriceDto.getBronzePrice())
-                .build();
-
-            concertResponseDtos.add(concertResponseDto);
-        }
-        return concertResponseDtos;
+    public List<AllConcertResponseDto> getAllConcerts() {
+        return concertRepository.getAllConcerts();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.concert.service;
 
+import com.laydowncoding.tickitecking.domain.concert.dto.AllConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import java.util.List;
@@ -10,7 +11,7 @@ public interface ConcertService {
 
     ConcertResponseDto getConcert(Long concertId);
 
-    List<ConcertResponseDto> getAllConcerts();
+    List<AllConcertResponseDto> getAllConcerts();
 
     ConcertResponseDto updateConcert(Long companyUserId, Long concertId, ConcertRequestDto requestDto);
 

@@ -1,5 +1,7 @@
 package com.laydowncoding.tickitecking.domain.seat.service;
 
+import static com.laydowncoding.tickitecking.global.exception.errorcode.SeatErrorCode.INVALID_HORIZONTAL;
+
 import com.laydowncoding.tickitecking.domain.seat.dto.AuditoriumCapacityDto;
 import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
 import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
@@ -7,6 +9,8 @@ import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.entity.SeatPrice;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatPriceRepository;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
+import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import com.laydowncoding.tickitecking.global.exception.errorcode.SeatErrorCode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +31,16 @@ public class SeatServiceImpl implements SeatService {
     public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
         AuditoriumCapacityDto capacityDto) {
         List<Seat> seatList = new ArrayList<>();
+        char maxRowChar = capacityDto.getMaxRow().charAt(0);
 
         for (SeatRequestDto seatRequest : seatRequestDtos) {
             for (String horizontal : seatRequest.getHorizontals()) {
+                char horizontalChar = horizontal.charAt(0);
+
+                if (horizontalChar > maxRowChar) {
+                    throw new CustomRuntimeException(INVALID_HORIZONTAL.getMessage());
+                }
+
                 for (int vertical = 1; vertical <= Integer.parseInt(capacityDto.getMaxColumn());
                     vertical++) {
                     Seat seat = Seat.builder()

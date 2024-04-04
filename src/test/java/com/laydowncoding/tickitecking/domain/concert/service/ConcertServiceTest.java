@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.*;
 
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
+import com.laydowncoding.tickitecking.domain.concert.dto.AllConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
@@ -143,7 +144,7 @@ public class ConcertServiceTest {
         given(auditoriumRepository.findById(any())).willReturn(Optional.of(auditorium));
 
         //when
-        List<ConcertResponseDto> response = concertService.getAllConcerts();
+        List<AllConcertResponseDto> response = concertService.getAllConcerts();
 
         //then
         assertThat(response).hasSize(2);
@@ -156,7 +157,7 @@ public class ConcertServiceTest {
         given(concertRepository.findAll()).willReturn(Collections.emptyList());
 
         //when
-        List<ConcertResponseDto> response = concertService.getAllConcerts();
+        List<AllConcertResponseDto> response = concertService.getAllConcerts();
 
         //then
         assertThat(response).hasSize(0);

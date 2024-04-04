@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.concert.controller;
 
+import com.laydowncoding.tickitecking.domain.concert.dto.AllConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.service.ConcertService;
@@ -37,16 +38,14 @@ public class ConcertController {
 
   @GetMapping("/{concertId}")
   public ResponseEntity<CommonResponse<ConcertResponseDto>> getConcert(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
       @PathVariable Long concertId) {
     ConcertResponseDto response = concertService.getConcert(concertId);
     return CommonResponse.ok(response);
   }
 
   @GetMapping
-  public ResponseEntity<CommonResponse<List<ConcertResponseDto>>> getAllConcerts(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    List<ConcertResponseDto> response = concertService.getAllConcerts();
+  public ResponseEntity<CommonResponse<List<AllConcertResponseDto>>> getAllConcerts() {
+    List<AllConcertResponseDto> response = concertService.getAllConcerts();
     return CommonResponse.ok(response);
   }
 
