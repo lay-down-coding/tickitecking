@@ -4,11 +4,7 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRe
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
-import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
-import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
