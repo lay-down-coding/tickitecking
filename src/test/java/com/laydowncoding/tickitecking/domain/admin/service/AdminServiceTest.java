@@ -1,6 +1,5 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminLockSeatRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
@@ -32,7 +32,6 @@ import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -212,12 +211,32 @@ public class AdminServiceTest {
 
   @Test
   void testLockSeat_Success() {
-    Seat seat = new Seat("5", "C", "Y", "G", 1L);
-    when(seatRepository.findByIdAndAuditoriumId(anyLong(), anyLong())).thenReturn(seat);
+    Seat seat1 = Seat.builder()
+        .concertId(1L)
+        .horizontal("A")
+        .vertical("1")
+        .reserved("N")
+        .grade("G")
+        .auditoriumId(1L)
+        .build();
+    Seat seat2 = Seat.builder()
+        .concertId(2L)
+        .horizontal("A")
+        .vertical("1")
+        .reserved("N")
+        .grade("G")
+        .auditoriumId(1L)
+        .build();
+    List<Seat> seats = Arrays.asList(seat1, seat2);
 
-    adminService.lockSeat(1L, 1L);
+    when(seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(anyLong(), anyString(), anyString()))
+        .thenReturn(seats);
 
-    assertEquals(seat.getAvailability(), "N");
+    adminService.lockSeat(1L, new AdminLockSeatRequestDto("C", "Y"));
+
+    // 모든 좌석이 잠겼는지 확인
+    assertTrue(seat1.getReserved().equals("N")); // 첫 번째 좌석이 잠겨있는지 확인
+    assertTrue(seat2.getReserved().equals("N")); // 두 번째 좌석이 잠겨있는지 확인
   }
 
   @Test

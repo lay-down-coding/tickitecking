@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.admin.controller;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminLockSeatRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
@@ -65,13 +66,13 @@ public class AdminController {
     return CommonResponse.ok(response);
   }
 
-  @PatchMapping("/auditoriums/{auditoriumId}/seats/{seatId}")
+  @PatchMapping("/auditoriums/{auditoriumId}/seats")
   @Secured({"ROLE_ADMIN"})
   public ResponseEntity<CommonResponse<Void>> lockSeat(
       @PathVariable Long auditoriumId,
-      @PathVariable Long seatId
+      @RequestBody AdminLockSeatRequestDto requestDto
   ) {
-    adminService.lockSeat(auditoriumId, seatId);
+    adminService.lockSeat(auditoriumId, requestDto);
     return CommonResponse.ok(null);
   }
 
