@@ -39,6 +39,7 @@ public class SeatServiceImpl implements SeatService {
                         .auditoriumId(capacityDto.getAuditoriumId())
                         .concertId(concertId)
                         .reserved("N")
+                        .availability("Y")
                         .build();
                     seatList.add(seat);
                 }
