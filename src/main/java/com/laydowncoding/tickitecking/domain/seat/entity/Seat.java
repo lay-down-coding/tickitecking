@@ -71,4 +71,12 @@ public class Seat {
       this.availability = "Y";
     }
   }
+
+  public void reserve() {
+    this.reserved = "Y";
+  }
+
+  public void cancel() {
+    this.reserved = "N";
+  }
 }

@@ -17,7 +17,6 @@ import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto
 import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,10 +66,18 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
   @Override
   public List<Tuple> findReservedSeats(Long concertId) {
     return jpaQueryFactory.select(seat.horizontal, seat.vertical)
-        .from(concert)
-        .join(seat).on(concert.auditoriumId.eq(seat.auditoriumId))
-        .join(reservation).on(reservation.seatId.eq(seat.id))
-        .where(reservedSeatCondition(concertId))
+        .from(seat)
+        .where(seat.concertId.eq(concertId))
+        .where(seat.reserved.eq("Y"))
+        .fetch();
+  }
+
+  @Override
+  public List<Tuple> findLockedSeats(Long concertId) {
+    return jpaQueryFactory.select(seat.horizontal, seat.vertical)
+        .from(seat)
+        .where(seat.concertId.eq(concertId))
+        .where(seat.availability.eq("N"))
         .fetch();
   }
 
@@ -190,29 +197,5 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
         .leftJoin(concert).on(reservation.concertId.eq(concert.id))
         .leftJoin(seat).on(reservation.seatId.eq(seat.id))
         .fetch();
-  }
-
-  @Override
-  public List<Tuple> findLockedSeats(Long concertId) {
-    return jpaQueryFactory.select(seat.horizontal, seat.vertical)
-        .from(concert)
-        .join(seat).on(concert.auditoriumId.eq(seat.auditoriumId))
-        .join(reservation).on(reservation.seatId.eq(seat.id))
-        .where(lockedSeatCondition(concertId))
-        .fetch();
-  }
-
-  private BooleanExpression reservedSeatCondition(Long concertId) {
-    return concert.id.eq(concertId)
-        .and(reservation.concertId.eq(concertId))
-        .and(reservation.seatId.eq(seat.id))
-        .and(reservation.status.eq("Y"));
-  }
-
-  private BooleanExpression lockedSeatCondition(Long concertId) {
-    return concert.id.eq(concertId)
-        .and(reservation.concertId.eq(concertId))
-        .and(reservation.seatId.eq(seat.id))
-        .and(seat.availability.eq("N"));
   }
 }
