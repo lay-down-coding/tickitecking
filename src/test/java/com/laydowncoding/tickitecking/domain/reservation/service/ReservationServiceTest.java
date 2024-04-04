@@ -13,6 +13,7 @@ import com.laydowncoding.tickitecking.domain.reservations.entity.Reservation;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.reservations.service.ReservationServiceImpl;
+import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.time.LocalDateTime;
@@ -46,6 +47,7 @@ public class ReservationServiceTest {
     UnreservableSeat unreservableSeat1;
     UnreservableSeat unreservableSeat2;
     ConcertInfoDto concertInfoDto;
+    Seat seat;
 
     @BeforeEach
     void setup() {
@@ -85,6 +87,14 @@ public class ReservationServiceTest {
             .auditoriumMaxColumn("Z")
             .auditoriumMaxRow("10")
             .build();
+        seat = Seat.builder()
+            .concertId(1L)
+            .horizontal("A")
+            .vertical("1")
+            .reserved("N")
+            .grade("G")
+            .auditoriumId(1L)
+            .build();
     }
 
     @DisplayName("예매 생성 - 성공")
@@ -92,7 +102,8 @@ public class ReservationServiceTest {
     void reservations_create_success() {
         //given
         given(seatRepository.isReservable(any(), any(), any())).willReturn(true);
-        given(seatRepository.findSeatId(any(), any(), any())).willReturn(1L);
+        given(seatRepository.findByConcertIdAndHorizontalAndVertical(any(), any(), any()))
+            .willReturn(seat);
         given(reservationRepository.save(any(Reservation.class))).willReturn(reservation);
 
         //when
@@ -151,6 +162,7 @@ public class ReservationServiceTest {
     void delete_reservation_success() {
         //given
         given(reservationRepository.findById(any())).willReturn(Optional.of(reservation));
+        given(seatRepository.findById(anyLong())).willReturn(Optional.of(seat));
 
         //when & then
         assertDoesNotThrow(() -> reservationService.deleteReservation(1L, 1L));

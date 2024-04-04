@@ -10,6 +10,7 @@ import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
+import com.laydowncoding.tickitecking.domain.seat.dto.AuditoriumCapacityDto;
 import com.laydowncoding.tickitecking.domain.seat.dto.SeatPriceDto;
 import com.laydowncoding.tickitecking.domain.seat.service.SeatServiceImpl;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
@@ -167,6 +168,7 @@ public class ConcertServiceTest {
         //given
         given(concertRepository.findById(any())).willReturn(Optional.of(concert));
         given(seatService.updateSeatPrices(any(), any())).willReturn(seatPriceDto);
+        given(auditoriumRepository.findById(anyLong())).willReturn(Optional.of(auditorium));
         ConcertRequestDto requestDto = ConcertRequestDto.builder()
             .name("updateName")
             .description("updateDescription")
@@ -178,6 +180,8 @@ public class ConcertServiceTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getName()).isEqualTo("updateName");
+        verify(seatService, times(1)).updateSeats(any(), anyLong(),
+            any(AuditoriumCapacityDto.class));
     }
 
     @DisplayName("콘서트 수정 - 실패 회사유저 id가 다름")
