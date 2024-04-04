@@ -4,11 +4,7 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRe
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
-import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
-import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuditoriumServiceImpl implements AuditoriumService {
 
   private final AuditoriumRepository auditoriumRepository;
-  private final SeatRepository seatRepository;
 
   @Override
   @Transactional
@@ -33,26 +28,6 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     );
 
     auditoriumRepository.save(auditorium);
-
-    List<Seat> seatList = new ArrayList<>();
-
-    for (SeatRequestDto seatRequest : auditoriumRequest.getSeatList()) {
-      for (String horizontal : seatRequest.getHorizontals()) {
-        for (int vertical = 1; vertical <= Integer.parseInt(auditoriumRequest.getMaxColumn());
-            vertical++) {
-          Seat seat = new Seat(
-              String.valueOf(vertical),
-              horizontal,
-              auditoriumRequest.getAvailability(),
-              seatRequest.getGrade(),
-              auditorium.getId()
-          );
-          seatList.add(seat);
-        }
-      }
-    }
-
-    seatRepository.saveAll(seatList);
   }
 
   @Override
@@ -69,19 +44,6 @@ public class AuditoriumServiceImpl implements AuditoriumService {
         auditoriumRequest.getMaxColumn(),
         auditoriumRequest.getMaxRow()
     );
-
-    for (SeatRequestDto seatRequest : auditoriumRequest.getSeatList()) {
-      for (String horizontal : seatRequest.getHorizontals()) {
-        for (int vertical = 1; vertical <= Integer.parseInt(auditoriumRequest.getMaxColumn());
-            vertical++) {
-          Seat seat = seatRepository.findByAuditoriumIdAndHorizontalAndVertical(auditoriumId,
-              horizontal, String.valueOf(vertical));
-          if (seat != null) {
-            seat.update(seatRequest.getGrade());
-          }
-        }
-      }
-    }
   }
 
   @Override
@@ -92,10 +54,6 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     checkWritingUser(auditorium.getCompanyUserId(), userId);
 
     auditoriumRepository.delete(auditorium);
-
-    List<Seat> seatList = seatRepository.findAllByAuditoriumId(auditorium.getId());
-
-    seatRepository.deleteAll(seatList);
   }
 
   @Override

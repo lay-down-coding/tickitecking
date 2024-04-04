@@ -6,9 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DialectOverride.ColumnDefault;
 
 @Entity
 @Table(name = "seats")
@@ -35,12 +35,30 @@ public class Seat {
   @Column(nullable = false)
   private Long auditoriumId;
 
+  @Column(nullable = false)
+  private Long concertId;
+
+  @Column(nullable = false, columnDefinition = "CHAR(1) default 'N'")
+  private String reserved;
+
   public Seat(String vertical, String horizontal, String availability, String grade, Long auditoriumId) {
     this.vertical = vertical;
     this.horizontal = horizontal;
     this.availability = availability;
     this.grade = grade;
     this.auditoriumId = auditoriumId;
+  }
+
+  @Builder
+  public Seat(String vertical, String horizontal, String grade,
+      Long auditoriumId, Long concertId, String reserved, String availability) {
+    this.vertical = vertical;
+    this.horizontal = horizontal;
+    this.grade = grade;
+    this.auditoriumId = auditoriumId;
+    this.concertId = concertId;
+    this.reserved = reserved;
+    this.availability = availability;
   }
 
   public void update(String grade) {
@@ -53,5 +71,13 @@ public class Seat {
     } else {
       this.availability = "Y";
     }
+  }
+
+  public void reserve() {
+    this.reserved = "Y";
+  }
+
+  public void cancel() {
+    this.reserved = "N";
   }
 }

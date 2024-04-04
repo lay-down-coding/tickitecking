@@ -2,6 +2,7 @@ package com.laydowncoding.tickitecking.domain.admin.service;
 
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminLockSeatRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
@@ -115,9 +116,10 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
-  public void lockSeat(Long auditoriumId, Long seatId) {
-    Seat seat = seatRepository.findByIdAndAuditoriumId(seatId, auditoriumId);
-    if (seat != null) {
+  public void lockSeat(Long auditoriumId, AdminLockSeatRequestDto requestDto) {
+    List<Seat> seats = seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(
+        auditoriumId, requestDto.getHorizontal(), requestDto.getVertical());
+    for (Seat seat: seats) {
       seat.togleLock();
     }
   }

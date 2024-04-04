@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SeatRepository extends JpaRepository<Seat, Long>, SeatRepositoryQuery {
 
-  Seat findByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal,
-      String vertical);
+  List<Seat> findAllByConcertId(Long concertId);
 
-  List<Seat> findAllByAuditoriumId(Long auditoriumId);
+  Seat findByConcertIdAndHorizontalAndVertical(Long concertId, String horizontal, String vertical);
 
-  Seat findByIdAndAuditoriumId(Long seatId, Long auditoriumId);
+  List<Seat> findAllByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal, String vertical);
 }

@@ -11,6 +11,7 @@ import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRespons
 import com.laydowncoding.tickitecking.domain.reservations.entity.Reservation;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
+import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode;
@@ -36,14 +37,15 @@ public class ReservationServiceImpl implements ReservationService {
         if (!isReservable(concertId, requestDto.getHorizontal(), requestDto.getVertical())) {
             throw new CustomRuntimeException("예약 불가능한 좌석입니다.");
         }
-        Long seatId = seatRepository.findSeatId(concertId, requestDto.getHorizontal(),
-            requestDto.getVertical());
+        Seat seat = seatRepository.findByConcertIdAndHorizontalAndVertical(concertId,
+            requestDto.getHorizontal(), requestDto.getVertical());
+        seat.reserve();
 
         Reservation reservation = Reservation.builder()
             .status("Y")
             .userId(userId)
             .concertId(concertId)
-            .seatId(seatId)
+            .seatId(seat.getId())
             .build();
         Reservation save = reservationRepository.save(reservation);
 
@@ -72,6 +74,8 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservation(Long userId, Long reservationId) {
         Reservation reservation = findReservation(reservationId);
         validateUserId(reservation.getUserId(), userId);
+        Seat seat = seatRepository.findById(reservation.getSeatId()).orElseThrow();
+        seat.cancel();
         reservationRepository.delete(reservation);
     }
 

@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
+import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminLockSeatRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminUserResponseDto;
@@ -17,7 +18,7 @@ public interface AdminService {
 
   List<AuditoriumResponseDto> getAuditoriums();
 
-  void lockSeat(Long auditoriumId, Long seatId);
+  void lockSeat(Long auditoriumId, AdminLockSeatRequestDto requestDto);
 
   List<AdminReservationResponseDto> getReservations();
 }

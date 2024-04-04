@@ -57,12 +57,7 @@ public class AuditoriumServiceTest {
         "auditorium1",
         "address1",
         "10",
-        "C",
-        "Y",
-        List.of(
-            new SeatRequestDto(List.of("A", "B"), "G"),
-            new SeatRequestDto(List.of("C"), "S")
-        ));
+        "C");
 
     auditorium = new Auditorium(
         "auditorium1",
@@ -79,42 +74,24 @@ public class AuditoriumServiceTest {
   public void create_auditorium() {
     when(auditoriumRepository.save(any(Auditorium.class))).thenReturn(new Auditorium());
 
-    List<Seat> savedSeats = new ArrayList<>();
-    when(seatRepository.saveAll(any())).thenAnswer(invocation -> {
-      savedSeats.addAll(invocation.getArgument(0));
-      return savedSeats;
-    });
-
     auditoriumService.createAuditorium(requestDto, 1L);
 
     verify(auditoriumRepository, times(1)).save(any(Auditorium.class));
-    verify(seatRepository, times(1)).saveAll(any());
   }
 
   @Test
   public void update_auditorium() {
     given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
-    given(seatRepository.findByAuditoriumIdAndHorizontalAndVertical(anyLong(), anyString(),
-        anyString())).willReturn(new Seat());
 
     AuditoriumRequestDto requestDto = new AuditoriumRequestDto(
         "update name",
         "update address",
         "10",
-        "D",
-        "Y",
-        List.of(
-            new SeatRequestDto(List.of("A", "B"), "G"),
-            new SeatRequestDto(List.of("C"), "S"),
-            new SeatRequestDto(List.of("D"), "B")
-        )
-    );
+        "D");
 
     auditoriumService.updateAuditorium(requestDto, 1L, 1L);
 
     verify(auditoriumRepository).findById(1L);
-    verify(seatRepository, times(40)).findByAuditoriumIdAndHorizontalAndVertical(anyLong(),
-        anyString(), anyString());
   }
 
   @Test
@@ -142,12 +119,10 @@ public class AuditoriumServiceTest {
   @Test
   public void testDeleteAuditorium_Success() {
     given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
-    given(seatRepository.findAllByAuditoriumId(any())).willReturn(List.of(seat));
 
     auditoriumService.deleteAuditorium(1L, 1L);
 
     verify(auditoriumRepository).delete(auditorium);
-    verify(seatRepository).deleteAll(List.of(seat));
   }
 
   @Test
