@@ -26,6 +26,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class ConcertServiceTest {
@@ -144,7 +147,7 @@ public class ConcertServiceTest {
         given(auditoriumRepository.findById(any())).willReturn(Optional.of(auditorium));
 
         //when
-        List<AllConcertResponseDto> response = concertService.getAllConcerts();
+        Page<AllConcertResponseDto> response = concertService.getAllConcerts(1, 10);
 
         //then
         assertThat(response).hasSize(2);
@@ -157,7 +160,7 @@ public class ConcertServiceTest {
         given(concertRepository.findAll()).willReturn(Collections.emptyList());
 
         //when
-        List<AllConcertResponseDto> response = concertService.getAllConcerts();
+        Page<AllConcertResponseDto> response = concertService.getAllConcerts(1, 10);
 
         //then
         assertThat(response).hasSize(0);
