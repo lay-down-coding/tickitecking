@@ -46,7 +46,8 @@ public class ConcertRepositoryImpl extends QuerydslRepositorySupport implements
             .from(concert)
             .join(user).on(concert.companyUserId.eq(user.id))
             .join(auditorium).on(concert.auditoriumId.eq(auditorium.id))
-            .join(image).on(concert.id.eq(image.concertId)));
+            .join(image).on(concert.id.eq(image.concertId))
+            .orderBy(concert.id.desc()));
 
     List<AllConcertResponseDto> responses = query.fetch();
     Long totalCount = query.fetchCount();
