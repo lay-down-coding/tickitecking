@@ -2,6 +2,7 @@ package com.laydowncoding.tickitecking.domain.concert.repository;
 
 import static com.laydowncoding.tickitecking.domain.auditorium.entity.QAuditorium.auditorium;
 import static com.laydowncoding.tickitecking.domain.concert.entitiy.QConcert.concert;
+import static com.laydowncoding.tickitecking.domain.image.entity.QImage.image;
 import static com.laydowncoding.tickitecking.domain.user.entity.QUser.user;
 
 import com.laydowncoding.tickitecking.domain.concert.dto.AllConcertResponseDto;
@@ -25,6 +26,7 @@ public class ConcertRepositoryImpl implements ConcertRepositoryQuery {
                 AllConcertResponseDto.class,
                 concert.id,
                 concert.name,
+                image.filePath,
                 concert.startTime,
                 user.nickname,
                 auditorium.name
@@ -33,6 +35,7 @@ public class ConcertRepositoryImpl implements ConcertRepositoryQuery {
         .from(concert)
         .join(user).on(concert.companyUserId.eq(user.id))
         .join(auditorium).on(concert.auditoriumId.eq(auditorium.id))
+        .join(image).on(concert.id.eq(image.concertId))
         .fetch();
   }
 }

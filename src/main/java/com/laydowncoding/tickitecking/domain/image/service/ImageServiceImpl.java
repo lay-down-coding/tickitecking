@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -50,18 +51,10 @@ public class ImageServiceImpl implements ImageService {
     imageRepository.save(image);
   }
 
-  @Override
-  public String get(Long concertId) {
-    Image image = imageRepository.findByConcertId(concertId).orElseThrow(
-        () -> new CustomRuntimeException(EMPTY_FILE_EXCEPTION.getMessage())
-    );
-    return image.getFilePath();
-  }
-
   private Image getImage(MultipartFile imageFile, Long concertId) {
     try {
       String originalFileName = imageFile.getOriginalFilename();
-      validateImageFileExtention(originalFileName);
+      String extension = validateImageFileExtention(originalFileName);
       String saveFileName = createSaveFileName(originalFileName);
 
       PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -72,7 +65,7 @@ public class ImageServiceImpl implements ImageService {
       PutObjectResponse response = s3Client
           .putObject(putObjectRequest, RequestBody.fromBytes(imageFile.getBytes()));
 
-      String filePath = uploadPath + saveFileName;
+      String filePath = getFilePath(uploadPath + saveFileName);
       String contentType = imageFile.getContentType();
 
       if (response.sdkHttpResponse().statusText().orElse("FAIL").equals("OK")) {
@@ -90,6 +83,13 @@ public class ImageServiceImpl implements ImageService {
     } catch (IOException | S3Exception | IllegalStateException ie) {
       throw new RuntimeException(ie.getMessage());
     }
+  }
+
+  private String getFilePath(String filePath) {
+    return s3Client.utilities().getUrl(
+        GetUrlRequest.builder().bucket(bucket)
+            .key(filePath).build()
+    ).toExternalForm();
   }
 
   private String validateImageFileExtention(String originalFilename) {
