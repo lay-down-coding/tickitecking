@@ -17,6 +17,7 @@ public class AllConcertResponseDto {
 
   private Long id;
   private String name;
+  private String imagePath;
   private LocalDateTime startTime;
   private String writer;
   private String auditoriumName;
