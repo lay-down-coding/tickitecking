@@ -1,9 +1,12 @@
 package com.laydowncoding.tickitecking.domain.image.service;
 
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_CONCERT;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ImageErrorCode.EMPTY_FILE_EXCEPTION;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ImageErrorCode.NO_FILE_EXTENSION;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ImageErrorCode.PUT_OBJECT_EXCEPTION;
 
+import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
+import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.domain.image.entity.Image;
 import com.laydowncoding.tickitecking.domain.image.repository.ImageRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
@@ -40,6 +43,8 @@ public class ImageServiceImpl implements ImageService {
 
   private final ImageRepository imageRepository;
 
+  private final ConcertRepository concertRepository;
+
   @Override
   @Transactional
   public void upload(MultipartFile imageFile, Long concertId) {
@@ -47,7 +52,11 @@ public class ImageServiceImpl implements ImageService {
       throw new CustomRuntimeException(EMPTY_FILE_EXCEPTION.getMessage());
     }
 
-    Image image = getImage(imageFile, concertId);
+    Concert concert = concertRepository.findById(concertId).orElseThrow(
+        () -> new CustomRuntimeException(NOT_FOUND_CONCERT.getMessage())
+    );
+
+    Image image = getImage(imageFile, concert.getId());
     imageRepository.save(image);
   }
 

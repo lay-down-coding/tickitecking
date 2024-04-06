@@ -8,6 +8,7 @@ import com.laydowncoding.tickitecking.global.response.CommonResponse;
 import com.laydowncoding.tickitecking.global.service.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -44,8 +46,11 @@ public class ConcertController {
   }
 
   @GetMapping
-  public ResponseEntity<CommonResponse<List<AllConcertResponseDto>>> getAllConcerts() {
-    List<AllConcertResponseDto> response = concertService.getAllConcerts();
+  public ResponseEntity<CommonResponse<Page<AllConcertResponseDto>>> getAllConcerts(
+      @RequestParam(required = false) int page,
+      @RequestParam(required = false) int size
+  ) {
+    Page<AllConcertResponseDto> response = concertService.getAllConcerts(page, size);
     return CommonResponse.ok(response);
   }
 

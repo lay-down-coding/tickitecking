@@ -4,6 +4,7 @@ import com.laydowncoding.tickitecking.domain.concert.dto.AllConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertRequestDto;
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface ConcertService {
 
@@ -11,7 +12,7 @@ public interface ConcertService {
 
     ConcertResponseDto getConcert(Long concertId);
 
-    List<AllConcertResponseDto> getAllConcerts();
+    Page<AllConcertResponseDto> getAllConcerts(int page, int size);
 
     ConcertResponseDto updateConcert(Long companyUserId, Long concertId, ConcertRequestDto requestDto);
 
