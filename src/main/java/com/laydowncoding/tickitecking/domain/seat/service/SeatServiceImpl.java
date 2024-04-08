@@ -102,25 +102,31 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public SeatPriceDto getSeatPrices(Long concertId) {
+    public List<SeatPriceResponseDto> getSeatPrices(Long concertId) {
         List<SeatPrice> seatPrices = seatPriceRepository.findAllByConcertId(concertId);
-        Map<String, Double> seatPricesMap = new HashMap<>();
-        for (SeatPrice seatPrice : seatPrices) {
-            seatPricesMap.put(seatPrice.getGrade(), seatPrice.getPrice());
-        }
-
-        return SeatPriceDto.builder()
-            .goldPrice(seatPricesMap.getOrDefault("G", 0.0))
-            .silverPrice(seatPricesMap.getOrDefault("S", 0.0))
-            .bronzePrice(seatPricesMap.getOrDefault("B", 0.0))
-            .build();
+        return seatPrices.stream()
+            .map(seatPrice -> new SeatPriceResponseDto(seatPrice.getGrade(), seatPrice.getPrice()))
+            .toList();
     }
 
-    private Map<String, Double> parseSeatPrices(SeatPriceDto seatPriceDto) {
-        return Map.of(
-            "G", seatPriceDto.getGoldPrice(),
-            "S", seatPriceDto.getSilverPrice(),
-            "B", seatPriceDto.getBronzePrice()
-        );
+    @Override
+    public void deleteSeatPrices(Long concertId) {
+        seatPriceRepository.deleteAllByConcertId(concertId);
+    }
+
+    private List<SeatPrice> seatPricesToEntity(Long concertId,
+        List<SeatPriceRequestDto> seatPriceRequestDtos) {
+
+        List<SeatPrice> seatPrices = new ArrayList<>();
+
+        for (SeatPriceRequestDto requestDto : seatPriceRequestDtos) {
+            SeatPrice seatPrice = SeatPrice.builder()
+                .grade(requestDto.getGrade())
+                .price(requestDto.getPrice())
+                .concertId(concertId)
+                .build();
+            seatPrices.add(seatPrice);
+        }
+        return seatPrices;
     }
 }

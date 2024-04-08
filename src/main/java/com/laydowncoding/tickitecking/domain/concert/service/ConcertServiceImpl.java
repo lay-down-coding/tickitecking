@@ -61,9 +61,10 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
-        SeatPriceDto seatPriceDto = seatService.getSeatPrices(concert.getId());
-
+        List<SeatPriceResponseDto> seatPriceResponseDtos =
+            seatService.getSeatPrices(concert.getId());
         Auditorium auditorium = findAuditorium(concert.getAuditoriumId());
+
         return ConcertResponseDto.builder()
             .id(concert.getId())
             .name(concert.getName())
@@ -75,9 +76,7 @@ public class ConcertServiceImpl implements ConcertService {
             .auditoriumAddress(auditorium.getAddress())
             .auditoriumMaxColumn(auditorium.getMaxColumn())
             .auditoriumMaxRow(auditorium.getMaxRow())
-            .goldPrice(seatPriceDto.getGoldPrice())
-            .silverPrice(seatPriceDto.getSilverPrice())
-            .bronzePrice(seatPriceDto.getBronzePrice())
+            .seatPrices(seatPriceResponseDtos)
             .build();
     }
 
@@ -123,6 +122,7 @@ public class ConcertServiceImpl implements ConcertService {
 
         concertRepository.delete(concert);
         seatService.deleteSeats(concertId);
+        seatService.deleteSeatPrices(concertId);
     }
 
     private void validateCompanyUserId(Long origin, Long input) {
