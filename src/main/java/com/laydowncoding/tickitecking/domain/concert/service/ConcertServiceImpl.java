@@ -102,8 +102,8 @@ public class ConcertServiceImpl implements ConcertService {
 
         concert.update(requestDto);
         seatService.updateSeats(requestDto.getSeatList(), concertId, capacityDto);
-        SeatPriceDto seatPriceDto = seatService.updateSeatPrices(concertId,
-            requestDto.getSeatPriceDto());
+        List<SeatPriceResponseDto> seatPriceResponseDtos = seatService.updateSeatPrices(concertId,
+            requestDto.getSeatPrices());
 
         return ConcertResponseDto.builder()
             .id(concert.getId())
@@ -112,9 +112,7 @@ public class ConcertServiceImpl implements ConcertService {
             .startTime(concert.getStartTime())
             .companyUserId(concert.getCompanyUserId())
             .auditoriumId(concert.getAuditoriumId())
-            .goldPrice(seatPriceDto.getGoldPrice())
-            .silverPrice(seatPriceDto.getSilverPrice())
-            .bronzePrice(seatPriceDto.getBronzePrice())
+            .seatPrices(seatPriceResponseDtos)
             .build();
     }
 

@@ -85,39 +85,20 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public void createSeatPrices(Long concertId, SeatPriceDto seatPriceDto) {
-        List<SeatPrice> seatPrices = new ArrayList<>();
-
-        Map<String, Double> seatPricesMap = parseSeatPrices(seatPriceDto);
-
-        seatPricesMap.forEach((grade, price) -> {
-            SeatPrice seatPrice = SeatPrice.builder()
-                .price(price)
-                .grade(grade)
-                .concertId(concertId)
-                .build();
-            seatPrices.add(seatPrice);
-        });
-
     public void createSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos) {
         List<SeatPrice> seatPrices = seatPricesToEntity(concertId ,seatPriceRequestDtos);
         seatPriceRepository.saveAll(seatPrices);
     }
 
     @Override
-    public SeatPriceDto updateSeatPrices(Long concertId, SeatPriceDto seatPriceDto) {
-        List<SeatPrice> seatPrices = seatPriceRepository.findAllByConcertId(concertId);
-
-        Map<String, Double> seatPricesMap = parseSeatPrices(seatPriceDto);
-        seatPrices.forEach(seatPrice -> {
-            seatPrice.update(seatPrice.getGrade(), seatPricesMap.get(seatPrice.getGrade()));
-        });
-
-        return SeatPriceDto.builder()
-            .goldPrice(seatPricesMap.get("G"))
-            .silverPrice(seatPricesMap.get("S"))
-            .bronzePrice(seatPricesMap.get("B"))
-            .build();
+    public List<SeatPriceResponseDto> updateSeatPrices(Long concertId,
+        List<SeatPriceRequestDto> seatPriceRequestDtos) {
+        seatPriceRepository.deleteAllByConcertId(concertId);
+        List<SeatPrice> seatPrices = seatPricesToEntity(concertId, seatPriceRequestDtos);
+        List<SeatPrice> saved = seatPriceRepository.saveAll(seatPrices);
+        return saved.stream()
+            .map(seatPrice -> new SeatPriceResponseDto(seatPrice.getGrade(), seatPrice.getPrice()))
+            .toList();
     }
 
     @Override
