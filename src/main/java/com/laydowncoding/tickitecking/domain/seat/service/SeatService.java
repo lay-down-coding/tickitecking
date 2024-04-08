@@ -18,4 +18,12 @@ public interface SeatService {
     void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId, AuditoriumCapacityDto capacityDto);
 
     void deleteSeats(Long concertId);
+
+    void createSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos);
+
+    List<SeatPriceResponseDto> updateSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos);
+
+    List<SeatPriceResponseDto> getSeatPrices(Long concertId);
+
+    void deleteSeatPrices(Long concertId);
 }

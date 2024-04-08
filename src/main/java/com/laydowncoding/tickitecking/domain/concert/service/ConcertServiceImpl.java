@@ -55,8 +55,7 @@ public class ConcertServiceImpl implements ConcertService {
             .build();
 
         seatService.createSeats(requestDto.getSeatList(), saved.getId(), capacityDto);
-        SeatPriceDto seatPriceDto = requestDto.getSeatPriceDto();
-        seatService.createSeatPrices(saved.getId(), seatPriceDto);
+        seatService.createSeatPrices(saved.getId(), requestDto.getSeatPrices());
     }
 
     @Override

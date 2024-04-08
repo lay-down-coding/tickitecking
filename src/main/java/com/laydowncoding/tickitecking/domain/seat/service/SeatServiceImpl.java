@@ -99,6 +99,8 @@ public class SeatServiceImpl implements SeatService {
             seatPrices.add(seatPrice);
         });
 
+    public void createSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos) {
+        List<SeatPrice> seatPrices = seatPricesToEntity(concertId ,seatPriceRequestDtos);
         seatPriceRepository.saveAll(seatPrices);
     }
 
