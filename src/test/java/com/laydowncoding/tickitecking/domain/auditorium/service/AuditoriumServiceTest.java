@@ -1,12 +1,12 @@
 package com.laydowncoding.tickitecking.domain.auditorium.service;
 
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.INVALID_COMPANY_USER_ID;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_AUDITORIUM;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
@@ -17,11 +17,9 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRe
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.domain.seat.dto.request.SeatRequestDto;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
-import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
-import java.util.ArrayList;
+import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,8 +98,8 @@ public class AuditoriumServiceTest {
 
     try {
       auditoriumService.updateAuditorium(requestDto, 1L, 1L);
-    } catch (NullPointerException e) {
-      assertThat(e).hasMessage("존재하지 않습니다.");
+    } catch (CustomRuntimeException e) {
+      assertThat(e).hasMessage(NOT_FOUND_AUDITORIUM.getMessage());
     }
   }
 
@@ -111,8 +109,8 @@ public class AuditoriumServiceTest {
 
     try {
       auditoriumService.updateAuditorium(requestDto, 1L, 567L);
-    } catch (InvalidUserException e) {
-      assertThat(e).hasMessage("작성자가 아닙니다.");
+    } catch (CustomRuntimeException e) {
+      assertThat(e).hasMessage(INVALID_COMPANY_USER_ID.getMessage());
     }
   }
 
@@ -131,8 +129,8 @@ public class AuditoriumServiceTest {
 
     try {
       auditoriumService.deleteAuditorium(1L, 1L);
-    } catch (NullPointerException e) {
-      assertThat(e).hasMessage("존재하지 않습니다.");
+    } catch (CustomRuntimeException e) {
+      assertThat(e).hasMessage(NOT_FOUND_AUDITORIUM.getMessage());
     }
   }
 
@@ -142,8 +140,8 @@ public class AuditoriumServiceTest {
 
     try {
       auditoriumService.deleteAuditorium(1L, 1L);
-    } catch (InvalidUserException e) {
-      assertThat(e).hasMessage("작성자가 아닙니다.");
+    } catch (CustomRuntimeException e) {
+      assertThat(e).hasMessage(INVALID_COMPANY_USER_ID.getMessage());
     }
   }
 
