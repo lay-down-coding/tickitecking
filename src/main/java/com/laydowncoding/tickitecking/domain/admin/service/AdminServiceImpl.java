@@ -17,7 +17,6 @@ import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
-import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
 import jakarta.annotation.PostConstruct;

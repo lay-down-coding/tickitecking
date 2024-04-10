@@ -28,7 +28,6 @@ import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
-import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
 import java.util.Arrays;
@@ -118,7 +117,7 @@ public class AdminServiceTest {
 
     when(userRepository.findByUsername("nonexistent")).thenReturn(java.util.Optional.empty());
 
-    assertThrows(NullPointerException.class, () -> adminService.login(loginRequest));
+    assertThrows(CustomRuntimeException.class, () -> adminService.login(loginRequest));
     verify(userRepository).findByUsername("nonexistent");
     verifyNoMoreInteractions(passwordEncoder, jwtUtil, redisService);
   }
@@ -133,7 +132,7 @@ public class AdminServiceTest {
     when(userRepository.findByUsername("admin")).thenReturn(java.util.Optional.of(user));
     when(passwordEncoder.matches("wrong_password", encodedPassword)).thenReturn(false);
 
-    assertThrows(InvalidUserException.class, () -> adminService.login(loginRequest));
+    assertThrows(CustomRuntimeException.class, () -> adminService.login(loginRequest));
     verify(userRepository).findByUsername("admin");
     verify(passwordEncoder).matches("wrong_password", encodedPassword);
     verifyNoMoreInteractions(jwtUtil, redisService);
@@ -187,29 +186,6 @@ public class AdminServiceTest {
   }
 
   @Test
-  void testUpdateUser_UserNotFound() {
-    AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto();
-
-    when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-    assertThrows(
-        CustomRuntimeException.class, () -> adminService.updateUser(1L, updateRequestDto));
-  }
-
-  @Test
-  void testGetAuditoriums_Success() {
-    List<AuditoriumResponseDto> auditoriumList = List.of(
-        new AuditoriumResponseDto(), new AuditoriumResponseDto()
-    );
-
-    when(auditoriumRepository.getAuditoriumAll()).thenReturn(auditoriumList);
-
-    List<AuditoriumResponseDto> result = adminService.getAuditoriums();
-
-    assertEquals(2, result.size());
-  }
-
-  @Test
   void testLockSeat_Success() {
     Seat seat1 = Seat.builder()
         .concertId(1L)
@@ -234,9 +210,31 @@ public class AdminServiceTest {
 
     adminService.lockSeat(1L, new AdminLockSeatRequestDto("C", "Y"));
 
-    // 모든 좌석이 잠겼는지 확인
-    assertTrue(seat1.getReserved().equals("N")); // 첫 번째 좌석이 잠겨있는지 확인
-    assertTrue(seat2.getReserved().equals("N")); // 두 번째 좌석이 잠겨있는지 확인
+    assertTrue(seat1.getReserved().equals("N"));
+    assertTrue(seat2.getReserved().equals("N"));
+  }
+
+  @Test
+  void testUpdateUser_UserNotFound() {
+    AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+    assertThrows(
+        CustomRuntimeException.class, () -> adminService.updateUser(1L, updateRequestDto));
+  }
+
+  @Test
+  void testGetAuditoriums_Success() {
+    List<AuditoriumResponseDto> auditoriumList = List.of(
+        new AuditoriumResponseDto(), new AuditoriumResponseDto()
+    );
+
+    when(auditoriumRepository.getAuditoriumAll()).thenReturn(auditoriumList);
+
+    List<AuditoriumResponseDto> result = adminService.getAuditoriums();
+
+    assertEquals(2, result.size());
   }
 
   @Test
