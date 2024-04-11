@@ -1,10 +1,13 @@
 package com.laydowncoding.tickitecking.domain.auditorium.service;
 
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.INVALID_COMPANY_USER_ID;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode.NOT_FOUND_AUDITORIUM;
+
 import com.laydowncoding.tickitecking.domain.auditorium.dto.request.AuditoriumRequestDto;
 import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumResponseDto;
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
-import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
+import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -66,15 +69,15 @@ public class AuditoriumServiceImpl implements AuditoriumService {
     return auditoriumRepository.getAuditoriumByAuditoriumId(auditoriumId);
   }
 
-  public Auditorium findAuditorium(Long auditoriumId) {
+  private Auditorium findAuditorium(Long auditoriumId) {
     return auditoriumRepository.findById(auditoriumId).orElseThrow(
-        () -> new NullPointerException("존재하지 않습니다.")
+        () -> new CustomRuntimeException(NOT_FOUND_AUDITORIUM.getMessage())
     );
   }
 
-  public void checkWritingUser(Long writerId, Long userId) {
+  private void checkWritingUser(Long writerId, Long userId) {
     if (!userId.equals(writerId)) {
-      throw new InvalidUserException("작성자가 아닙니다.");
+      throw new CustomRuntimeException(INVALID_COMPANY_USER_ID.getMessage());
     }
   }
 }

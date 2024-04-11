@@ -27,26 +27,10 @@ public class GlobalExceptionHandler {
     }
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
   }
-
-  @ExceptionHandler(InvalidUserException.class)
-  public ResponseEntity<ErrorResponse> handleInvalidUserException(
-      InvalidUserException e
-  ) {
-    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-  }
   
   @ExceptionHandler(CustomRuntimeException.class)
   public ResponseEntity<ErrorResponse> handleCustomRuntimeException(CustomRuntimeException e) {
       log.error("예외 발생", e);
-      ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-  }
-
-  @ExceptionHandler(NullPointerException.class)
-  public ResponseEntity<ErrorResponse> handleNullPointerException(
-      NullPointerException e
-  ) {
       ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }

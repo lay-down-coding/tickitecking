@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
 import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.NOT_FOUND_USER;
+import static com.laydowncoding.tickitecking.global.exception.errorcode.UserErrorCode.UNVERIFIED_USER;
 
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminLockSeatRequestDto;
 import com.laydowncoding.tickitecking.domain.admin.dto.request.AdminUserUpdateRequestDto;
@@ -16,7 +17,6 @@ import com.laydowncoding.tickitecking.domain.user.entity.User;
 import com.laydowncoding.tickitecking.domain.user.entity.UserRole;
 import com.laydowncoding.tickitecking.domain.user.repository.UserRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
-import com.laydowncoding.tickitecking.global.exception.InvalidUserException;
 import com.laydowncoding.tickitecking.global.service.RedisService;
 import com.laydowncoding.tickitecking.global.util.JwtUtil;
 import jakarta.annotation.PostConstruct;
@@ -66,10 +66,10 @@ public class AdminServiceImpl implements AdminService {
   public String login(LoginRequestDto loginRequest) {
     String password = loginRequest.getPassword();
     User user = userRepository.findByUsername(loginRequest.getUsername())
-        .orElseThrow(() -> new NullPointerException("해당 유저는 존재하지 않습니다."));
+        .orElseThrow(() -> new CustomRuntimeException(NOT_FOUND_USER.getMessage()));
     if (!passwordEncoder.matches(password, user.getPassword()) || !user.getRole()
         .equals(UserRole.ADMIN)) {
-      throw new InvalidUserException("허용되지 않은 권한입니다.");
+      throw new CustomRuntimeException(UNVERIFIED_USER.getMessage());
     }
 
     String accessToken = jwtUtil.createAccessToken(user.getId(), loginRequest.getUsername(),
