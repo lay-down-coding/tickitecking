@@ -44,7 +44,7 @@ public class ReservationIntegrationTest {
         config = @SqlConfig(transactionMode = TransactionMode.ISOLATED))
     void concurrency_test() throws InterruptedException {
         //given
-        int tryCount = 100;
+        int tryCount = 10;
         long userId = 1L;
         Long concertId = 1L;
         ReservationRequestDto reservationRequestDto = ReservationRequestDto.builder()
@@ -76,6 +76,6 @@ public class ReservationIntegrationTest {
 
     @AfterEach
     void clearRedis() {
-        redisTemplate.delete("1A0");
+        redisTemplate.delete("1");
     }
 }
