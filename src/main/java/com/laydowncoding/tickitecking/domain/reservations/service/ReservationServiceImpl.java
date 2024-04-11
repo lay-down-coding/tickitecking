@@ -65,6 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ConcertSeatResponseDto getConcertSeats(Long concertId) {
         validateConcertId(concertId);
         List<UnreservableSeat> unreservableSeats = reservationRepository.findUnreservableSeats(

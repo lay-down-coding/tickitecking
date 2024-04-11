@@ -100,6 +100,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SeatPriceResponseDto> getSeatPrices(Long concertId) {
         List<SeatPrice> seatPrices = seatPriceRepository.findAllByConcertId(concertId);
         return seatPrices.stream()

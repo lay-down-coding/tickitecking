@@ -60,11 +60,13 @@ public class AuditoriumServiceImpl implements AuditoriumService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<AuditoriumResponseDto> getAuditoriums(Long userId) {
     return auditoriumRepository.getAuditoriumAllByCompanyUserId(userId);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public AuditoriumResponseDto getAuditorium(Long auditoriumId) {
     return auditoriumRepository.getAuditoriumByAuditoriumId(auditoriumId);
   }
