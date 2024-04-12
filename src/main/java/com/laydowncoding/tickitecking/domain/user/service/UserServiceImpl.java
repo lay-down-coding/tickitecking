@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public UserResponseDto getUser(Long userId) {
     User user = findUser(userId);
     return new UserResponseDto(user.getId(), user.getUsername(), user.getEmail(),
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<UserReservationResponseDto> getReservations(Long userId) {
     return reservationRepository.findReservations(userId);
   }

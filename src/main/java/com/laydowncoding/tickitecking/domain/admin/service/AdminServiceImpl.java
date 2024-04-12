@@ -81,6 +81,7 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<AdminUserResponseDto> getUsers() {
     List<User> userList = userRepository.findAll();
 
@@ -110,6 +111,7 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<AuditoriumResponseDto> getAuditoriums() {
     return auditoriumRepository.getAuditoriumAll();
   }
@@ -125,6 +127,7 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<AdminReservationResponseDto> getReservations() {
     return reservationRepository.getReservationAll();
   }
