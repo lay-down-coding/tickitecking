@@ -58,6 +58,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
         List<SeatPriceResponseDto> seatPriceResponseDtos =
@@ -80,6 +81,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<AllConcertResponseDto> getAllConcerts(int page, int size) {
         Pageable pageable = PageRequest.of(page-1, size);
         return concertRepository.getAllConcerts(pageable);
