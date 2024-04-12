@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.*;
 
+import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
@@ -16,6 +17,7 @@ import com.laydowncoding.tickitecking.domain.reservations.service.ReservationSer
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import com.laydowncoding.tickitecking.global.service.RedisService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +46,7 @@ public class ReservationServiceTest {
     ConcertRepository concertRepository;
 
     @Mock
-    RedisTemplate<String, Object> redisTemplate;
+    RedisService redisService;
 
     @Mock
     ValueOperations<String, Object> valueOperations;
@@ -56,6 +57,7 @@ public class ReservationServiceTest {
     UnreservableSeat unreservableSeat2;
     ConcertInfoDto concertInfoDto;
     Seat seat;
+    Concert concert;
 
     @BeforeEach
     void setup() {
@@ -104,6 +106,13 @@ public class ReservationServiceTest {
             .availability("Y")
             .auditoriumId(1L)
             .build();
+        concert = Concert.builder()
+            .name("concertname")
+            .description("description")
+            .startTime(LocalDateTime.now())
+            .companyUserId(1L)
+            .auditoriumId(1L)
+            .build();
     }
 
     @DisplayName("예매 생성 - 성공")
@@ -113,8 +122,8 @@ public class ReservationServiceTest {
         given(seatRepository.findSeatForReservation(any(), any(), any()))
             .willReturn(seat);
         given(reservationRepository.save(any(Reservation.class))).willReturn(reservation);
-        given(redisTemplate.opsForValue()).willReturn(valueOperations);
-        given(redisTemplate.opsForValue().setIfAbsent(any(), any())).willReturn(true);
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert));
+        given(redisService.addSet(any(), any(), any())).willReturn("1");
 
         //when
         ReservationResponseDto responseDto = reservationService.createReservation(1L,
@@ -129,8 +138,8 @@ public class ReservationServiceTest {
     @Test
     void reservation_create_fail() {
         //given
-        given(redisTemplate.opsForValue()).willReturn(valueOperations);
-        given(redisTemplate.opsForValue().setIfAbsent(any(), any())).willReturn(false);
+        given(concertRepository.findById(any())).willReturn(Optional.of(concert));
+        given(redisService.addSet(any(), any(), any())).willReturn("0");
 
         //when & then
         assertThatThrownBy(() ->
@@ -174,6 +183,7 @@ public class ReservationServiceTest {
         //given
         given(reservationRepository.findById(any())).willReturn(Optional.of(reservation));
         given(seatRepository.findById(anyLong())).willReturn(Optional.of(seat));
+
 
         //when & then
         assertDoesNotThrow(() -> reservationService.deleteReservation(1L, 1L));

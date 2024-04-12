@@ -3,6 +3,7 @@ package com.laydowncoding.tickitecking.domain.reservations.service;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.INVALID_USER_ID;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.NOT_FOUND_RESERVATION;
 
+import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
@@ -15,10 +16,13 @@ import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode;
+import com.laydowncoding.tickitecking.global.exception.errorcode.SeatErrorCode;
+import com.laydowncoding.tickitecking.global.service.RedisService;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +34,15 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisService redisService;
 
     @Override
     public ReservationResponseDto createReservation(Long userId, Long concertId,
         ReservationRequestDto requestDto) {
-
-        if (isTaken(concertId, requestDto.getHorizontal(), requestDto.getVertical())) {
-            throw new CustomRuntimeException("이미 예약된 좌석입니다.");
+        Concert concert = findConcert(concertId);
+        if (isTaken(concertId, requestDto.getHorizontal(), requestDto.getVertical(),
+            Duration.between(LocalDateTime.now(), concert.getStartTime()).toSeconds())) {
+            throw new CustomRuntimeException("redis가 막았습니다.");
         }
 
         Seat seat = seatRepository.findSeatForReservation(concertId, requestDto.getHorizontal(),
@@ -81,15 +86,19 @@ public class ReservationServiceImpl implements ReservationService {
     public void deleteReservation(Long userId, Long reservationId) {
         Reservation reservation = findReservation(reservationId);
         validateUserId(reservation.getUserId(), userId);
-        Seat seat = seatRepository.findById(reservation.getSeatId()).orElseThrow();
+
+        Seat seat = findSeat(reservation.getSeatId());
+
+        redisService.deleteValue(String.valueOf(reservation.getConcertId()),
+            seat.getHorizontal() + seat.getVertical());
         seat.cancel();
         reservationRepository.delete(reservation);
     }
 
-    private Boolean isTaken(Long concertId, String horizontal, String vertical) {
-        String key = concertId + horizontal + vertical;
-        return Boolean.FALSE.equals(
-            redisTemplate.opsForValue().setIfAbsent(key, "reserved"));
+    private Boolean isTaken(Long concertId, String horizontal, String vertical, Long expiredTime) {
+        String key = String.valueOf(concertId);
+        String value = horizontal + vertical;
+        return Objects.equals(redisService.addSet(key, value, expiredTime), "0");
     }
 
     private Reservation findReservation(Long reservationId) {
@@ -108,5 +117,17 @@ public class ReservationServiceImpl implements ReservationService {
         if (!concertRepository.existsById(concertId)) {
             throw new CustomRuntimeException(ConcertErrorCode.NOT_FOUND_CONCERT.getMessage());
         }
+    }
+
+    private Concert findConcert(Long concertId) {
+        return concertRepository.findById(concertId).orElseThrow(
+            () -> new CustomRuntimeException(ConcertErrorCode.NOT_FOUND_CONCERT.getMessage())
+        );
+    }
+
+    private Seat findSeat(Long seatId) {
+        return seatRepository.findById(seatId).orElseThrow(
+            () -> new CustomRuntimeException(SeatErrorCode.NOT_FOUND_SEAT.getMessage())
+        );
     }
 }
