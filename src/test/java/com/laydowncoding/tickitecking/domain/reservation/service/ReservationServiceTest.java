@@ -17,7 +17,7 @@ import com.laydowncoding.tickitecking.domain.reservations.service.ReservationSer
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
-import com.laydowncoding.tickitecking.global.util.RedisUtil;
+import com.laydowncoding.tickitecking.global.service.RedisService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +46,7 @@ public class ReservationServiceTest {
     ConcertRepository concertRepository;
 
     @Mock
-    RedisUtil redisUtil;
+    RedisService redisService;
 
     @Mock
     ValueOperations<String, Object> valueOperations;
@@ -124,7 +123,7 @@ public class ReservationServiceTest {
             .willReturn(seat);
         given(reservationRepository.save(any(Reservation.class))).willReturn(reservation);
         given(concertRepository.findById(any())).willReturn(Optional.of(concert));
-        given(redisUtil.addSet(any(), any(), any())).willReturn("1");
+        given(redisService.addSet(any(), any(), any())).willReturn("1");
 
         //when
         ReservationResponseDto responseDto = reservationService.createReservation(1L,
@@ -140,7 +139,7 @@ public class ReservationServiceTest {
     void reservation_create_fail() {
         //given
         given(concertRepository.findById(any())).willReturn(Optional.of(concert));
-        given(redisUtil.addSet(any(), any(), any())).willReturn("0");
+        given(redisService.addSet(any(), any(), any())).willReturn("0");
 
         //when & then
         assertThatThrownBy(() ->

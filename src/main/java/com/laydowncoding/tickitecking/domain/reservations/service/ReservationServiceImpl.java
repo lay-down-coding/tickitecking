@@ -17,13 +17,12 @@ import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode;
 import com.laydowncoding.tickitecking.global.exception.errorcode.SeatErrorCode;
-import com.laydowncoding.tickitecking.global.util.RedisUtil;
+import com.laydowncoding.tickitecking.global.service.RedisService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
-    private final RedisUtil redisUtil;
+    private final RedisService redisService;
 
     @Override
     public ReservationResponseDto createReservation(Long userId, Long concertId,
@@ -90,7 +89,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         Seat seat = findSeat(reservation.getSeatId());
 
-        redisUtil.deleteValue(String.valueOf(reservation.getConcertId()),
+        redisService.deleteValue(String.valueOf(reservation.getConcertId()),
             seat.getHorizontal() + seat.getVertical());
         seat.cancel();
         reservationRepository.delete(reservation);
@@ -99,7 +98,7 @@ public class ReservationServiceImpl implements ReservationService {
     private Boolean isTaken(Long concertId, String horizontal, String vertical, Long expiredTime) {
         String key = String.valueOf(concertId);
         String value = horizontal + vertical;
-        return Objects.equals(redisUtil.addSet(key, value, expiredTime), "0");
+        return Objects.equals(redisService.addSet(key, value, expiredTime), "0");
     }
 
     private Reservation findReservation(Long reservationId) {
