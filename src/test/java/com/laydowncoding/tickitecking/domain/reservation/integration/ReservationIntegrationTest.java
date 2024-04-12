@@ -76,6 +76,6 @@ public class ReservationIntegrationTest {
 
     @AfterEach
     void clearRedis() {
-        redisTemplate.delete("1");
+        redisTemplate.opsForSet().remove("1", "A0");
     }
 }
