@@ -30,27 +30,4 @@ public class RedisService {
   public boolean existsByKey(String key) {
     return redisTemplate.opsForValue().getOperations().hasKey(key);
   }
-
-  public String addSet(String key, String value, Long expiredTime) {
-    StringBuffer stringBuffer = new StringBuffer();
-    stringBuffer.append("local keyExists = redis.call('exists', KEYS[1]) ");
-    stringBuffer.append("local isAdded ");
-    stringBuffer.append("if keyExists == 0 then ");
-    stringBuffer.append("    redis.call('sadd', KEYS[1], ARGV[1]) ");
-    stringBuffer.append("    redis.call('expire', KEYS[1], ARGV[2]) ");
-    stringBuffer.append("    isAdded = 1 ");
-    stringBuffer.append("else ");
-    stringBuffer.append("    isAdded = redis.call('sadd', KEYS[1], ARGV[1]) ");
-    stringBuffer.append("end ");
-    stringBuffer.append("return tostring(isAdded)");
-    String script = stringBuffer.toString();
-    DefaultRedisScript<String> luaScript = new DefaultRedisScript<>(script, String.class);
-    List<String> keys = Collections.singletonList(key);
-
-    return redisTemplate.execute(luaScript, keys, value, expiredTime.toString());
-  }
-
-  public void deleteValue(String key, String value) {
-    redisTemplate.opsForSet().remove(key, value);
-  }
 }
