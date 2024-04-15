@@ -2,6 +2,7 @@ package com.laydowncoding.tickitecking.domain.reservation.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.laydowncoding.tickitecking.domain.reservation.config.MockTestConfiguration;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRequestDto;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.reservations.service.ReservationService;
@@ -9,12 +10,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -22,6 +22,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlConfig.TransactionMode;
 import org.springframework.transaction.annotation.Transactional;
 
+@Import(MockTestConfiguration.class)
 @SpringBootTest
 @Slf4j
 @Transactional
@@ -34,9 +35,6 @@ public class ReservationIntegrationTest {
 
     @Autowired
     ReservationRepository reservationRepository;
-
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
 
     @DisplayName("동시에 한자리 예매시 첫번째 요청만 예매성공한다.")
     @Test
@@ -72,10 +70,5 @@ public class ReservationIntegrationTest {
 
         //then
         assertThat(reservationRepository.count()).isEqualTo(1);
-    }
-
-    @AfterEach
-    void clearRedis() {
-        redisTemplate.opsForSet().remove("1", "A0");
     }
 }

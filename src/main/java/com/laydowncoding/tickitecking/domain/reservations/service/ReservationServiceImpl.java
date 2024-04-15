@@ -34,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
-    private final RedisService redisService;
+    private final DuplicatedReservationCheck duplicatedReservationCheck;
 
     @Override
     public ReservationResponseDto createReservation(Long userId, Long concertId,
@@ -89,7 +89,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         Seat seat = findSeat(reservation.getSeatId());
 
-        redisService.deleteValue(String.valueOf(reservation.getConcertId()),
+        duplicatedReservationCheck.deleteValue(String.valueOf(reservation.getConcertId()),
             seat.getHorizontal() + seat.getVertical());
         seat.cancel();
         reservationRepository.delete(reservation);
@@ -98,7 +98,7 @@ public class ReservationServiceImpl implements ReservationService {
     private Boolean isTaken(Long concertId, String horizontal, String vertical, Long expiredTime) {
         String key = String.valueOf(concertId);
         String value = horizontal + vertical;
-        return Objects.equals(redisService.addSet(key, value, expiredTime), "0");
+        return duplicatedReservationCheck.isDuplicated(key, value, expiredTime);
     }
 
     private Reservation findReservation(Long reservationId) {
