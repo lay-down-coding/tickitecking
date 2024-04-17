@@ -4,9 +4,10 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.*;
 
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
-import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
+import com.laydowncoding.tickitecking.domain.concert.service.ConcertServiceImpl;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRequestDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationResponseDto;
@@ -47,13 +48,16 @@ public class ReservationServiceTest {
     @Mock
     DuplicatedReservationCheckImpl duplicatedReservationCheck;
 
+    @Mock
+    ConcertServiceImpl concertService;
+
     Reservation reservation;
     ReservationRequestDto reservationRequestDto;
     UnreservableSeat unreservableSeat1;
     UnreservableSeat unreservableSeat2;
-    ConcertInfoDto concertInfoDto;
     Seat seat;
     Concert concert;
+    ConcertResponseDto concertResponseDto;
 
     @BeforeEach
     void setup() {
@@ -79,20 +83,6 @@ public class ReservationServiceTest {
             .isLocked(true)
             .isReserved(false)
             .build();
-        concertInfoDto = ConcertInfoDto.builder()
-            .concertId(1L)
-            .concertName("ConcertName")
-            .concertDescription("ConcertDescription")
-            .concertStartTime(LocalDateTime.now())
-            .concertGoldPrice(100.0)
-            .concertSilverPrice(75.0)
-            .concertBronzePrice(50.0)
-            .auditoriumId(1L)
-            .auditoriumName("AuditoriumName")
-            .auditoriumAddress("강남구")
-            .auditoriumMaxColumn("Z")
-            .auditoriumMaxRow("10")
-            .build();
         seat = Seat.builder()
             .concertId(1L)
             .horizontal("A")
@@ -109,6 +99,7 @@ public class ReservationServiceTest {
             .companyUserId(1L)
             .auditoriumId(1L)
             .build();
+        concertResponseDto = ConcertResponseDto.builder().build();
     }
 
     @DisplayName("예매 생성 - 성공")
@@ -149,8 +140,7 @@ public class ReservationServiceTest {
         //given
         given(reservationRepository.findUnreservableSeats(any()))
             .willReturn(List.of(unreservableSeat1, unreservableSeat2));
-        given(reservationRepository.findConcertInfo(any()))
-            .willReturn(concertInfoDto);
+        given(concertService.getConcert(anyLong())).willReturn(concertResponseDto);
         given(concertRepository.existsById(any())).willReturn(true);
 
         //when

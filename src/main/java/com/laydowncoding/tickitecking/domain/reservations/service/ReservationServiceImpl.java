@@ -3,9 +3,10 @@ package com.laydowncoding.tickitecking.domain.reservations.service;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.INVALID_USER_ID;
 import static com.laydowncoding.tickitecking.global.exception.errorcode.ReservationErrorCode.NOT_FOUND_RESERVATION;
 
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
 import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepository;
-import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertInfoDto;
+import com.laydowncoding.tickitecking.domain.concert.service.ConcertService;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ConcertSeatResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRequestDto;
 import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationResponseDto;
@@ -34,6 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final SeatRepository seatRepository;
     private final ConcertRepository concertRepository;
     private final DuplicatedReservationCheck duplicatedReservationCheck;
+    private final ConcertService concertService;
 
     @Override
     public ReservationResponseDto createReservation(Long userId, Long concertId,
@@ -72,11 +74,13 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional(readOnly = true)
     public ConcertSeatResponseDto getConcertSeats(Long concertId) {
         validateConcertId(concertId);
+
         List<UnreservableSeat> unreservableSeats = reservationRepository.findUnreservableSeats(
             concertId);
-        ConcertInfoDto concertInfoDto = reservationRepository.findConcertInfo(concertId);
+        ConcertResponseDto concert = concertService.getConcert(concertId);
+
         return ConcertSeatResponseDto.builder()
-            .concertInfoDto(concertInfoDto)
+            .concertResponseDto(concert)
             .unreservableSeats(unreservableSeats)
             .build();
     }
