@@ -28,7 +28,6 @@ public class ConcertRepositoryImpl extends QuerydslRepositorySupport implements
     this.queryFactory = queryFactory;
   }
 
-
   @Override
   public Page<AllConcertResponseDto> getAllConcerts(Pageable pageable) {
     JPQLQuery<AllConcertResponseDto> query = getQuerydsl().applyPagination(pageable,
