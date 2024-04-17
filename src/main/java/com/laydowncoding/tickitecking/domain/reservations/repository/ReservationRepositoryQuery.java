@@ -11,10 +11,6 @@ public interface ReservationRepositoryQuery {
 
     List<UnreservableSeat> findUnreservableSeats(Long concertId);
 
-    List<Tuple> findLockedSeats(Long concertId);
-
-    List<Tuple> findReservedSeats(Long concertId);
-
     ConcertInfoDto findConcertInfo(Long concertId);
 
     List<UserReservationResponseDto> findReservations(Long userId);

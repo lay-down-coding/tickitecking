@@ -21,6 +21,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 
@@ -31,54 +32,20 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
 
   @Override
   public List<UnreservableSeat> findUnreservableSeats(Long concertId) {
-    List<Tuple> reserved = findReservedSeats(concertId);
-    List<Tuple> locked = findLockedSeats(concertId);
-    List<UnreservableSeat> unreservableSeats = new ArrayList<>();
-
-    for (Tuple tuple : reserved) {
-      String horizontal = tuple.get(seat.horizontal);
-      String vertical = tuple.get(seat.vertical);
-
-      UnreservableSeat unreservableSeat = UnreservableSeat.builder()
-          .horizontal(horizontal)
-          .vertical(vertical)
-          .isReserved(true)
-          .isLocked(false)
-          .build();
-      unreservableSeats.add(unreservableSeat);
-    }
-
-    for (Tuple tuple : locked) {
-      String horizontal = tuple.get(seat.horizontal);
-      String vertical = tuple.get(seat.vertical);
-
-      UnreservableSeat unreservableSeat = UnreservableSeat.builder()
-          .horizontal(horizontal)
-          .vertical(vertical)
-          .isReserved(false)
-          .isLocked(true)
-          .build();
-      unreservableSeats.add(unreservableSeat);
-    }
-    return unreservableSeats;
-  }
-
-  @Override
-  public List<Tuple> findReservedSeats(Long concertId) {
-    return jpaQueryFactory.select(seat.horizontal, seat.vertical)
+    return jpaQueryFactory.select(seat.horizontal, seat.vertical, seat.availability, seat.reserved)
         .from(seat)
-        .where(seat.concertId.eq(concertId))
-        .where(seat.reserved.eq("Y"))
-        .fetch();
-  }
-
-  @Override
-  public List<Tuple> findLockedSeats(Long concertId) {
-    return jpaQueryFactory.select(seat.horizontal, seat.vertical)
-        .from(seat)
-        .where(seat.concertId.eq(concertId))
-        .where(seat.availability.eq("N"))
-        .fetch();
+        .where(seat.concertId.eq(concertId)
+            .and(seat.reserved.eq("Y")
+                .or(seat.availability.eq("N"))))
+        .fetch()
+        .stream()
+        .map(tuple -> UnreservableSeat.builder()
+            .horizontal(tuple.get(seat.horizontal))
+            .vertical(tuple.get(seat.vertical))
+            .isReserved(Objects.equals(tuple.get(seat.reserved), "Y"))
+            .isLocked(Objects.equals(tuple.get(seat.availability), "N"))
+            .build())
+        .toList();
   }
 
   @Override

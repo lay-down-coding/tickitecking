@@ -17,7 +17,6 @@ import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import com.laydowncoding.tickitecking.global.exception.errorcode.ConcertErrorCode;
 import com.laydowncoding.tickitecking.global.exception.errorcode.SeatErrorCode;
-import com.laydowncoding.tickitecking.global.service.RedisService;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
