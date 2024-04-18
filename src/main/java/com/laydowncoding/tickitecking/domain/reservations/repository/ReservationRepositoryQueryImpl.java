@@ -29,8 +29,8 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
   public List<UnreservableSeat> findUnreservableSeats(Long concertId) {
     return jpaQueryFactory.select(seat.horizontal, seat.vertical, seat.availability, seat.reserved)
         .from(seat)
-        .where(seat.concertId.eq(concertId)
-            .and(seat.reserved.eq("Y")
+        .where(seat.reserved.eq("Y")
+            .and(seat.concertId.eq(concertId)
                 .or(seat.availability.eq("N"))))
         .fetch()
         .stream()
