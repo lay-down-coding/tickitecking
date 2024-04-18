@@ -17,6 +17,7 @@ import com.laydowncoding.tickitecking.domain.reservations.repository.Reservation
 import com.laydowncoding.tickitecking.domain.reservations.service.DuplicatedReservationCheckImpl;
 import com.laydowncoding.tickitecking.domain.reservations.service.ReservationServiceImpl;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
+import com.laydowncoding.tickitecking.domain.seat.entity.SeatStatus;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.time.LocalDateTime;
@@ -74,14 +75,12 @@ public class ReservationServiceTest {
         unreservableSeat1 = UnreservableSeat.builder()
             .horizontal("A")
             .vertical("2")
-            .isLocked(false)
-            .isReserved(true)
+            .status(SeatStatus.RESERVED)
             .build();
         unreservableSeat2 = UnreservableSeat.builder()
             .horizontal("A")
             .vertical("3")
-            .isLocked(true)
-            .isReserved(false)
+            .status(SeatStatus.LOCKED)
             .build();
         seat = Seat.builder()
             .concertId(1L)
@@ -89,6 +88,7 @@ public class ReservationServiceTest {
             .vertical("1")
             .grade("G")
             .auditoriumId(1L)
+            .seatStatus(SeatStatus.AVAILABLE)
             .build();
         concert = Concert.builder()
             .name("concertname")

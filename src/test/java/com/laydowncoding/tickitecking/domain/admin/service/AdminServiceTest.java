@@ -23,6 +23,7 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumR
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
+import com.laydowncoding.tickitecking.domain.seat.entity.SeatStatus;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
@@ -194,6 +195,7 @@ public class AdminServiceTest {
         .vertical("1")
         .grade("G")
         .auditoriumId(1L)
+        .seatStatus(SeatStatus.AVAILABLE)
         .build();
     Seat seat2 = Seat.builder()
         .concertId(2L)
@@ -201,6 +203,7 @@ public class AdminServiceTest {
         .vertical("1")
         .grade("G")
         .auditoriumId(1L)
+        .seatStatus(SeatStatus.AVAILABLE)
         .build();
     List<Seat> seats = Arrays.asList(seat1, seat2);
 

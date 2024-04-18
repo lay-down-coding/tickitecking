@@ -18,6 +18,7 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumR
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
+import com.laydowncoding.tickitecking.domain.seat.entity.SeatStatus;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.List;
@@ -65,7 +66,14 @@ public class AuditoriumServiceTest {
         1L
     );
 
-    seat = new Seat("1", "A", "G", 1L);
+    seat = Seat.builder()
+        .auditoriumId(1L)
+        .concertId(1L)
+        .horizontal("A")
+        .vertical("1")
+        .grade("G")
+        .seatStatus(SeatStatus.AVAILABLE)
+        .build();
   }
 
   @Test
