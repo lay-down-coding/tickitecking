@@ -21,35 +21,35 @@ import org.springframework.stereotype.Repository;
 public class ConcertRepositoryImpl extends QuerydslRepositorySupport implements
     ConcertRepositoryQuery {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
-    public ConcertRepositoryImpl(JPAQueryFactory queryFactory) {
-        super(Concert.class);
-        this.queryFactory = queryFactory;
-    }
+  public ConcertRepositoryImpl(JPAQueryFactory queryFactory) {
+    super(Concert.class);
+    this.queryFactory = queryFactory;
+  }
 
-    @Override
-    public Page<AllConcertResponseDto> getAllConcerts(Pageable pageable) {
-        JPQLQuery<AllConcertResponseDto> query = getQuerydsl().applyPagination(pageable,
-            queryFactory.select(
-                    Projections.constructor(
-                        AllConcertResponseDto.class,
-                        concert.id,
-                        concert.name,
-                        image.filePath,
-                        concert.startTime,
-                        user.nickname,
-                        auditorium.name
-                    )
+  @Override
+  public Page<AllConcertResponseDto> getAllConcerts(Pageable pageable) {
+    JPQLQuery<AllConcertResponseDto> query = getQuerydsl().applyPagination(pageable,
+        queryFactory.select(
+                Projections.constructor(
+                    AllConcertResponseDto.class,
+                    concert.id,
+                    concert.name,
+                    image.filePath,
+                    concert.startTime,
+                    user.nickname,
+                    auditorium.name
                 )
-                .from(concert)
-                .join(user).on(concert.companyUserId.eq(user.id))
-                .join(auditorium).on(concert.auditoriumId.eq(auditorium.id))
-                .join(image).on(concert.id.eq(image.concertId))
-                .orderBy(concert.id.desc()));
+            )
+            .from(concert)
+            .join(user).on(concert.companyUserId.eq(user.id))
+            .join(auditorium).on(concert.auditoriumId.eq(auditorium.id))
+            .join(image).on(concert.id.eq(image.concertId))
+            .orderBy(concert.id.desc()));
 
-        List<AllConcertResponseDto> responses = query.fetch();
-        Long totalCount = query.fetchCount();
-        return new PageImpl<>(responses, pageable, totalCount);
-    }
+    List<AllConcertResponseDto> responses = query.fetch();
+    Long totalCount = query.fetchCount();
+    return new PageImpl<>(responses, pageable, totalCount);
+  }
 }

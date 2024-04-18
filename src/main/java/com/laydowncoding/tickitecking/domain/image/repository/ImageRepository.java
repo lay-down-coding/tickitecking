@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    Optional<Image> findByConcertId(Long id);
+  Optional<Image> findByConcertId(Long id);
 }

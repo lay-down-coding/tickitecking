@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class AllConcertResponseDto {
 
-    private Long id;
-    private String name;
-    private String imagePath;
-    private LocalDateTime startTime;
-    private String writer;
-    private String auditoriumName;
+  private Long id;
+  private String name;
+  private String imagePath;
+  private LocalDateTime startTime;
+  private String writer;
+  private String auditoriumName;
 }

@@ -45,215 +45,210 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
 
-    @InjectMocks
-    private AdminServiceImpl adminService;
+  @InjectMocks
+  private AdminServiceImpl adminService;
 
-    @Mock
-    private UserRepository userRepository;
+  @Mock
+  private UserRepository userRepository;
 
-    @Mock
-    private AuditoriumRepository auditoriumRepository;
+  @Mock
+  private AuditoriumRepository auditoriumRepository;
 
-    @Mock
-    private SeatRepository seatRepository;
+  @Mock
+  private SeatRepository seatRepository;
 
-    @Mock
-    private ReservationRepository reservationRepository;
+  @Mock
+  private ReservationRepository reservationRepository;
 
-    @Mock
-    private JwtUtil jwtUtil;
+  @Mock
+  private JwtUtil jwtUtil;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+  @Mock
+  private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private RedisService redisService;
+  @Mock
+  private RedisService redisService;
 
-    @Test
-    public void testCreateAdminAccount_Success() {
-        when(userRepository.existsByRole(UserRole.ADMIN)).thenReturn(false);
+  @Test
+  public void testCreateAdminAccount_Success() {
+    when(userRepository.existsByRole(UserRole.ADMIN)).thenReturn(false);
 
-        adminService.createAdminAccount();
+    adminService.createAdminAccount();
 
-        verify(userRepository, times(1)).existsByRole(UserRole.ADMIN);
-        verify(userRepository, times(1)).save(any(User.class));
-    }
+    verify(userRepository, times(1)).existsByRole(UserRole.ADMIN);
+    verify(userRepository, times(1)).save(any(User.class));
+  }
 
-    @Test
-    public void testCreateAdminAccount_AdminExists() {
-        when(userRepository.existsByRole(UserRole.ADMIN)).thenReturn(true);
+  @Test
+  public void testCreateAdminAccount_AdminExists() {
+    when(userRepository.existsByRole(UserRole.ADMIN)).thenReturn(true);
 
-        adminService.createAdminAccount();
+    adminService.createAdminAccount();
 
-        verify(userRepository, times(1)).existsByRole(UserRole.ADMIN);
-    }
+    verify(userRepository, times(1)).existsByRole(UserRole.ADMIN);
+  }
 
-    @Test
-    void testLogin_Success() {
-        LoginRequestDto loginRequest = new LoginRequestDto("admin", "password");
-        String encodedPassword = "$2a$10$4QXdYasJ3t52ST8J1v23j.1mEohu9Q8Tn9itkJgSKazbdKwHmoK1y"; // 예상되는 암호화된 패스워드
-        User user = new User(1L, "admin", encodedPassword, "admin@example.com", "admin",
-            UserRole.ADMIN);
+  @Test
+  void testLogin_Success() {
+    LoginRequestDto loginRequest = new LoginRequestDto("admin", "password");
+    String encodedPassword = "$2a$10$4QXdYasJ3t52ST8J1v23j.1mEohu9Q8Tn9itkJgSKazbdKwHmoK1y"; // 예상되는 암호화된 패스워드
+    User user = new User(1L, "admin", encodedPassword, "admin@example.com", "admin",
+        UserRole.ADMIN);
 
-        when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("password", encodedPassword)).thenReturn(true);
-        when(jwtUtil.createAccessToken(anyLong(), eq("admin"),
-            eq(UserRole.ADMIN.name()))).thenReturn(
-            "access_token");
-        when(jwtUtil.createRefreshToken(UserRole.ADMIN.name())).thenReturn("refresh_token");
-        doNothing().when(redisService).setValuesWithTimeout(eq("admin"), anyString(), eq(7L));
+    when(userRepository.findByUsername("admin")).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches("password", encodedPassword)).thenReturn(true);
+    when(jwtUtil.createAccessToken(anyLong(), eq("admin"), eq(UserRole.ADMIN.name()))).thenReturn(
+        "access_token");
+    when(jwtUtil.createRefreshToken(UserRole.ADMIN.name())).thenReturn("refresh_token");
+    doNothing().when(redisService).setValuesWithTimeout(eq("admin"), anyString(), eq(7L));
 
-        String accessToken = adminService.login(loginRequest);
+    String accessToken = adminService.login(loginRequest);
 
-        assertNotNull(accessToken);
-        assertEquals("access_token", accessToken);
-        verify(userRepository).findByUsername("admin");
-        verify(passwordEncoder).matches("password", encodedPassword);
-        verify(jwtUtil).createAccessToken(anyLong(), eq("admin"), eq(UserRole.ADMIN.name()));
-        verify(jwtUtil).createRefreshToken(UserRole.ADMIN.name());
-        verify(redisService).setValuesWithTimeout(eq("admin"), anyString(), eq(7L));
-    }
+    assertNotNull(accessToken);
+    assertEquals("access_token", accessToken);
+    verify(userRepository).findByUsername("admin");
+    verify(passwordEncoder).matches("password", encodedPassword);
+    verify(jwtUtil).createAccessToken(anyLong(), eq("admin"), eq(UserRole.ADMIN.name()));
+    verify(jwtUtil).createRefreshToken(UserRole.ADMIN.name());
+    verify(redisService).setValuesWithTimeout(eq("admin"), anyString(), eq(7L));
+  }
 
-    @Test
-    void testLogin_InvalidUser() {
-        LoginRequestDto loginRequest = new LoginRequestDto("nonexistent", "password");
+  @Test
+  void testLogin_InvalidUser() {
+    LoginRequestDto loginRequest = new LoginRequestDto("nonexistent", "password");
 
-        when(userRepository.findByUsername("nonexistent")).thenReturn(java.util.Optional.empty());
+    when(userRepository.findByUsername("nonexistent")).thenReturn(java.util.Optional.empty());
 
-        assertThrows(CustomRuntimeException.class, () -> adminService.login(loginRequest));
-        verify(userRepository).findByUsername("nonexistent");
-        verifyNoMoreInteractions(passwordEncoder, jwtUtil, redisService);
-    }
+    assertThrows(CustomRuntimeException.class, () -> adminService.login(loginRequest));
+    verify(userRepository).findByUsername("nonexistent");
+    verifyNoMoreInteractions(passwordEncoder, jwtUtil, redisService);
+  }
 
-    @Test
-    void testLogin_IncorrectPassword() {
-        LoginRequestDto loginRequest = new LoginRequestDto("admin", "wrong_password");
-        String encodedPassword = "$2a$10$4QXdYasJ3t52ST8J1v23j.1mEohu9Q8Tn9itkJgSKazbdKwHmoK1y";
-        User user = new User(1L, "admin", encodedPassword, "admin@example.com", "admin",
-            UserRole.ADMIN);
+  @Test
+  void testLogin_IncorrectPassword() {
+    LoginRequestDto loginRequest = new LoginRequestDto("admin", "wrong_password");
+    String encodedPassword = "$2a$10$4QXdYasJ3t52ST8J1v23j.1mEohu9Q8Tn9itkJgSKazbdKwHmoK1y";
+    User user = new User(1L, "admin", encodedPassword, "admin@example.com", "admin",
+        UserRole.ADMIN);
 
-        when(userRepository.findByUsername("admin")).thenReturn(java.util.Optional.of(user));
-        when(passwordEncoder.matches("wrong_password", encodedPassword)).thenReturn(false);
+    when(userRepository.findByUsername("admin")).thenReturn(java.util.Optional.of(user));
+    when(passwordEncoder.matches("wrong_password", encodedPassword)).thenReturn(false);
 
-        assertThrows(CustomRuntimeException.class, () -> adminService.login(loginRequest));
-        verify(userRepository).findByUsername("admin");
-        verify(passwordEncoder).matches("wrong_password", encodedPassword);
-        verifyNoMoreInteractions(jwtUtil, redisService);
-    }
+    assertThrows(CustomRuntimeException.class, () -> adminService.login(loginRequest));
+    verify(userRepository).findByUsername("admin");
+    verify(passwordEncoder).matches("wrong_password", encodedPassword);
+    verifyNoMoreInteractions(jwtUtil, redisService);
+  }
 
-    @Test
-    void testGetUsers_Success() {
-        User user1 = new User(1L, "user1", "password1", "user1@example.com", "User One",
-            UserRole.USER);
-        User user2 = new User(2L, "user2", "password", "user2@example.com", "User Two",
-            UserRole.USER);
-        List<User> userList = Arrays.asList(user1, user2);
+  @Test
+  void testGetUsers_Success() {
+    User user1 = new User(1L, "user1", "password1", "user1@example.com", "User One", UserRole.USER);
+    User user2 = new User(2L, "user2", "password", "user2@example.com", "User Two", UserRole.USER);
+    List<User> userList = Arrays.asList(user1, user2);
 
-        when(userRepository.findAll()).thenReturn(userList);
+    when(userRepository.findAll()).thenReturn(userList);
 
-        List<AdminUserResponseDto> responseDtoList = adminService.getUsers();
+    List<AdminUserResponseDto> responseDtoList = adminService.getUsers();
 
-        assertEquals(userList.size(), responseDtoList.size());
-        verify(userRepository).findAll();
-    }
+    assertEquals(userList.size(), responseDtoList.size());
+    verify(userRepository).findAll();
+  }
 
-    @Test
-    void testUpdateUser_Success() {
-        AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto(
-            "updateUsername",
-            "updatePassword",
-            "update@test.com",
-            "updateUser",
-            UserRole.COMPANY_USER
-        );
+  @Test
+  void testUpdateUser_Success() {
+    AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto(
+        "updateUsername",
+        "updatePassword",
+        "update@test.com",
+        "updateUser",
+        UserRole.COMPANY_USER
+    );
 
-        User existingUser = new User(
-            1L,
-            "oldUsername",
-            "oldPassword",
-            "oldNickname",
-            "old@example.com",
-            UserRole.USER);
-        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(existingUser));
+    User existingUser = new User(
+        1L,
+        "oldUsername",
+        "oldPassword",
+        "oldNickname",
+        "old@example.com",
+        UserRole.USER);
+    when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(existingUser));
 
-        String encryptedPassword = "encryptedNewPassword";
-        when(passwordEncoder.encode(updateRequestDto.getPassword())).thenReturn(encryptedPassword);
+    String encryptedPassword = "encryptedNewPassword";
+    when(passwordEncoder.encode(updateRequestDto.getPassword())).thenReturn(encryptedPassword);
 
-        adminService.updateUser(1L, updateRequestDto);
+    adminService.updateUser(1L, updateRequestDto);
 
-        verify(userRepository).findById(1L);
-        verify(passwordEncoder).encode(updateRequestDto.getPassword());
-        assertEquals(updateRequestDto.getUsername(), existingUser.getUsername());
-        assertEquals(encryptedPassword, existingUser.getPassword());
-        assertEquals(updateRequestDto.getNickname(), existingUser.getNickname());
-        assertEquals(updateRequestDto.getEmail(), existingUser.getEmail());
-        assertEquals(updateRequestDto.getRole().name(), existingUser.getRole().name());
-    }
+    verify(userRepository).findById(1L);
+    verify(passwordEncoder).encode(updateRequestDto.getPassword());
+    assertEquals(updateRequestDto.getUsername(), existingUser.getUsername());
+    assertEquals(encryptedPassword, existingUser.getPassword());
+    assertEquals(updateRequestDto.getNickname(), existingUser.getNickname());
+    assertEquals(updateRequestDto.getEmail(), existingUser.getEmail());
+    assertEquals(updateRequestDto.getRole().name(), existingUser.getRole().name());
+  }
 
-    @Test
-    void testLockSeat_Success() {
-        Seat seat1 = Seat.builder()
-            .concertId(1L)
-            .horizontal("A")
-            .vertical("1")
-            .grade("G")
-            .auditoriumId(1L)
-            .seatStatus(SeatStatus.AVAILABLE)
-            .build();
-        Seat seat2 = Seat.builder()
-            .concertId(2L)
-            .horizontal("A")
-            .vertical("1")
-            .grade("G")
-            .auditoriumId(1L)
-            .seatStatus(SeatStatus.AVAILABLE)
-            .build();
-        List<Seat> seats = Arrays.asList(seat1, seat2);
+  @Test
+  void testLockSeat_Success() {
+    Seat seat1 = Seat.builder()
+        .concertId(1L)
+        .horizontal("A")
+        .vertical("1")
+        .grade("G")
+        .auditoriumId(1L)
+        .seatStatus(SeatStatus.AVAILABLE)
+        .build();
+    Seat seat2 = Seat.builder()
+        .concertId(2L)
+        .horizontal("A")
+        .vertical("1")
+        .grade("G")
+        .auditoriumId(1L)
+        .seatStatus(SeatStatus.AVAILABLE)
+        .build();
+    List<Seat> seats = Arrays.asList(seat1, seat2);
 
-        when(seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(anyLong(), anyString(),
-            anyString()))
-            .thenReturn(seats);
+    when(seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(anyLong(), anyString(), anyString()))
+        .thenReturn(seats);
 
-        adminService.lockSeat(1L, new AdminLockSeatRequestDto("C", "Y"));
+    adminService.lockSeat(1L, new AdminLockSeatRequestDto("C", "Y"));
 
-        assertFalse(seat1.isReservable());
-        assertFalse(seat2.isReservable());
-    }
+    assertFalse(seat1.isReservable());
+    assertFalse(seat2.isReservable());
+  }
 
-    @Test
-    void testUpdateUser_UserNotFound() {
-        AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto();
+  @Test
+  void testUpdateUser_UserNotFound() {
+    AdminUserUpdateRequestDto updateRequestDto = new AdminUserUpdateRequestDto();
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(
-            CustomRuntimeException.class, () -> adminService.updateUser(1L, updateRequestDto));
-    }
+    assertThrows(
+        CustomRuntimeException.class, () -> adminService.updateUser(1L, updateRequestDto));
+  }
 
-    @Test
-    void testGetAuditoriums_Success() {
-        List<AuditoriumResponseDto> auditoriumList = List.of(
-            new AuditoriumResponseDto(), new AuditoriumResponseDto()
-        );
+  @Test
+  void testGetAuditoriums_Success() {
+    List<AuditoriumResponseDto> auditoriumList = List.of(
+        new AuditoriumResponseDto(), new AuditoriumResponseDto()
+    );
 
-        when(auditoriumRepository.getAuditoriumAll()).thenReturn(auditoriumList);
+    when(auditoriumRepository.getAuditoriumAll()).thenReturn(auditoriumList);
 
-        List<AuditoriumResponseDto> result = adminService.getAuditoriums();
+    List<AuditoriumResponseDto> result = adminService.getAuditoriums();
 
-        assertEquals(2, result.size());
-    }
+    assertEquals(2, result.size());
+  }
 
-    @Test
-    void testGetReservations_Success() {
-        AdminReservationResponseDto reservation1 = new AdminReservationResponseDto();
-        AdminReservationResponseDto reservation2 = new AdminReservationResponseDto();
-        List<AdminReservationResponseDto> expectedReservations = List.of(reservation1,
-            reservation2);
-        when(reservationRepository.getReservationAll()).thenReturn(expectedReservations);
+  @Test
+  void testGetReservations_Success() {
+    AdminReservationResponseDto reservation1 = new AdminReservationResponseDto();
+    AdminReservationResponseDto reservation2 = new AdminReservationResponseDto();
+    List<AdminReservationResponseDto> expectedReservations = List.of(reservation1, reservation2);
+    when(reservationRepository.getReservationAll()).thenReturn(expectedReservations);
 
-        List<AdminReservationResponseDto> actualReservations = adminService.getReservations();
+    List<AdminReservationResponseDto> actualReservations = adminService.getReservations();
 
-        assertEquals(expectedReservations.size(), actualReservations.size());
-        assertTrue(actualReservations.containsAll(expectedReservations));
-    }
+    assertEquals(expectedReservations.size(), actualReservations.size());
+    assertTrue(actualReservations.containsAll(expectedReservations));
+  }
 }

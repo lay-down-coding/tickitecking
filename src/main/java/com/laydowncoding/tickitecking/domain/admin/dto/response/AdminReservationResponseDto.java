@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AdminReservationResponseDto {
 
-    private Long id;
-    private String status;
-    private UserResponseDto reservedUser;
-    private AdminConcertResponseDto concert;
-    private SeatResponseDto seat;
-    private LocalDateTime reservedTime;
-    private LocalDateTime canceledTime;
+  private Long id;
+  private String status;
+  private UserResponseDto reservedUser;
+  private AdminConcertResponseDto concert;
+  private SeatResponseDto seat;
+  private LocalDateTime reservedTime;
+  private LocalDateTime canceledTime;
 }

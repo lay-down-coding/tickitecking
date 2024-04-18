@@ -10,15 +10,15 @@ import java.util.List;
 
 public interface AdminService {
 
-    String login(LoginRequestDto loginRequest);
+  String login(LoginRequestDto loginRequest);
 
-    List<AdminUserResponseDto> getUsers();
+  List<AdminUserResponseDto> getUsers();
 
-    void updateUser(Long userId, AdminUserUpdateRequestDto userUpdateRequest);
+  void updateUser(Long userId, AdminUserUpdateRequestDto userUpdateRequest);
 
-    List<AuditoriumResponseDto> getAuditoriums();
+  List<AuditoriumResponseDto> getAuditoriums();
 
-    void lockSeat(Long auditoriumId, AdminLockSeatRequestDto requestDto);
+  void lockSeat(Long auditoriumId, AdminLockSeatRequestDto requestDto);
 
-    List<AdminReservationResponseDto> getReservations();
+  List<AdminReservationResponseDto> getReservations();
 }

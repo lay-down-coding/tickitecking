@@ -87,7 +87,7 @@ public class ConcertServiceImpl implements ConcertService {
     @Override
     @Transactional(readOnly = true)
     public Page<AllConcertResponseDto> getAllConcerts(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page-1, size);
         return concertRepository.getAllConcerts(pageable);
     }
 

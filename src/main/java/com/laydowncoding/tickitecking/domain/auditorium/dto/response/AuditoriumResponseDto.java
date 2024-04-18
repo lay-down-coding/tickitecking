@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuditoriumResponseDto {
 
-    private Long id;
+  private Long id;
 
-    private String name;
+  private String name;
 
-    private String address;
+  private String address;
 
-    private String maxColumn;
+  private String maxColumn;
 
-    private String maxRow;
+  private String maxRow;
 
-    private UserResponseDto companyUser;
+  private UserResponseDto companyUser;
 }

@@ -14,91 +14,91 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class AuditoriumQueryRepositoryImpl implements AuditoriumQueryRepository {
 
-    private final JPAQueryFactory query;
+  private final JPAQueryFactory query;
 
-    @Override
-    public List<AuditoriumResponseDto> getAuditoriumAllByCompanyUserId(Long companyUserId) {
-        QAuditorium auditorium = QAuditorium.auditorium;
-        QUser user = QUser.user;
+  @Override
+  public List<AuditoriumResponseDto> getAuditoriumAllByCompanyUserId(Long companyUserId) {
+    QAuditorium auditorium = QAuditorium.auditorium;
+    QUser user = QUser.user;
 
-        return query.select(
+    return query.select(
+            Projections.constructor(
+                AuditoriumResponseDto.class,
+                auditorium.id,
+                auditorium.name,
+                auditorium.address,
+                auditorium.maxColumn,
+                auditorium.maxRow,
                 Projections.constructor(
-                    AuditoriumResponseDto.class,
-                    auditorium.id,
-                    auditorium.name,
-                    auditorium.address,
-                    auditorium.maxColumn,
-                    auditorium.maxRow,
-                    Projections.constructor(
-                        UserResponseDto.class,
-                        user.id,
-                        user.username,
-                        user.email,
-                        user.nickname
-                    )
+                    UserResponseDto.class,
+                    user.id,
+                    user.username,
+                    user.email,
+                    user.nickname
                 )
             )
-            .from(auditorium)
-            .leftJoin(user)
-            .on(auditorium.companyUserId.eq(user.id))
-            .where(auditorium.companyUserId.eq(companyUserId))
-            .fetch();
-    }
+        )
+        .from(auditorium)
+        .leftJoin(user)
+        .on(auditorium.companyUserId.eq(user.id))
+        .where(auditorium.companyUserId.eq(companyUserId))
+        .fetch();
+  }
 
-    @Override
-    public List<AuditoriumResponseDto> getAuditoriumAll() {
-        QAuditorium auditorium = QAuditorium.auditorium;
-        QUser user = QUser.user;
+  @Override
+  public List<AuditoriumResponseDto> getAuditoriumAll() {
+    QAuditorium auditorium = QAuditorium.auditorium;
+    QUser user = QUser.user;
 
-        return query.select(
+    return query.select(
+            Projections.constructor(
+                AuditoriumResponseDto.class,
+                auditorium.id,
+                auditorium.name,
+                auditorium.address,
+                auditorium.maxColumn,
+                auditorium.maxRow,
                 Projections.constructor(
-                    AuditoriumResponseDto.class,
-                    auditorium.id,
-                    auditorium.name,
-                    auditorium.address,
-                    auditorium.maxColumn,
-                    auditorium.maxRow,
-                    Projections.constructor(
-                        UserResponseDto.class,
-                        user.id,
-                        user.username,
-                        user.email,
-                        user.nickname
-                    )
+                    UserResponseDto.class,
+                    user.id,
+                    user.username,
+                    user.email,
+                    user.nickname
                 )
             )
-            .from(auditorium)
-            .leftJoin(user)
-            .on(auditorium.companyUserId.eq(user.id))
-            .fetch();
-    }
+        )
+        .from(auditorium)
+        .leftJoin(user)
+        .on(auditorium.companyUserId.eq(user.id))
+        .fetch();
+  }
 
-    @Override
-    public AuditoriumResponseDto getAuditoriumByAuditoriumId(Long auditoriumId) {
-        QAuditorium auditorium = QAuditorium.auditorium;
-        QUser user = QUser.user;
+  @Override
+  public AuditoriumResponseDto getAuditoriumByAuditoriumId(Long auditoriumId) {
+    QAuditorium auditorium = QAuditorium.auditorium;
+    QUser user = QUser.user;
 
-        return query.select(
+    return query.select(
+            Projections.constructor(
+                AuditoriumResponseDto.class,
+                auditorium.id,
+                auditorium.name,
+                auditorium.address,
+                auditorium.maxColumn,
+                auditorium.maxRow,
                 Projections.constructor(
-                    AuditoriumResponseDto.class,
-                    auditorium.id,
-                    auditorium.name,
-                    auditorium.address,
-                    auditorium.maxColumn,
-                    auditorium.maxRow,
-                    Projections.constructor(
-                        UserResponseDto.class,
-                        user.id,
-                        user.username,
-                        user.email,
-                        user.nickname
-                    )
+                    UserResponseDto.class,
+                    user.id,
+                    user.username,
+                    user.email,
+                    user.nickname
                 )
             )
-            .from(auditorium)
-            .leftJoin(user)
-            .on(auditorium.companyUserId.eq(user.id))
-            .where(auditorium.id.eq(auditoriumId))
-            .fetchOne();
-    }
+        )
+        .from(auditorium)
+        .leftJoin(user)
+        .on(auditorium.companyUserId.eq(user.id))
+        .where(auditorium.id.eq(auditoriumId))
+        .fetchOne();
+  }
 }

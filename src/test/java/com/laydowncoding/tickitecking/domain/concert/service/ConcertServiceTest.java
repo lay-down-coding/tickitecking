@@ -1,14 +1,8 @@
 package com.laydowncoding.tickitecking.domain.concert.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.anyList;
-import static org.mockito.BDDMockito.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.times;
-import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.*;
 
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
@@ -165,8 +159,7 @@ public class ConcertServiceTest {
     @Test
     void getAll_fail() {
         //given
-        given(concertRepository.getAllConcerts(any())).willReturn(
-            new PageImpl<>(Collections.emptyList()));
+        given(concertRepository.getAllConcerts(any())).willReturn(new PageImpl<>(Collections.emptyList()));
 
         //when
         Page<AllConcertResponseDto> response = concertService.getAllConcerts(1, 10);

@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SeatServiceImpl implements SeatService {
 
-    private final SeatPriceRepository seatPriceRepository;
-    private final SeatRepository seatRepository;
+  private final SeatPriceRepository seatPriceRepository;
+  private final SeatRepository seatRepository;
 
     @Override
     public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
@@ -41,15 +41,13 @@ public class SeatServiceImpl implements SeatService {
 
         seatRepository.saveAllSeat(seatList);
     }
-
     @Override
     public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
         AuditoriumCapacityDto capacityDto) {
         List<Seat> seatList = seatRequestDtos.stream()
             .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
                 .flatMap(
-                    horizontal -> IntStream.rangeClosed(1,
-                            Integer.parseInt(capacityDto.getMaxColumn()))
+                    horizontal -> IntStream.rangeClosed(1, Integer.parseInt(capacityDto.getMaxColumn()))
                         .mapToObj(vertical -> Seat.builder()
                             .grade(seatRequest.getGrade())
                             .concertId(concertId)
@@ -64,84 +62,84 @@ public class SeatServiceImpl implements SeatService {
         seatRepository.updateAllSeat(seatList);
     }
 
-    @Override
-    public void deleteSeats(Long concertId) {
-        List<Seat> seatList = seatRepository.findAllByConcertId(concertId);
+  @Override
+  public void deleteSeats(Long concertId) {
+    List<Seat> seatList = seatRepository.findAllByConcertId(concertId);
 
-        seatRepository.deleteAll(seatList);
+    seatRepository.deleteAll(seatList);
+  }
+
+  @Override
+  public void createSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos) {
+    List<SeatPrice> seatPrices = seatPricesToEntity(concertId, seatPriceRequestDtos);
+    seatPriceRepository.saveAll(seatPrices);
+  }
+
+  @Override
+  public List<SeatPriceResponseDto> updateSeatPrices(Long concertId,
+      List<SeatPriceRequestDto> seatPriceRequestDtos) {
+    seatPriceRepository.deleteAllByConcertId(concertId);
+    List<SeatPrice> seatPrices = seatPricesToEntity(concertId, seatPriceRequestDtos);
+    List<SeatPrice> saved = seatPriceRepository.saveAll(seatPrices);
+    return saved.stream()
+        .map(seatPrice -> new SeatPriceResponseDto(seatPrice.getGrade(), seatPrice.getPrice()))
+        .toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<SeatPriceResponseDto> getSeatPrices(Long concertId) {
+    List<SeatPrice> seatPrices = seatPriceRepository.findAllByConcertId(concertId);
+    return seatPrices.stream()
+        .map(seatPrice -> new SeatPriceResponseDto(seatPrice.getGrade(), seatPrice.getPrice()))
+        .toList();
+  }
+
+  @Override
+  public void deleteSeatPrices(Long concertId) {
+    seatPriceRepository.deleteAllByConcertId(concertId);
+  }
+
+  private List<SeatPrice> seatPricesToEntity(Long concertId,
+      List<SeatPriceRequestDto> seatPriceRequestDtos) {
+
+    List<SeatPrice> seatPrices = new ArrayList<>();
+
+    for (SeatPriceRequestDto requestDto : seatPriceRequestDtos) {
+      SeatPrice seatPrice = SeatPrice.builder()
+          .grade(requestDto.getGrade())
+          .price(requestDto.getPrice())
+          .concertId(concertId)
+          .build();
+      seatPrices.add(seatPrice);
     }
+    return seatPrices;
+  }
 
-    @Override
-    public void createSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos) {
-        List<SeatPrice> seatPrices = seatPricesToEntity(concertId, seatPriceRequestDtos);
-        seatPriceRepository.saveAll(seatPrices);
+  private boolean isValidHorizontal(String horizontal, String maxRow) {
+    char horizontalChar = horizontal.charAt(0);
+    char maxRowChar = maxRow.charAt(0);
+    if (horizontalChar > maxRowChar) {
+      throw new CustomRuntimeException(INVALID_HORIZONTAL.getMessage());
     }
+    return true;
+  }
 
-    @Override
-    public List<SeatPriceResponseDto> updateSeatPrices(Long concertId,
-        List<SeatPriceRequestDto> seatPriceRequestDtos) {
-        seatPriceRepository.deleteAllByConcertId(concertId);
-        List<SeatPrice> seatPrices = seatPricesToEntity(concertId, seatPriceRequestDtos);
-        List<SeatPrice> saved = seatPriceRepository.saveAll(seatPrices);
-        return saved.stream()
-            .map(seatPrice -> new SeatPriceResponseDto(seatPrice.getGrade(), seatPrice.getPrice()))
-            .toList();
-    }
+  private Stream<Seat> generateSeats(Long concertId, AuditoriumCapacityDto capacityDto,
+      String horizontal, String grade) {
+    int maxColumn = Integer.parseInt(capacityDto.getMaxColumn());
+    return IntStream.rangeClosed(1, maxColumn)
+        .mapToObj(vertical -> createSeat(concertId, capacityDto, horizontal, vertical, grade));
+  }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<SeatPriceResponseDto> getSeatPrices(Long concertId) {
-        List<SeatPrice> seatPrices = seatPriceRepository.findAllByConcertId(concertId);
-        return seatPrices.stream()
-            .map(seatPrice -> new SeatPriceResponseDto(seatPrice.getGrade(), seatPrice.getPrice()))
-            .toList();
-    }
-
-    @Override
-    public void deleteSeatPrices(Long concertId) {
-        seatPriceRepository.deleteAllByConcertId(concertId);
-    }
-
-    private List<SeatPrice> seatPricesToEntity(Long concertId,
-        List<SeatPriceRequestDto> seatPriceRequestDtos) {
-
-        List<SeatPrice> seatPrices = new ArrayList<>();
-
-        for (SeatPriceRequestDto requestDto : seatPriceRequestDtos) {
-            SeatPrice seatPrice = SeatPrice.builder()
-                .grade(requestDto.getGrade())
-                .price(requestDto.getPrice())
-                .concertId(concertId)
-                .build();
-            seatPrices.add(seatPrice);
-        }
-        return seatPrices;
-    }
-
-    private boolean isValidHorizontal(String horizontal, String maxRow) {
-        char horizontalChar = horizontal.charAt(0);
-        char maxRowChar = maxRow.charAt(0);
-        if (horizontalChar > maxRowChar) {
-            throw new CustomRuntimeException(INVALID_HORIZONTAL.getMessage());
-        }
-        return true;
-    }
-
-    private Stream<Seat> generateSeats(Long concertId, AuditoriumCapacityDto capacityDto,
-        String horizontal, String grade) {
-        int maxColumn = Integer.parseInt(capacityDto.getMaxColumn());
-        return IntStream.rangeClosed(1, maxColumn)
-            .mapToObj(vertical -> createSeat(concertId, capacityDto, horizontal, vertical, grade));
-    }
-
-    private Seat createSeat(Long concertId, AuditoriumCapacityDto capacityDto, String horizontal,
-        int vertical, String grade) {
-        return Seat.builder()
-            .vertical(String.valueOf(vertical))
-            .horizontal(horizontal)
-            .grade(grade)
-            .auditoriumId(capacityDto.getAuditoriumId())
-            .concertId(concertId)
-            .build();
-    }
+  private Seat createSeat(Long concertId, AuditoriumCapacityDto capacityDto, String horizontal,
+      int vertical, String grade) {
+    return Seat.builder()
+        .vertical(String.valueOf(vertical))
+        .horizontal(horizontal)
+        .grade(grade)
+        .auditoriumId(capacityDto.getAuditoriumId())
+        .concertId(concertId)
+        .build();
+  }
 }

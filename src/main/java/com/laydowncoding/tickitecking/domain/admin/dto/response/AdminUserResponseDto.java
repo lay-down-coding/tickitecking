@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AdminUserResponseDto {
 
-    private Long userId;
-    private String username;
-    private String email;
-    private String nickname;
-    private String role;
+  private Long userId;
+  private String username;
+  private String email;
+  private String nickname;
+  private String role;
 }

@@ -6,8 +6,7 @@ import com.laydowncoding.tickitecking.domain.reservations.dto.ReservationRespons
 
 public interface ReservationService {
 
-    ReservationResponseDto createReservation(Long userId, Long concertId,
-        ReservationRequestDto requestDto);
+    ReservationResponseDto createReservation(Long userId, Long concertId, ReservationRequestDto requestDto);
 
     ConcertSeatResponseDto getConcertSeats(Long concertId);
 

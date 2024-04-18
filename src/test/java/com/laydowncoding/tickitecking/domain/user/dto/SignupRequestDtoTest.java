@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.user.dto;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
