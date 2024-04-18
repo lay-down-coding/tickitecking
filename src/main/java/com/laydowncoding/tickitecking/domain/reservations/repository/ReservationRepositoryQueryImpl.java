@@ -11,6 +11,7 @@ import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminConcertResp
 import com.laydowncoding.tickitecking.domain.admin.dto.response.AdminReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import com.laydowncoding.tickitecking.domain.seat.dto.response.SeatResponseDto;
+import com.laydowncoding.tickitecking.domain.seat.entity.SeatStatus;
 import com.laydowncoding.tickitecking.domain.user.dto.QUserReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserReservationResponseDto;
 import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
@@ -26,19 +27,17 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
 
   @Override
   public List<UnreservableSeat> findUnreservableSeats(Long concertId) {
-    return jpaQueryFactory.select(seat.horizontal, seat.vertical, seat.locked, seat.reserved)
+    return jpaQueryFactory.select(seat.horizontal, seat.vertical, seat.seatStatus)
         .from(seat)
-        .where(
-            seat.isAvailable.eq(false)
-                .and(seat.concertId.eq(concertId))
-        )
+        .where(seat.seatStatus.eq(SeatStatus.LOCKED)
+                .or(seat.seatStatus.eq(SeatStatus.RESERVED))
+                    .and(seat.concertId.eq(concertId)))
         .fetch()
         .stream()
         .map(tuple -> UnreservableSeat.builder()
             .horizontal(tuple.get(seat.horizontal))
             .vertical(tuple.get(seat.vertical))
-            .isReserved(Boolean.TRUE.equals(tuple.get(seat.reserved)))
-            .isLocked(Boolean.TRUE.equals(tuple.get(seat.locked)))
+            .status(tuple.get(seat.seatStatus))
             .build())
         .toList();
   }
@@ -98,9 +97,7 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
                     seat.id,
                     seat.vertical,
                     seat.horizontal,
-                    seat.locked,
-                    seat.reserved,
-                    seat.isAvailable,
+                    seat.seatStatus,
                     seat.grade
                 ),
                 reservation.createdAt,

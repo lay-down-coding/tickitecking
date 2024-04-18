@@ -140,8 +140,6 @@ public class SeatServiceImpl implements SeatService {
         .grade(grade)
         .auditoriumId(capacityDto.getAuditoriumId())
         .concertId(concertId)
-        .reserved("N")
-        .availability("Y")
         .build();
   }
 }

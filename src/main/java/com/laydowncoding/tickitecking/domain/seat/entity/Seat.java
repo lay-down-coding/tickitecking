@@ -2,6 +2,8 @@ package com.laydowncoding.tickitecking.domain.seat.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,6 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "seats")
@@ -16,78 +19,62 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Seat {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column
-  private String vertical;
+    @Column
+    private String vertical;
 
-  @Column
-  private String horizontal;
+    @Column
+    private String horizontal;
 
-  @Column(columnDefinition = "CHAR(1)")
-  private String grade;
+    @Column(columnDefinition = "CHAR(1)")
+    private String grade;
 
-  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
-  private boolean locked;
+    @Column(nullable = false)
+    private Long auditoriumId;
 
-  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
-  private boolean reserved;
+    @Column(nullable = false)
+    private Long concertId;
 
-  @Column(nullable = false)
-  private Long auditoriumId;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'AVAILABLE'")
+    private SeatStatus seatStatus;
 
-  @Column(nullable = false)
-  private Long concertId;
+    @Builder
+    public Seat(String vertical, String horizontal, String grade,
+        Long auditoriumId, Long concertId, SeatStatus seatStatus) {
+        this.vertical = vertical;
+        this.horizontal = horizontal;
+        this.grade = grade;
+        this.auditoriumId = auditoriumId;
+        this.concertId = concertId;
+        this.seatStatus = seatStatus;
+    }
 
-  @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
-  private boolean isAvailable;
+    public void update(String grade) {
+        this.grade = grade;
+    }
 
-  public Seat(String vertical, String horizontal, String grade, Long auditoriumId) {
-    this.vertical = vertical;
-    this.horizontal = horizontal;
-    this.grade = grade;
-    this.auditoriumId = auditoriumId;
-  }
+    public void toggleLock() {
+        if (this.seatStatus.equals(SeatStatus.LOCKED)) {
+            this.seatStatus = SeatStatus.AVAILABLE;
+        } else {
+            this.seatStatus = SeatStatus.LOCKED;
+        }
+    }
 
-  @Builder
-  public Seat(String vertical, String horizontal, String grade,
-      Long auditoriumId, Long concertId, boolean reserved, boolean locked) {
-    this.vertical = vertical;
-    this.horizontal = horizontal;
-    this.grade = grade;
-    this.auditoriumId = auditoriumId;
-    this.concertId = concertId;
-    this.reserved = reserved;
-    this.locked = locked;
-    this.isAvailable = true;
-  }
+    public void reserve() {
+        this.seatStatus = SeatStatus.RESERVED;
+    }
 
-  public void update(String grade) {
-      this.grade = grade;
-  }
+    public void cancel() {
+        this.seatStatus = SeatStatus.AVAILABLE;
+    }
 
-  public void toggleLock() {
-      this.locked = !locked;
-      assignAvailability();
-  }
-
-  public void reserve() {
-      this.reserved = true;
-      assignAvailability();
-  }
-
-  public void cancel() {
-      this.reserved = false;
-      assignAvailability();
-  }
-
-  public boolean isReservable() {
-      return !this.locked && !this.reserved;
-  }
-
-  private void assignAvailability() {
-      this.isAvailable = !locked && !reserved;
-  }
+    public boolean isReservable() {
+        return this.seatStatus.equals(SeatStatus.AVAILABLE);
+    }
 }
