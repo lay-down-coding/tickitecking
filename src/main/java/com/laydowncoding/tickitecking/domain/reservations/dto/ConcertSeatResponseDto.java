@@ -12,6 +12,6 @@ import lombok.Getter;
 @Builder
 public class ConcertSeatResponseDto {
 
-    private ConcertResponseDto concertResponseDto;
+    private ConcertResponseDto concert;
     private List<UnreservableSeat> unreservableSeats;
 }

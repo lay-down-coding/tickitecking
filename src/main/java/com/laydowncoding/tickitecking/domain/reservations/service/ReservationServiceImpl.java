@@ -80,7 +80,7 @@ public class ReservationServiceImpl implements ReservationService {
         ConcertResponseDto concert = concertService.getConcert(concertId);
 
         return ConcertSeatResponseDto.builder()
-            .concertResponseDto(concert)
+            .concert(concert)
             .unreservableSeats(unreservableSeats)
             .build();
     }
