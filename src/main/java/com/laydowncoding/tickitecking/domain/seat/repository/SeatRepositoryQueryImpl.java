@@ -49,7 +49,7 @@ public class SeatRepositoryQueryImpl implements SeatRepositoryQuery {
 
       @Override
       public int getBatchSize() {
-        return 100;
+        return seatList.size();
       }
     });
   }
