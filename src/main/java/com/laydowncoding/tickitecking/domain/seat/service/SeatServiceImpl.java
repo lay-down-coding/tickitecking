@@ -45,18 +45,22 @@ public class SeatServiceImpl implements SeatService {
   @Override
   public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
       AuditoriumCapacityDto capacityDto) {
-    for (SeatRequestDto seatRequest : seatRequestDtos) {
-      for (String horizontal : seatRequest.getHorizontals()) {
-        for (int vertical = 1; vertical <= Integer.parseInt(capacityDto.getMaxColumn());
-            vertical++) {
-          Seat seat = seatRepository.findByConcertIdAndHorizontalAndVertical(
-              concertId, horizontal, String.valueOf(vertical));
-          if (seat != null) {
-            seat.update(seatRequest.getGrade());
-          }
-        }
-      }
-    }
+    List<Seat> seatList = seatRequestDtos.stream()
+        .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
+            .flatMap(
+                horizontal -> IntStream.rangeClosed(1, Integer.parseInt(capacityDto.getMaxColumn()))
+                    .mapToObj(vertical -> Seat.builder()
+                        .grade(seatRequest.getGrade())
+                        .concertId(concertId)
+                        .horizontal(horizontal)
+                        .vertical(String.valueOf(vertical))
+                        .build()
+                    )
+            )
+        )
+        .collect(Collectors.toList());
+
+    seatRepository.updateAllSeat(seatList);
   }
 
   @Override
