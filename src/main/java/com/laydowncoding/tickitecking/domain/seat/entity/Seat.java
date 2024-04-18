@@ -26,11 +26,14 @@ public class Seat {
   @Column
   private String horizontal;
 
-  @Column(columnDefinition = "CHAR(1) default 'Y'")
-  private String availability;
-
   @Column(columnDefinition = "CHAR(1)")
   private String grade;
+
+  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+  private boolean locked;
+
+  @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+  private boolean reserved;
 
   @Column(nullable = false)
   private Long auditoriumId;
@@ -38,50 +41,53 @@ public class Seat {
   @Column(nullable = false)
   private Long concertId;
 
-  @Column(nullable = false, columnDefinition = "CHAR(1) default 'N'")
-  private String reserved;
+  @Column(columnDefinition = "BOOLEAN DEFAULT TRUE")
+  private boolean isAvailable;
 
-  public Seat(String vertical, String horizontal, String availability, String grade, Long auditoriumId) {
+  public Seat(String vertical, String horizontal, String grade, Long auditoriumId) {
     this.vertical = vertical;
     this.horizontal = horizontal;
-    this.availability = availability;
     this.grade = grade;
     this.auditoriumId = auditoriumId;
   }
 
   @Builder
   public Seat(String vertical, String horizontal, String grade,
-      Long auditoriumId, Long concertId, String reserved, String availability) {
+      Long auditoriumId, Long concertId, boolean reserved, boolean locked) {
     this.vertical = vertical;
     this.horizontal = horizontal;
     this.grade = grade;
     this.auditoriumId = auditoriumId;
     this.concertId = concertId;
     this.reserved = reserved;
-    this.availability = availability;
+    this.locked = locked;
+    this.isAvailable = true;
   }
 
   public void update(String grade) {
-    this.grade = grade;
+      this.grade = grade;
   }
 
-  public void togleLock() {
-    if ("Y".equals(availability)) {
-      this.availability = "N";
-    } else {
-      this.availability = "Y";
-    }
+  public void toggleLock() {
+      this.locked = !locked;
+      assignAvailability();
   }
 
   public void reserve() {
-    this.reserved = "Y";
+      this.reserved = true;
+      assignAvailability();
   }
 
   public void cancel() {
-    this.reserved = "N";
+      this.reserved = false;
+      assignAvailability();
   }
 
   public boolean isReservable() {
-    return this.reserved.equals("N") && this.availability.equals("Y");
+      return !this.locked && !this.reserved;
+  }
+
+  private void assignAvailability() {
+      this.isAvailable = !locked && !reserved;
   }
 }

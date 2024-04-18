@@ -122,7 +122,7 @@ public class AdminServiceImpl implements AdminService {
     List<Seat> seats = seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(
         auditoriumId, requestDto.getHorizontal(), requestDto.getVertical());
     for (Seat seat: seats) {
-      seat.togleLock();
+      seat.toggleLock();
     }
   }
 

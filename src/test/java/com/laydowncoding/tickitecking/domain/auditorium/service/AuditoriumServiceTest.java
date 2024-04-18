@@ -65,7 +65,7 @@ public class AuditoriumServiceTest {
         1L
     );
 
-    seat = new Seat("1", "A", "Y", "G", 1L);
+    seat = new Seat("1", "A", "G", 1L);
   }
 
   @Test

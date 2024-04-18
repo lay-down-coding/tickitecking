@@ -47,8 +47,6 @@ public class SeatServiceImpl implements SeatService {
                         .grade(seatRequest.getGrade())
                         .auditoriumId(capacityDto.getAuditoriumId())
                         .concertId(concertId)
-                        .reserved("N")
-                        .availability("Y")
                         .build();
                     seatList.add(seat);
                 }

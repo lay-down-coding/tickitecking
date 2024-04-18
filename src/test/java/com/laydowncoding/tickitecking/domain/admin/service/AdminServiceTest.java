@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -191,7 +192,6 @@ public class AdminServiceTest {
         .concertId(1L)
         .horizontal("A")
         .vertical("1")
-        .reserved("N")
         .grade("G")
         .auditoriumId(1L)
         .build();
@@ -199,7 +199,6 @@ public class AdminServiceTest {
         .concertId(2L)
         .horizontal("A")
         .vertical("1")
-        .reserved("N")
         .grade("G")
         .auditoriumId(1L)
         .build();
@@ -210,8 +209,8 @@ public class AdminServiceTest {
 
     adminService.lockSeat(1L, new AdminLockSeatRequestDto("C", "Y"));
 
-    assertTrue(seat1.getReserved().equals("N"));
-    assertTrue(seat2.getReserved().equals("N"));
+    assertFalse(seat1.isReservable());
+    assertFalse(seat2.isReservable());
   }
 
   @Test
