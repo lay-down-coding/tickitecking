@@ -1,8 +1,13 @@
 package com.laydowncoding.tickitecking.domain.reservation.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
 import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.concert.entitiy.Concert;
@@ -167,7 +172,6 @@ public class ReservationServiceTest {
         //given
         given(reservationRepository.findById(any())).willReturn(Optional.of(reservation));
         given(seatRepository.findById(anyLong())).willReturn(Optional.of(seat));
-
 
         //when & then
         assertDoesNotThrow(() -> reservationService.deleteReservation(1L, 1L));

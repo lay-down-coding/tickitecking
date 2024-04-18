@@ -25,55 +25,55 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auditoriums")
 public class AuditoriumController {
 
-  private final AuditoriumService auditoriumService;
+    private final AuditoriumService auditoriumService;
 
-  @PostMapping
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> createAuditorium(
-      @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
-      @AuthenticationPrincipal UserDetailsImpl userDetails
-  ) {
-    auditoriumService.createAuditorium(auditoriumRequest, userDetails.getUser().getId());
-    return CommonResponse.ok(null);
-  }
+    @PostMapping
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> createAuditorium(
+        @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        auditoriumService.createAuditorium(auditoriumRequest, userDetails.getUser().getId());
+        return CommonResponse.ok(null);
+    }
 
-  @PutMapping("/{auditoriumId}")
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> updateAuditorium(
-      @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
-      @PathVariable Long auditoriumId,
-      @AuthenticationPrincipal UserDetailsImpl userDetails
-  ) {
-    auditoriumService.updateAuditorium(auditoriumRequest, auditoriumId,
-        userDetails.getUser().getId());
-    return CommonResponse.ok(null);
-  }
+    @PutMapping("/{auditoriumId}")
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> updateAuditorium(
+        @RequestBody @Valid AuditoriumRequestDto auditoriumRequest,
+        @PathVariable Long auditoriumId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        auditoriumService.updateAuditorium(auditoriumRequest, auditoriumId,
+            userDetails.getUser().getId());
+        return CommonResponse.ok(null);
+    }
 
-  @DeleteMapping("/{auditoriumId}")
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> deleteAuditorium(
-      @PathVariable Long auditoriumId,
-      @AuthenticationPrincipal UserDetailsImpl userDetails
-  ) {
-    auditoriumService.deleteAuditorium(auditoriumId, userDetails.getUser().getId());
-    return CommonResponse.ok(null);
-  }
+    @DeleteMapping("/{auditoriumId}")
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> deleteAuditorium(
+        @PathVariable Long auditoriumId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        auditoriumService.deleteAuditorium(auditoriumId, userDetails.getUser().getId());
+        return CommonResponse.ok(null);
+    }
 
-  @GetMapping
-  @Secured({"ROLE_COMPANY_USER"})
-  public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums(
-      @AuthenticationPrincipal UserDetailsImpl userDetails
-  ) {
-    List<AuditoriumResponseDto> response = auditoriumService.getAuditoriums(
-        userDetails.getUser().getId());
-    return CommonResponse.ok(response);
-  }
+    @GetMapping
+    @Secured({"ROLE_COMPANY_USER"})
+    public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        List<AuditoriumResponseDto> response = auditoriumService.getAuditoriums(
+            userDetails.getUser().getId());
+        return CommonResponse.ok(response);
+    }
 
-  @GetMapping("/{auditoriumId}")
-  public ResponseEntity<CommonResponse<AuditoriumResponseDto>> getAuditorium(
-      @PathVariable Long auditoriumId
-  ) {
-    AuditoriumResponseDto response = auditoriumService.getAuditorium(auditoriumId);
-    return CommonResponse.ok(response);
-  }
+    @GetMapping("/{auditoriumId}")
+    public ResponseEntity<CommonResponse<AuditoriumResponseDto>> getAuditorium(
+        @PathVariable Long auditoriumId
+    ) {
+        AuditoriumResponseDto response = auditoriumService.getAuditorium(auditoriumId);
+        return CommonResponse.ok(response);
+    }
 }

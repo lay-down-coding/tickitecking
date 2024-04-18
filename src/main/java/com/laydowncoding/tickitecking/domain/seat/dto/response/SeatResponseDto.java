@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SeatResponseDto {
 
-  private Long id;
-  private String vertical;
-  private String horizontal;
-  private SeatStatus status;
-  private String grade;
+    private Long id;
+    private String vertical;
+    private String horizontal;
+    private SeatStatus status;
+    private String grade;
 }

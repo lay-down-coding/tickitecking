@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AdminUserUpdateRequestDto {
 
-  private String username;
-  private String password;
-  private String email;
-  private String nickname;
-  private UserRole role;
+    private String username;
+    private String password;
+    private String email;
+    private String nickname;
+    private UserRole role;
 }

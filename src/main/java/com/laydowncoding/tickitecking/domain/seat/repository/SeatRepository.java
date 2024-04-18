@@ -7,13 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SeatRepository extends JpaRepository<Seat, Long>, SeatRepositoryQuery {
 
-  List<Seat> findAllByConcertId(Long concertId);
+    List<Seat> findAllByConcertId(Long concertId);
 
-  Seat findByConcertIdAndHorizontalAndVertical(Long concertId, String horizontal, String vertical);
+    Seat findByConcertIdAndHorizontalAndVertical(Long concertId, String horizontal,
+        String vertical);
 
-  List<Seat> findAllByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal, String vertical);
+    List<Seat> findAllByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal,
+        String vertical);
 
-  @Query("select s from Seat s where s.horizontal = :horizontal and s.vertical = :vertical "
-      + "and s.concertId = :concertId")
-  Seat findSeatForReservation(Long concertId, String horizontal, String vertical);
+    @Query("select s from Seat s where s.horizontal = :horizontal and s.vertical = :vertical "
+        + "and s.concertId = :concertId")
+    Seat findSeatForReservation(Long concertId, String horizontal, String vertical);
 }

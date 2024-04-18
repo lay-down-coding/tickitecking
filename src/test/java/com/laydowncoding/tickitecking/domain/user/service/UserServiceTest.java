@@ -1,8 +1,13 @@
 package com.laydowncoding.tickitecking.domain.user.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
@@ -178,7 +183,8 @@ public class UserServiceTest {
     void get_reservation_success() {
         //given
         given(reservationRepository.findReservations(anyLong()))
-            .willReturn(List.of(new UserReservationResponseDto(), new UserReservationResponseDto()));
+            .willReturn(
+                List.of(new UserReservationResponseDto(), new UserReservationResponseDto()));
 
         //when
         List<UserReservationResponseDto> response = userService.getReservations(1L);

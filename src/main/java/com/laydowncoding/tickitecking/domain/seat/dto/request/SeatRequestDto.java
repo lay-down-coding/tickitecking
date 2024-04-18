@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SeatRequestDto {
 
-  private List<String> horizontals;
-  private String grade;
+    private List<String> horizontals;
+    private String grade;
 }
