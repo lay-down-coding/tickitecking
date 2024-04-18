@@ -87,9 +87,7 @@ public class ReservationServiceTest {
             .concertId(1L)
             .horizontal("A")
             .vertical("1")
-            .reserved("N")
             .grade("G")
-            .availability("Y")
             .auditoriumId(1L)
             .build();
         concert = Concert.builder()
