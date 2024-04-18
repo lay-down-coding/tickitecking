@@ -17,7 +17,6 @@ import com.laydowncoding.tickitecking.domain.user.dto.UserResponseDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,18 +26,19 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
 
   @Override
   public List<UnreservableSeat> findUnreservableSeats(Long concertId) {
-    return jpaQueryFactory.select(seat.horizontal, seat.vertical, seat.availability, seat.reserved)
+    return jpaQueryFactory.select(seat.horizontal, seat.vertical, seat.locked, seat.reserved)
         .from(seat)
-        .where(seat.reserved.eq("Y")
-            .and(seat.concertId.eq(concertId)
-                .or(seat.availability.eq("N"))))
+        .where(
+            seat.isAvailable.eq(false)
+                .and(seat.concertId.eq(concertId))
+        )
         .fetch()
         .stream()
         .map(tuple -> UnreservableSeat.builder()
             .horizontal(tuple.get(seat.horizontal))
             .vertical(tuple.get(seat.vertical))
-            .isReserved(Objects.equals(tuple.get(seat.reserved), "Y"))
-            .isLocked(Objects.equals(tuple.get(seat.availability), "N"))
+            .isReserved(Boolean.TRUE.equals(tuple.get(seat.reserved)))
+            .isLocked(Boolean.TRUE.equals(tuple.get(seat.locked)))
             .build())
         .toList();
   }
@@ -98,7 +98,9 @@ public class ReservationRepositoryQueryImpl implements ReservationRepositoryQuer
                     seat.id,
                     seat.vertical,
                     seat.horizontal,
-                    seat.availability,
+                    seat.locked,
+                    seat.reserved,
+                    seat.isAvailable,
                     seat.grade
                 ),
                 reservation.createdAt,

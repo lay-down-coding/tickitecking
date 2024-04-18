@@ -13,7 +13,7 @@ public interface SeatRepository extends JpaRepository<Seat, Long>, SeatRepositor
 
   List<Seat> findAllByAuditoriumIdAndHorizontalAndVertical(Long auditoriumId, String horizontal, String vertical);
 
-  @Query("select s from Seat s where s.concertId = :concertId "
-      + "and s.horizontal = :horizontal and s.vertical = :vertical ")
+  @Query("select s from Seat s where s.horizontal = :horizontal and s.vertical = :vertical "
+      + "and s.concertId = :concertId")
   Seat findSeatForReservation(Long concertId, String horizontal, String vertical);
 }
