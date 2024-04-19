@@ -14,10 +14,13 @@ import com.laydowncoding.tickitecking.domain.concert.repository.ConcertRepositor
 import com.laydowncoding.tickitecking.domain.seat.dto.AuditoriumCapacityDto;
 import com.laydowncoding.tickitecking.domain.seat.dto.response.SeatPriceResponseDto;
 import com.laydowncoding.tickitecking.domain.seat.service.SeatService;
+import com.laydowncoding.tickitecking.global.config.CacheConfig;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +62,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = CacheConfig.CONCERT_CACHE, key = "#concertId")
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
         List<SeatPriceResponseDto> seatPriceResponseDtos =
@@ -88,6 +92,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
+    @CacheEvict(value = CacheConfig.CONCERT_CACHE, key = "#concertId")
     public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
         ConcertRequestDto requestDto) {
         Concert concert = findConcert(concertId);

@@ -1,6 +1,7 @@
 package com.laydowncoding.tickitecking.domain.admin.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,6 +23,7 @@ import com.laydowncoding.tickitecking.domain.auditorium.dto.response.AuditoriumR
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.seat.entity.Seat;
+import com.laydowncoding.tickitecking.domain.seat.entity.SeatStatus;
 import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.LoginRequestDto;
 import com.laydowncoding.tickitecking.domain.user.entity.User;
@@ -191,17 +193,17 @@ public class AdminServiceTest {
         .concertId(1L)
         .horizontal("A")
         .vertical("1")
-        .reserved("N")
         .grade("G")
         .auditoriumId(1L)
+        .seatStatus(SeatStatus.AVAILABLE)
         .build();
     Seat seat2 = Seat.builder()
         .concertId(2L)
         .horizontal("A")
         .vertical("1")
-        .reserved("N")
         .grade("G")
         .auditoriumId(1L)
+        .seatStatus(SeatStatus.AVAILABLE)
         .build();
     List<Seat> seats = Arrays.asList(seat1, seat2);
 
@@ -210,8 +212,8 @@ public class AdminServiceTest {
 
     adminService.lockSeat(1L, new AdminLockSeatRequestDto("C", "Y"));
 
-    assertTrue(seat1.getReserved().equals("N"));
-    assertTrue(seat2.getReserved().equals("N"));
+    assertFalse(seat1.isReservable());
+    assertFalse(seat2.isReservable());
   }
 
   @Test

@@ -28,40 +28,39 @@ public class SeatServiceImpl implements SeatService {
   private final SeatPriceRepository seatPriceRepository;
   private final SeatRepository seatRepository;
 
-  @Override
-  public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
-      AuditoriumCapacityDto capacityDto) {
-    List<Seat> seatList = seatRequestDtos.stream()
-        .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
-            .filter(horizontal -> isValidHorizontal(horizontal, capacityDto.getMaxRow()))
-            .flatMap(horizontal -> generateSeats(concertId, capacityDto, horizontal,
-                seatRequest.getGrade()))
-        )
-        .collect(Collectors.toList());
-
-    seatRepository.saveAllSeat(seatList);
-  }
-
-  @Override
-  public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
-      AuditoriumCapacityDto capacityDto) {
-    List<Seat> seatList = seatRequestDtos.stream()
-        .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
-            .flatMap(
-                horizontal -> IntStream.rangeClosed(1, Integer.parseInt(capacityDto.getMaxColumn()))
-                    .mapToObj(vertical -> Seat.builder()
-                        .grade(seatRequest.getGrade())
-                        .concertId(concertId)
-                        .horizontal(horizontal)
-                        .vertical(String.valueOf(vertical))
-                        .build()
-                    )
+    @Override
+    public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+        AuditoriumCapacityDto capacityDto) {
+        List<Seat> seatList = seatRequestDtos.stream()
+            .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
+                .filter(horizontal -> isValidHorizontal(horizontal, capacityDto.getMaxRow()))
+                .flatMap(horizontal -> generateSeats(concertId, capacityDto, horizontal,
+                    seatRequest.getGrade()))
             )
-        )
-        .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
-    seatRepository.updateAllSeat(seatList);
-  }
+        seatRepository.saveAllSeat(seatList);
+    }
+    @Override
+    public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+        AuditoriumCapacityDto capacityDto) {
+        List<Seat> seatList = seatRequestDtos.stream()
+            .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
+                .flatMap(
+                    horizontal -> IntStream.rangeClosed(1, Integer.parseInt(capacityDto.getMaxColumn()))
+                        .mapToObj(vertical -> Seat.builder()
+                            .grade(seatRequest.getGrade())
+                            .concertId(concertId)
+                            .horizontal(horizontal)
+                            .vertical(String.valueOf(vertical))
+                            .build()
+                        )
+                )
+            )
+            .collect(Collectors.toList());
+
+        seatRepository.updateAllSeat(seatList);
+    }
 
   @Override
   public void deleteSeats(Long concertId) {
@@ -141,8 +140,6 @@ public class SeatServiceImpl implements SeatService {
         .grade(grade)
         .auditoriumId(capacityDto.getAuditoriumId())
         .concertId(concertId)
-        .reserved("N")
-        .availability("Y")
         .build();
   }
 }
