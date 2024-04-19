@@ -17,10 +17,4 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager(CONCERT_CACHE);
     }
-
-    //매 6시간마다 콘서트 캐시 제거
-    @CacheEvict(allEntries = true, value = {CONCERT_CACHE})
-    @Scheduled(cron = "0 0 */6 * * *")
-    public void cacheEvict() {
-    }
 }
