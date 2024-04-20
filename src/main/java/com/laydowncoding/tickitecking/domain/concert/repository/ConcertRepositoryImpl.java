@@ -28,7 +28,7 @@ public class ConcertRepositoryImpl implements ConcertRepositoryQuery {
 
   @Override
   public Page<AllConcertResponseDto> getAllConcerts(Pageable pageable) {
-    JPQLQuery<AllConcertResponseDto> query = queryFactory.select(
+    List<AllConcertResponseDto> query = queryFactory.select(
             Projections.constructor(
                 AllConcertResponseDto.class,
                 concert.id,
@@ -43,13 +43,15 @@ public class ConcertRepositoryImpl implements ConcertRepositoryQuery {
         .join(user).on(concert.companyUserId.eq(user.id))
         .join(auditorium).on(concert.auditoriumId.eq(auditorium.id))
         .join(image).on(concert.id.eq(image.concertId))
-        .orderBy(concert.id.desc());
-
-    List<AllConcertResponseDto> data = query
+        .orderBy(concert.id.desc())
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
-        .fetch();
+        .fetch();;
 
-    return PageableExecutionUtils.getPage(data, pageable, query::fetchCount);
+    Long totalCount = queryFactory.select(concert.count())
+        .from(concert)
+        .fetchFirst();
+
+    return PageableExecutionUtils.getPage(query, pageable, () -> totalCount);
   }
 }
