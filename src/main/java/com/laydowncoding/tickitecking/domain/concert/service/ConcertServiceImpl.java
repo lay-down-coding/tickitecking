@@ -15,9 +15,13 @@ import com.laydowncoding.tickitecking.domain.seat.dto.AuditoriumCapacityDto;
 import com.laydowncoding.tickitecking.domain.seat.dto.response.SeatPriceResponseDto;
 import com.laydowncoding.tickitecking.domain.seat.service.SeatService;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
+import com.laydowncoding.tickitecking.global.util.RestPage;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -82,12 +86,14 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "concerts", key = "'all'", cacheManager = "cacheManager", condition = "#page == 1", unless = "#result == null")
     public Page<AllConcertResponseDto> getAllConcerts(int page, int size) {
         Pageable pageable = PageRequest.of(page-1, size);
-        return concertRepository.getAllConcerts(pageable);
+        return new RestPage<>(concertRepository.getAllConcerts(pageable));
     }
 
     @Override
+    @CacheEvict(value = "concerts", key = "'all'")
     public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
         ConcertRequestDto requestDto) {
         Concert concert = findConcert(concertId);
@@ -117,6 +123,7 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
+    @CacheEvict(value = "concerts", key = "'all'")
     public void deleteConcert(Long companyUserId, Long concertId) {
         Concert concert = findConcert(concertId);
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
