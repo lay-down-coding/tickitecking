@@ -21,6 +21,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,7 @@ public class ConcertServiceImpl implements ConcertService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "concerts", key = "#concertId")
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
         List<SeatPriceResponseDto> seatPriceResponseDtos =
@@ -92,7 +94,10 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    @CacheEvict(value = "concerts", key = "'all'")
+    @Caching(evict = {
+        @CacheEvict(value = "concerts", key = "'all'"),
+        @CacheEvict(value = "concerts", key = "#concertId")}
+    )
     public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
         ConcertRequestDto requestDto) {
         Concert concert = findConcert(concertId);
@@ -122,7 +127,10 @@ public class ConcertServiceImpl implements ConcertService {
     }
 
     @Override
-    @CacheEvict(value = "concerts", key = "'all'")
+    @Caching(evict = {
+        @CacheEvict(value = "concerts", key = "'all'"),
+        @CacheEvict(value = "concerts", key = "#concertId")}
+    )
     public void deleteConcert(Long companyUserId, Long concertId) {
         Concert concert = findConcert(concertId);
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
