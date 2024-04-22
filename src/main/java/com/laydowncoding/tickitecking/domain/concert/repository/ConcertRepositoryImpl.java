@@ -25,7 +25,6 @@ public class ConcertRepositoryImpl implements ConcertRepositoryQuery {
     this.queryFactory = queryFactory;
   }
 
-
   @Override
   public Page<AllConcertResponseDto> getAllConcerts(Pageable pageable) {
     List<AllConcertResponseDto> query = queryFactory.select(

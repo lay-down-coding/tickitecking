@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.entity;
 
+import com.laydowncoding.tickitecking.domain.seat.entity.SeatStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,5 @@ public class UnreservableSeat {
 
     private final String horizontal;
     private final String vertical;
-    private final boolean isReserved;
-    private final boolean isLocked;
+    private final SeatStatus status;
 }

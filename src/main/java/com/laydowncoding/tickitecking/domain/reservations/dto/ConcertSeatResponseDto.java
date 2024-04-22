@@ -1,5 +1,6 @@
 package com.laydowncoding.tickitecking.domain.reservations.dto;
 
+import com.laydowncoding.tickitecking.domain.concert.dto.ConcertResponseDto;
 import com.laydowncoding.tickitecking.domain.reservations.entity.UnreservableSeat;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,6 @@ import lombok.Getter;
 @Builder
 public class ConcertSeatResponseDto {
 
-    private ConcertInfoDto concertInfoDto;
+    private ConcertResponseDto concert;
     private List<UnreservableSeat> unreservableSeats;
 }
