@@ -13,6 +13,7 @@ import com.laydowncoding.tickitecking.domain.seat.repository.SeatRepository;
 import com.laydowncoding.tickitecking.global.exception.CustomRuntimeException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -28,39 +29,34 @@ public class SeatServiceImpl implements SeatService {
   private final SeatPriceRepository seatPriceRepository;
   private final SeatRepository seatRepository;
 
-    @Override
-    public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
-        AuditoriumCapacityDto capacityDto) {
-        List<Seat> seatList = seatRequestDtos.stream()
-            .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
-                .filter(horizontal -> isValidHorizontal(horizontal, capacityDto.getMaxRow()))
-                .flatMap(horizontal -> generateSeats(concertId, capacityDto, horizontal,
-                    seatRequest.getGrade()))
-            )
-            .collect(Collectors.toList());
+  @Override
+  public void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+      AuditoriumCapacityDto capacityDto) {
+    List<Seat> seatList = seatRequestDtos.stream()
+        .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
+            .filter(horizontal -> isValidHorizontal(horizontal, capacityDto.getMaxRow()))
+            .flatMap(horizontal -> generateSeats(concertId, capacityDto, horizontal,
+                seatRequest.getGrade())))
+        .collect(Collectors.toList());
 
-        seatRepository.saveAllSeat(seatList);
-    }
-    @Override
-    public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
-        AuditoriumCapacityDto capacityDto) {
-        List<Seat> seatList = seatRequestDtos.stream()
-            .flatMap(seatRequest -> seatRequest.getHorizontals().stream()
-                .flatMap(
-                    horizontal -> IntStream.rangeClosed(1, Integer.parseInt(capacityDto.getMaxColumn()))
-                        .mapToObj(vertical -> Seat.builder()
-                            .grade(seatRequest.getGrade())
-                            .concertId(concertId)
-                            .horizontal(horizontal)
-                            .vertical(String.valueOf(vertical))
-                            .build()
-                        )
-                )
-            )
-            .collect(Collectors.toList());
+    seatRepository.saveAllSeat(seatList);
+  }
 
-        seatRepository.updateAllSeat(seatList);
-    }
+  @Override
+  public void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+      AuditoriumCapacityDto capacityDto) {
+    List<Seat> seatList = seatRepository.findAllByConcertIdAndAuditoriumId(concertId,
+        capacityDto.getAuditoriumId());
+
+    Set<String> requiredHorizontals = extractValidHorizontals(seatRequestDtos,
+        capacityDto.getMaxRow());
+    Set<Integer> requiredVerticals = rangeToSet(1, Integer.parseInt(capacityDto.getMaxColumn()));
+
+    List<Seat> updateSeatList = filterSeats(seatList, requiredHorizontals, requiredVerticals);
+    updateSeatGrades(updateSeatList, seatRequestDtos, requiredVerticals);
+
+    seatRepository.updateAllSeat(updateSeatList);
+  }
 
   @Override
   public void deleteSeats(Long concertId) {
@@ -141,5 +137,41 @@ public class SeatServiceImpl implements SeatService {
         .auditoriumId(capacityDto.getAuditoriumId())
         .concertId(concertId)
         .build();
+  }
+
+  private Set<String> extractValidHorizontals(List<SeatRequestDto> seatRequestDtos, String maxRow) {
+    return seatRequestDtos.stream()
+        .flatMap(dto -> dto.getHorizontals().stream())
+        .filter(horizontal -> isValidHorizontal(horizontal, maxRow))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<Integer> rangeToSet(int start, int end) {
+    return IntStream.rangeClosed(start, end)
+        .boxed()
+        .collect(Collectors.toSet());
+  }
+
+  private List<Seat> filterSeats(List<Seat> seats, Set<String> requiredHorizontals,
+      Set<Integer> requiredVerticals) {
+    return seats.stream()
+        .filter(seat -> requiredHorizontals.contains(seat.getHorizontal()) &&
+            requiredVerticals.contains(Integer.parseInt(seat.getVertical())))
+        .collect(Collectors.toList());
+  }
+
+  private void updateSeatGrades(List<Seat> seats, List<SeatRequestDto> seatRequestDtos,
+      Set<Integer> requiredVerticals) {
+    seats.forEach(seat -> {
+      seatRequestDtos.forEach(dto -> {
+        dto.getHorizontals().stream()
+            .filter(horizontal -> horizontal.equals(seat.getHorizontal()))
+            .forEach(horizontal -> {
+              if (requiredVerticals.contains(Integer.parseInt(seat.getVertical()))) {
+                seat.update(dto.getGrade());
+              }
+            });
+      });
+    });
   }
 }
