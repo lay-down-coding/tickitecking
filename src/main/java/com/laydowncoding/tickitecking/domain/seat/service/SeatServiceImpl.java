@@ -54,8 +54,6 @@ public class SeatServiceImpl implements SeatService {
 
     List<Seat> updateSeatList = filterSeats(seatList, requiredHorizontals, requiredVerticals);
     updateSeatGrades(updateSeatList, seatRequestDtos, requiredVerticals);
-
-    seatRepository.updateAllSeat(updateSeatList);
   }
 
   @Override
@@ -173,5 +171,7 @@ public class SeatServiceImpl implements SeatService {
             });
       });
     });
+
+    seatRepository.updateAllSeat(seats);
   }
 }
