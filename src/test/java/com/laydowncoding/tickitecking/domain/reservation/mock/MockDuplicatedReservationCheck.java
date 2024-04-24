@@ -11,9 +11,9 @@ public class MockDuplicatedReservationCheck implements DuplicatedReservationChec
     private final Map<String, Set<String>> store = new ConcurrentHashMap<>();
 
     @Override
-    public Boolean isDuplicated(String key, String value, Long expiredTime) {
-        Set<String> values = store.computeIfAbsent(key, k -> new HashSet<>());
-        return !values.add(value);
+    public synchronized Boolean isDuplicated(String key, String value, Long expiredTime) {
+        store.putIfAbsent(key, new HashSet<>());
+        return !store.get(key).add(value);
     }
 
     @Override
