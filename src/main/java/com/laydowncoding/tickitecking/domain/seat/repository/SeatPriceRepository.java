@@ -10,7 +10,7 @@ public interface SeatPriceRepository extends JpaRepository<SeatPrice, Long> {
 
     List<SeatPrice> findAllByConcertId(Long concertId);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query("delete from SeatPrice sp where sp.concertId = :concertId")
     void deleteAllByConcertId(Long concertId);
 }
