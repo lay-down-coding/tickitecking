@@ -45,7 +45,7 @@ public class Seat {
 
     @Builder
     public Seat(String vertical, String horizontal, String grade,
-        Long auditoriumId, Long concertId, SeatStatus seatStatus) {
+            Long auditoriumId, Long concertId, SeatStatus seatStatus) {
         this.vertical = vertical;
         this.horizontal = horizontal;
         this.grade = grade;

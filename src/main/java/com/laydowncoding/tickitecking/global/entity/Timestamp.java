@@ -14,12 +14,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Timestamp {
 
-  protected LocalDateTime deletedAt;
+    protected LocalDateTime deletedAt;
 
-  @CreatedDate
-  @Column(updatable = false)
-  private LocalDateTime createdAt;
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
-  @LastModifiedDate
-  private LocalDateTime modifiedAt;
+    @LastModifiedDate
+    private LocalDateTime modifiedAt;
 }

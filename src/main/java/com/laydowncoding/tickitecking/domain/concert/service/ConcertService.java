@@ -13,7 +13,8 @@ public interface ConcertService {
 
     Page<AllConcertResponseDto> getAllConcerts(int page, int size);
 
-    ConcertResponseDto updateConcert(Long companyUserId, Long concertId, ConcertRequestDto requestDto);
+    ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
+            ConcertRequestDto requestDto);
 
     void deleteConcert(Long id, Long concertId);
 }

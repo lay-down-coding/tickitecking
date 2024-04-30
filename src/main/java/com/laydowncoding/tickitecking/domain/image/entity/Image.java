@@ -20,22 +20,22 @@ import lombok.NoArgsConstructor;
 public class Image {
 
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(name = "original_file_name")
-  private String originalFileName;
+    @Column(name = "original_file_name")
+    private String originalFileName;
 
-  @Column(name = "save_file_name")
-  private String saveFileName;
+    @Column(name = "save_file_name")
+    private String saveFileName;
 
-  @Column(name = "content_type")
-  private String contentType;
+    @Column(name = "content_type")
+    private String contentType;
 
-  @Column(name = "file_path")
-  private String filePath;
+    @Column(name = "file_path")
+    private String filePath;
 
-  @Column(name = "concert_id")
-  private Long concertId;
+    @Column(name = "concert_id")
+    private Long concertId;
 }

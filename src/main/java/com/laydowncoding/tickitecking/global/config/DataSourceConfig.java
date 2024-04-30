@@ -16,47 +16,48 @@ import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 @Configuration
 public class DataSourceConfig {
 
-  private static final String SOURCE_SERVER = "SOURCE";
-  private static final String REPLICA_SERVER = "REPLICA";
+    private static final String SOURCE_SERVER = "SOURCE";
+    private static final String REPLICA_SERVER = "REPLICA";
 
-  @Bean
-  @Qualifier(SOURCE_SERVER)
-  @ConfigurationProperties(prefix = "spring.datasource.source")
-  public DataSource sourceDataSource() {
-    return DataSourceBuilder.create()
-        .build();
-  }
+    @Bean
+    @Qualifier(SOURCE_SERVER)
+    @ConfigurationProperties(prefix = "spring.datasource.source")
+    public DataSource sourceDataSource() {
+        return DataSourceBuilder.create()
+                .build();
+    }
 
-  @Bean
-  @Qualifier(REPLICA_SERVER)
-  @ConfigurationProperties(prefix = "spring.datasource.replica")
-  public DataSource replicaDataSource() {
-    return DataSourceBuilder.create()
-        .build();
-  }
+    @Bean
+    @Qualifier(REPLICA_SERVER)
+    @ConfigurationProperties(prefix = "spring.datasource.replica")
+    public DataSource replicaDataSource() {
+        return DataSourceBuilder.create()
+                .build();
+    }
 
-  @Bean
-  public DataSource routingDataSource(
-      @Qualifier(SOURCE_SERVER) DataSource sourceDataSource,
-      @Qualifier(REPLICA_SERVER) DataSource replicaDataSource
-  ) {
-    RoutingDataSource routingDataSource = new RoutingDataSource();
+    @Bean
+    public DataSource routingDataSource(
+            @Qualifier(SOURCE_SERVER) DataSource sourceDataSource,
+            @Qualifier(REPLICA_SERVER) DataSource replicaDataSource
+    ) {
+        RoutingDataSource routingDataSource = new RoutingDataSource();
 
-    HashMap<Object, Object> dataSourceMap = new HashMap<>();
-    dataSourceMap.put("source", sourceDataSource);
-    dataSourceMap.put("replica", replicaDataSource);
+        HashMap<Object, Object> dataSourceMap = new HashMap<>();
+        dataSourceMap.put("source", sourceDataSource);
+        dataSourceMap.put("replica", replicaDataSource);
 
-    routingDataSource.setTargetDataSources(dataSourceMap);
-    routingDataSource.setDefaultTargetDataSource(sourceDataSource);
+        routingDataSource.setTargetDataSources(dataSourceMap);
+        routingDataSource.setDefaultTargetDataSource(sourceDataSource);
 
-    return routingDataSource;
-  }
+        return routingDataSource;
+    }
 
-  @Bean
-  @Primary
-  public DataSource dataSource() {
-    DataSource determinedDataSource = routingDataSource(sourceDataSource(), replicaDataSource());
-    return new LazyConnectionDataSourceProxy(determinedDataSource);
-  }
+    @Bean
+    @Primary
+    public DataSource dataSource() {
+        DataSource determinedDataSource = routingDataSource(sourceDataSource(),
+                replicaDataSource());
+        return new LazyConnectionDataSourceProxy(determinedDataSource);
+    }
 
 }

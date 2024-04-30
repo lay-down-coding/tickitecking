@@ -21,38 +21,39 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "update auditoriums set deleted_at = NOW() where id=?")
 public class Auditorium extends Timestamp {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column
-  private String name;
+    @Column
+    private String name;
 
-  @Column
-  private String address;
+    @Column
+    private String address;
 
-  @Column(name = "max_column")
-  private String maxColumn;
+    @Column(name = "max_column")
+    private String maxColumn;
 
-  @Column(name = "max_row")
-  private String maxRow;
+    @Column(name = "max_row")
+    private String maxRow;
 
-  @Column(nullable = false)
-  private Long companyUserId;
+    @Column(nullable = false)
+    private Long companyUserId;
 
-  @Builder
-  public Auditorium(String name, String address, String maxColumn, String maxRow, Long companyUserId) {
-    this.name = name;
-    this.address = address;
-    this.maxColumn = maxColumn;
-    this.maxRow = maxRow;
-    this.companyUserId = companyUserId;
-  }
+    @Builder
+    public Auditorium(String name, String address, String maxColumn, String maxRow,
+            Long companyUserId) {
+        this.name = name;
+        this.address = address;
+        this.maxColumn = maxColumn;
+        this.maxRow = maxRow;
+        this.companyUserId = companyUserId;
+    }
 
-  public void update(String name, String address, String maxColumn, String maxRow) {
-    this.name = name;
-    this.address = address;
-    this.maxColumn = maxColumn;
-    this.maxRow = maxRow;
-  }
+    public void update(String name, String address, String maxColumn, String maxRow) {
+        this.name = name;
+        this.address = address;
+        this.maxColumn = maxColumn;
+        this.maxRow = maxRow;
+    }
 }

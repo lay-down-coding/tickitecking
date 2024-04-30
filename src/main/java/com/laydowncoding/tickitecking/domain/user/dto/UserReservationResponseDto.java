@@ -29,8 +29,10 @@ public class UserReservationResponseDto {
 
     @QueryProjection
     public UserReservationResponseDto(Long concertId, String concertName, String concertDescription,
-        LocalDateTime concertStartDate, Long auditoriumId, String auditoriumName, String auditoriumAddress,
-        Long seatId, String vertical, String horizontal, String grade, Double price, String status, LocalDateTime deletedAt) {
+            LocalDateTime concertStartDate, Long auditoriumId, String auditoriumName,
+            String auditoriumAddress,
+            Long seatId, String vertical, String horizontal, String grade, Double price,
+            String status, LocalDateTime deletedAt) {
         this.concertId = concertId;
         this.concertName = concertName;
         this.concertDescription = concertDescription;
