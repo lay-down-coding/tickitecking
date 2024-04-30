@@ -11,18 +11,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuditoriumRequestDto {
 
-  @NotBlank
-  private String name;
+    @NotBlank
+    private String name;
 
-  @NotBlank
-  private String address;
+    @NotBlank
+    private String address;
 
-  @NotBlank
-  @Pattern(regexp = "\\b(?:[1-9][0-9]?|100)\\b", message = "1부터 100까지의 값을 입력하세요.")
-  private String maxColumn;
+    @NotBlank
+    @Pattern(regexp = "\\b(?:[1-9][0-9]?|100)\\b", message = "1부터 100까지의 값을 입력하세요.")
+    private String maxColumn;
 
-  @NotBlank
-  @Pattern(regexp = "[A-Z]", message = "알파벳 대문자(A-Z)만 입력하세요.")
-  private String maxRow;
+    @NotBlank
+    @Pattern(regexp = "[A-Z]", message = "알파벳 대문자(A-Z)만 입력하세요.")
+    private String maxRow;
 }
 

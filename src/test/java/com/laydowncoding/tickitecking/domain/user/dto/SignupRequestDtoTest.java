@@ -1,7 +1,6 @@
 package com.laydowncoding.tickitecking.domain.user.dto;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -18,11 +17,11 @@ class SignupRequestDtoTest {
     void create_success() {
         //given
         SignupRequestDto requestDto = SignupRequestDto.builder()
-            .username("test_username")
-            .password("pass@i344")
-            .email("test@email.com")
-            .nickname("johny")
-            .build();
+                .username("test_username")
+                .password("pass@i344")
+                .email("test@email.com")
+                .nickname("johny")
+                .build();
 
         //when
         Set<ConstraintViolation<SignupRequestDto>> validate = validate(requestDto);
@@ -36,11 +35,11 @@ class SignupRequestDtoTest {
     void create_fail() {
         //given
         SignupRequestDto requestDto = SignupRequestDto.builder()
-            .username("")
-            .password("fail")
-            .email("test")
-            .nickname("johny")
-            .build();
+                .username("")
+                .password("fail")
+                .email("test")
+                .nickname("johny")
+                .build();
 
         //when
         Set<ConstraintViolation<SignupRequestDto>> validate = validate(requestDto);

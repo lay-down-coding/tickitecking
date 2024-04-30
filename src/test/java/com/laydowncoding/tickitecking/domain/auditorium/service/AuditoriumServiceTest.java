@@ -33,167 +33,167 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class AuditoriumServiceTest {
 
-  @Mock
-  private AuditoriumRepository auditoriumRepository;
+    @Mock
+    private AuditoriumRepository auditoriumRepository;
 
-  @Mock
-  private SeatRepository seatRepository;
+    @Mock
+    private SeatRepository seatRepository;
 
-  @InjectMocks
-  private AuditoriumServiceImpl auditoriumService;
+    @InjectMocks
+    private AuditoriumServiceImpl auditoriumService;
 
-  AuditoriumRequestDto requestDto;
+    AuditoriumRequestDto requestDto;
 
-  @Mock
-  Auditorium auditorium;
+    @Mock
+    Auditorium auditorium;
 
-  @Mock
-  Seat seat;
+    @Mock
+    Seat seat;
 
-  @BeforeEach
-  void setup() {
-    requestDto = new AuditoriumRequestDto(
-        "auditorium1",
-        "address1",
-        "10",
-        "C");
+    @BeforeEach
+    void setup() {
+        requestDto = new AuditoriumRequestDto(
+                "auditorium1",
+                "address1",
+                "10",
+                "C");
 
-    auditorium = new Auditorium(
-        "auditorium1",
-        "address1",
-        "10",
-        "C",
-        1L
-    );
+        auditorium = new Auditorium(
+                "auditorium1",
+                "address1",
+                "10",
+                "C",
+                1L
+        );
 
-    seat = Seat.builder()
-        .auditoriumId(1L)
-        .concertId(1L)
-        .horizontal("A")
-        .vertical("1")
-        .grade("G")
-        .seatStatus(SeatStatus.AVAILABLE)
-        .build();
-  }
-
-  @Test
-  public void create_auditorium() {
-    when(auditoriumRepository.save(any(Auditorium.class))).thenReturn(new Auditorium());
-
-    auditoriumService.createAuditorium(requestDto, 1L);
-
-    verify(auditoriumRepository, times(1)).save(any(Auditorium.class));
-  }
-
-  @Test
-  public void update_auditorium() {
-    given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
-
-    AuditoriumRequestDto requestDto = new AuditoriumRequestDto(
-        "update name",
-        "update address",
-        "10",
-        "D");
-
-    auditoriumService.updateAuditorium(requestDto, 1L, 1L);
-
-    verify(auditoriumRepository).findById(1L);
-  }
-
-  @Test
-  public void testUpdateAuditorium_InvalidAuditoriumId() {
-    given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.empty());
-
-    try {
-      auditoriumService.updateAuditorium(requestDto, 1L, 1L);
-    } catch (CustomRuntimeException e) {
-      assertThat(e).hasMessage(NOT_FOUND_AUDITORIUM.getMessage());
+        seat = Seat.builder()
+                .auditoriumId(1L)
+                .concertId(1L)
+                .horizontal("A")
+                .vertical("1")
+                .grade("G")
+                .seatStatus(SeatStatus.AVAILABLE)
+                .build();
     }
-  }
 
-  @Test
-  public void testUpdateAuditorium_InvalidUser() {
-    given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
+    @Test
+    public void create_auditorium() {
+        when(auditoriumRepository.save(any(Auditorium.class))).thenReturn(new Auditorium());
 
-    try {
-      auditoriumService.updateAuditorium(requestDto, 1L, 567L);
-    } catch (CustomRuntimeException e) {
-      assertThat(e).hasMessage(INVALID_COMPANY_USER_ID.getMessage());
+        auditoriumService.createAuditorium(requestDto, 1L);
+
+        verify(auditoriumRepository, times(1)).save(any(Auditorium.class));
     }
-  }
 
-  @Test
-  public void testDeleteAuditorium_Success() {
-    given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
+    @Test
+    public void update_auditorium() {
+        given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
 
-    auditoriumService.deleteAuditorium(1L, 1L);
+        AuditoriumRequestDto requestDto = new AuditoriumRequestDto(
+                "update name",
+                "update address",
+                "10",
+                "D");
 
-    verify(auditoriumRepository).delete(auditorium);
-  }
+        auditoriumService.updateAuditorium(requestDto, 1L, 1L);
 
-  @Test
-  public void testDeleteAuditorium_InvalidAuditoriumId() {
-    given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.empty());
-
-    try {
-      auditoriumService.deleteAuditorium(1L, 1L);
-    } catch (CustomRuntimeException e) {
-      assertThat(e).hasMessage(NOT_FOUND_AUDITORIUM.getMessage());
+        verify(auditoriumRepository).findById(1L);
     }
-  }
 
-  @Test
-  public void testDeleteAuditorium_InvalidUser() {
-    given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
+    @Test
+    public void testUpdateAuditorium_InvalidAuditoriumId() {
+        given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
-    try {
-      auditoriumService.deleteAuditorium(1L, 1L);
-    } catch (CustomRuntimeException e) {
-      assertThat(e).hasMessage(INVALID_COMPANY_USER_ID.getMessage());
+        try {
+            auditoriumService.updateAuditorium(requestDto, 1L, 1L);
+        } catch (CustomRuntimeException e) {
+            assertThat(e).hasMessage(NOT_FOUND_AUDITORIUM.getMessage());
+        }
     }
-  }
 
-  @Test
-  public void testGetAuditoriums_Success() {
-    List<AuditoriumResponseDto> auditoriumList = List.of(new AuditoriumResponseDto(),
-        new AuditoriumResponseDto());
-    when(auditoriumRepository.getAuditoriumAllByCompanyUserId(any(Long.class))).thenReturn(
-        auditoriumList);
+    @Test
+    public void testUpdateAuditorium_InvalidUser() {
+        given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
 
-    List<AuditoriumResponseDto> result = auditoriumService.getAuditoriums(1L);
+        try {
+            auditoriumService.updateAuditorium(requestDto, 1L, 567L);
+        } catch (CustomRuntimeException e) {
+            assertThat(e).hasMessage(INVALID_COMPANY_USER_ID.getMessage());
+        }
+    }
 
-    assertNotNull(result);
-    assertEquals(2, result.size());
-  }
+    @Test
+    public void testDeleteAuditorium_Success() {
+        given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
 
-  @Test
-  public void testGetAuditoriums_NoAuditoriumsFound() {
-    when(auditoriumRepository.getAuditoriumAllByCompanyUserId(any(Long.class))).thenReturn(
-        List.of());
+        auditoriumService.deleteAuditorium(1L, 1L);
 
-    List<AuditoriumResponseDto> result = auditoriumService.getAuditoriums(1L);
+        verify(auditoriumRepository).delete(auditorium);
+    }
 
-    assertNotNull(result);
-    assertTrue(result.isEmpty());
-  }
+    @Test
+    public void testDeleteAuditorium_InvalidAuditoriumId() {
+        given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.empty());
 
-  @Test
-  public void testGetAuditorium_Success() {
-    when(auditoriumRepository.getAuditoriumByAuditoriumId(any(Long.class))).thenReturn(
-        new AuditoriumResponseDto()
-    );
+        try {
+            auditoriumService.deleteAuditorium(1L, 1L);
+        } catch (CustomRuntimeException e) {
+            assertThat(e).hasMessage(NOT_FOUND_AUDITORIUM.getMessage());
+        }
+    }
 
-    AuditoriumResponseDto result = auditoriumService.getAuditorium(1L);
+    @Test
+    public void testDeleteAuditorium_InvalidUser() {
+        given(auditoriumRepository.findById(any(Long.class))).willReturn(Optional.of(auditorium));
 
-    assertNotNull(result);
-  }
+        try {
+            auditoriumService.deleteAuditorium(1L, 1L);
+        } catch (CustomRuntimeException e) {
+            assertThat(e).hasMessage(INVALID_COMPANY_USER_ID.getMessage());
+        }
+    }
 
-  @Test
-  public void testGetAuditorium_AuditoriumNotFound() {
-    when(auditoriumRepository.getAuditoriumByAuditoriumId(any(Long.class))).thenReturn(null);
+    @Test
+    public void testGetAuditoriums_Success() {
+        List<AuditoriumResponseDto> auditoriumList = List.of(new AuditoriumResponseDto(),
+                new AuditoriumResponseDto());
+        when(auditoriumRepository.getAuditoriumAllByCompanyUserId(any(Long.class))).thenReturn(
+                auditoriumList);
 
-    AuditoriumResponseDto result = auditoriumService.getAuditorium(1L);
+        List<AuditoriumResponseDto> result = auditoriumService.getAuditoriums(1L);
 
-    assertNull(result);
-  }
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testGetAuditoriums_NoAuditoriumsFound() {
+        when(auditoriumRepository.getAuditoriumAllByCompanyUserId(any(Long.class))).thenReturn(
+                List.of());
+
+        List<AuditoriumResponseDto> result = auditoriumService.getAuditoriums(1L);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAuditorium_Success() {
+        when(auditoriumRepository.getAuditoriumByAuditoriumId(any(Long.class))).thenReturn(
+                new AuditoriumResponseDto()
+        );
+
+        AuditoriumResponseDto result = auditoriumService.getAuditorium(1L);
+
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testGetAuditorium_AuditoriumNotFound() {
+        when(auditoriumRepository.getAuditoriumByAuditoriumId(any(Long.class))).thenReturn(null);
+
+        AuditoriumResponseDto result = auditoriumService.getAuditorium(1L);
+
+        assertNull(result);
+    }
 }

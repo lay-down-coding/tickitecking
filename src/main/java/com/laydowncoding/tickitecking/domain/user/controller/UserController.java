@@ -26,52 +26,52 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-  private final UserService userService;
-  private final RedisService redisService;
+    private final UserService userService;
+    private final RedisService redisService;
 
-  @PostMapping("/signup")
-  public ResponseEntity<CommonResponse<Void>> signup(
-      @Valid @RequestBody SignupRequestDto requestDto) {
-    userService.signup(requestDto);
-    return CommonResponse.ok(null);
-  }
+    @PostMapping("/signup")
+    public ResponseEntity<CommonResponse<Void>> signup(
+            @Valid @RequestBody SignupRequestDto requestDto) {
+        userService.signup(requestDto);
+        return CommonResponse.ok(null);
+    }
 
-  @PutMapping("/my")
-  public ResponseEntity<CommonResponse<Void>> updateUser(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @RequestBody UserUpdateRequestDto requestDto) {
-    userService.updateUser(userDetails.getUser().getId(), requestDto);
-    return CommonResponse.ok(null);
-  }
+    @PutMapping("/my")
+    public ResponseEntity<CommonResponse<Void>> updateUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody UserUpdateRequestDto requestDto) {
+        userService.updateUser(userDetails.getUser().getId(), requestDto);
+        return CommonResponse.ok(null);
+    }
 
-  @GetMapping("/my")
-  public ResponseEntity<CommonResponse<UserResponseDto>> getUser(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    UserResponseDto responseDto = userService.getUser(userDetails.getUser().getId());
-    return CommonResponse.ok(responseDto);
-  }
+    @GetMapping("/my")
+    public ResponseEntity<CommonResponse<UserResponseDto>> getUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UserResponseDto responseDto = userService.getUser(userDetails.getUser().getId());
+        return CommonResponse.ok(responseDto);
+    }
 
-  @DeleteMapping("/my")
-  public ResponseEntity<CommonResponse<Void>> deleteUser(
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    userService.deleteUser(userDetails.getUser().getId());
-    return CommonResponse.ok(null);
-  }
+    @DeleteMapping("/my")
+    public ResponseEntity<CommonResponse<Void>> deleteUser(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteUser(userDetails.getUser().getId());
+        return CommonResponse.ok(null);
+    }
 
-  @PostMapping("/logout")
-  public ResponseEntity<CommonResponse<Void>> logout(
-      @AuthenticationPrincipal UserDetailsImpl userDetails
-  ) {
-    redisService.deleteValues(userDetails.getUser().getUsername());
-    return CommonResponse.ok(null);
-  }
+    @PostMapping("/logout")
+    public ResponseEntity<CommonResponse<Void>> logout(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        redisService.deleteValues(userDetails.getUser().getUsername());
+        return CommonResponse.ok(null);
+    }
 
-  @GetMapping("/my/reservations")
-  public ResponseEntity<CommonResponse<List<UserReservationResponseDto>>> getReservations(
-      @AuthenticationPrincipal UserDetailsImpl userDetails
-  ) {
-    List<UserReservationResponseDto> response = userService.getReservations(
-        userDetails.getUser().getId());
-    return CommonResponse.ok(response);
-  }
+    @GetMapping("/my/reservations")
+    public ResponseEntity<CommonResponse<List<UserReservationResponseDto>>> getReservations(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        List<UserReservationResponseDto> response = userService.getReservations(
+                userDetails.getUser().getId());
+        return CommonResponse.ok(response);
+    }
 }

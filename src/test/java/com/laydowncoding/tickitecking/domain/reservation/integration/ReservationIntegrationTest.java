@@ -39,16 +39,16 @@ public class ReservationIntegrationTest {
     @DisplayName("동시에 한자리 예매시 첫번째 요청만 예매성공한다.")
     @Test
     @Sql(scripts = "/reservation-test-data.sql",
-        config = @SqlConfig(transactionMode = TransactionMode.ISOLATED))
+            config = @SqlConfig(transactionMode = TransactionMode.ISOLATED))
     void concurrency_test() throws InterruptedException {
         //given
         int tryCount = 10;
         long userId = 1L;
         Long concertId = 1L;
         ReservationRequestDto reservationRequestDto = ReservationRequestDto.builder()
-            .horizontal("A")
-            .vertical("0")
-            .build();
+                .horizontal("A")
+                .vertical("0")
+                .build();
         ExecutorService executor = Executors.newFixedThreadPool(16);
 
         //when
@@ -58,7 +58,7 @@ public class ReservationIntegrationTest {
             executor.submit(() -> {
                 try {
                     reservationService.createReservation(userId + finalI, concertId,
-                        reservationRequestDto);
+                            reservationRequestDto);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 } finally {

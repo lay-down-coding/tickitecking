@@ -20,13 +20,13 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class AllConcertResponseDto {
 
-  private Long id;
-  private String name;
-  private String imagePath;
-  @JsonSerialize(using = LocalDateTimeSerializer.class)
-  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-  @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
-  private LocalDateTime startTime;
-  private String writer;
-  private String auditoriumName;
+    private Long id;
+    private String name;
+    private String imagePath;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime startTime;
+    private String writer;
+    private String auditoriumName;
 }

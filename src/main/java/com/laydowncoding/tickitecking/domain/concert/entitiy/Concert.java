@@ -23,39 +23,39 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLRestriction(value = "deleted_at is NULL")
 public class Concert extends Timestamp {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false)
-  private String name;
+    @Column(nullable = false)
+    private String name;
 
-  @Column(nullable = false)
-  private String description;
+    @Column(nullable = false)
+    private String description;
 
-  @Column(nullable = false)
-  private LocalDateTime startTime;
+    @Column(nullable = false)
+    private LocalDateTime startTime;
 
-  @Column(nullable = false)
-  private Long companyUserId;
+    @Column(nullable = false)
+    private Long companyUserId;
 
-  @Column(nullable = false)
-  private Long auditoriumId;
+    @Column(nullable = false)
+    private Long auditoriumId;
 
-  @Builder
-  public Concert(String name, String description, LocalDateTime startTime, Long companyUserId,
-      Long auditoriumId) {
-    this.name = name;
-    this.description = description;
-    this.startTime = startTime;
-    this.companyUserId = companyUserId;
-    this.auditoriumId = auditoriumId;
-  }
+    @Builder
+    public Concert(String name, String description, LocalDateTime startTime, Long companyUserId,
+            Long auditoriumId) {
+        this.name = name;
+        this.description = description;
+        this.startTime = startTime;
+        this.companyUserId = companyUserId;
+        this.auditoriumId = auditoriumId;
+    }
 
-  public void update(ConcertRequestDto requestDto) {
-    this.name = requestDto.getName();
-    this.description = requestDto.getDescription();
-    this.startTime = requestDto.getStartTime();
-    this.auditoriumId = requestDto.getAuditoriumId();
-  }
+    public void update(ConcertRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.description = requestDto.getDescription();
+        this.startTime = requestDto.getStartTime();
+        this.auditoriumId = requestDto.getAuditoriumId();
+    }
 }

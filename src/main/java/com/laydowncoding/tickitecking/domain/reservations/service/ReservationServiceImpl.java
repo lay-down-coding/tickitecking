@@ -39,35 +39,35 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationResponseDto createReservation(Long userId, Long concertId,
-        ReservationRequestDto requestDto) {
+            ReservationRequestDto requestDto) {
         Concert concert = findConcert(concertId);
         if (isTaken(concertId, requestDto.getHorizontal(), requestDto.getVertical(),
-            Duration.between(LocalDateTime.now(), concert.getStartTime()).toSeconds())) {
+                Duration.between(LocalDateTime.now(), concert.getStartTime()).toSeconds())) {
             throw new CustomRuntimeException("redis가 막았습니다.");
         }
 
         Seat seat = seatRepository.findSeatForReservation(concertId, requestDto.getHorizontal(),
-            requestDto.getVertical());
+                requestDto.getVertical());
         if (!seat.isReservable()) {
             throw new CustomRuntimeException("예약 불가능한 좌석입니다.");
         }
         seat.reserve();
 
         Reservation reservation = Reservation.builder()
-            .status("Y")
-            .userId(userId)
-            .concertId(concertId)
-            .seatId(seat.getId())
-            .build();
+                .status("Y")
+                .userId(userId)
+                .concertId(concertId)
+                .seatId(seat.getId())
+                .build();
         Reservation save = reservationRepository.save(reservation);
 
         return ReservationResponseDto.builder()
-            .id(save.getId())
-            .status(save.getStatus())
-            .userId(save.getUserId())
-            .concertId(save.getConcertId())
-            .seatId(save.getSeatId())
-            .build();
+                .id(save.getId())
+                .status(save.getStatus())
+                .userId(save.getUserId())
+                .concertId(save.getConcertId())
+                .seatId(save.getSeatId())
+                .build();
     }
 
     @Override
@@ -76,13 +76,13 @@ public class ReservationServiceImpl implements ReservationService {
         validateConcertId(concertId);
 
         List<UnreservableSeat> unreservableSeats = reservationRepository.findUnreservableSeats(
-            concertId);
+                concertId);
         ConcertResponseDto concert = concertService.getConcert(concertId);
 
         return ConcertSeatResponseDto.builder()
-            .concert(concert)
-            .unreservableSeats(unreservableSeats)
-            .build();
+                .concert(concert)
+                .unreservableSeats(unreservableSeats)
+                .build();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ReservationServiceImpl implements ReservationService {
         Seat seat = findSeat(reservation.getSeatId());
 
         duplicatedReservationCheck.deleteValue(String.valueOf(reservation.getConcertId()),
-            seat.getHorizontal() + seat.getVertical());
+                seat.getHorizontal() + seat.getVertical());
         seat.cancel();
         reservationRepository.delete(reservation);
     }
@@ -106,7 +106,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private Reservation findReservation(Long reservationId) {
         return reservationRepository.findById(reservationId).orElseThrow(
-            () -> new CustomRuntimeException(NOT_FOUND_RESERVATION.getMessage())
+                () -> new CustomRuntimeException(NOT_FOUND_RESERVATION.getMessage())
         );
     }
 
@@ -124,13 +124,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     private Concert findConcert(Long concertId) {
         return concertRepository.findById(concertId).orElseThrow(
-            () -> new CustomRuntimeException(ConcertErrorCode.NOT_FOUND_CONCERT.getMessage())
+                () -> new CustomRuntimeException(ConcertErrorCode.NOT_FOUND_CONCERT.getMessage())
         );
     }
 
     private Seat findSeat(Long seatId) {
         return seatRepository.findById(seatId).orElseThrow(
-            () -> new CustomRuntimeException(SeatErrorCode.NOT_FOUND_SEAT.getMessage())
+                () -> new CustomRuntimeException(SeatErrorCode.NOT_FOUND_SEAT.getMessage())
         );
     }
 }

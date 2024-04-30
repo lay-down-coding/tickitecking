@@ -1,8 +1,13 @@
 package com.laydowncoding.tickitecking.domain.user.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
 import com.laydowncoding.tickitecking.domain.reservations.repository.ReservationRepository;
 import com.laydowncoding.tickitecking.domain.user.dto.SignupRequestDto;
@@ -46,11 +51,11 @@ public class UserServiceTest {
         given(userRepository.findByEmail(any(String.class))).willReturn(Optional.empty());
         given(userRepository.findByNickname(any(String.class))).willReturn(Optional.empty());
         SignupRequestDto requestDto = SignupRequestDto.builder()
-            .username("test_username")
-            .password("pass@i344")
-            .email("test@email.com")
-            .nickname("johny")
-            .build();
+                .username("test_username")
+                .password("pass@i344")
+                .email("test@email.com")
+                .nickname("johny")
+                .build();
 
         //when & then
         assertDoesNotThrow(() -> userService.signup(requestDto));
@@ -61,21 +66,21 @@ public class UserServiceTest {
     void signup_fail() {
         //given
         given(userRepository.findByUsername(any(String.class))).willReturn(
-            Optional.ofNullable(User.builder()
-                .id(1L)
-                .build()));
+                Optional.ofNullable(User.builder()
+                        .id(1L)
+                        .build()));
 
         //when
         SignupRequestDto requestDto = SignupRequestDto.builder()
-            .username("test_username")
-            .password("pass@i344")
-            .email("test@email.com")
-            .nickname("johny")
-            .build();
+                .username("test_username")
+                .password("pass@i344")
+                .email("test@email.com")
+                .nickname("johny")
+                .build();
 
         //when && then
         assertThatThrownBy(() -> userService.signup(requestDto))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("회원 수정 요청 성공")
@@ -83,20 +88,20 @@ public class UserServiceTest {
     void update_success() {
         //given
         given(userRepository.findById(anyLong())).willReturn(Optional.of(User.builder()
-            .username("username")
-            .password("password")
-            .email("email@com")
-            .nickname("nickname")
-            .role(UserRole.USER)
-            .build()));
+                .username("username")
+                .password("password")
+                .email("email@com")
+                .nickname("nickname")
+                .role(UserRole.USER)
+                .build()));
         UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
-            .email("update@com")
-            .nickname("updateNickname")
-            .build();
+                .email("update@com")
+                .nickname("updateNickname")
+                .build();
 
         //when & then
         assertDoesNotThrow(() ->
-            userService.updateUser(1L, requestDto));
+                userService.updateUser(1L, requestDto));
     }
 
     @DisplayName("회원 수정 요청 실패")
@@ -105,13 +110,13 @@ public class UserServiceTest {
         //given
         given(userRepository.findById(anyLong())).willReturn(Optional.empty());
         UserUpdateRequestDto requestDto = UserUpdateRequestDto.builder()
-            .email("update@com")
-            .nickname("updateNickname")
-            .build();
+                .email("update@com")
+                .nickname("updateNickname")
+                .build();
 
         //when & then
         assertThatThrownBy(() -> userService.updateUser(1L, requestDto))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("회원 조회 요청 성공")
@@ -119,12 +124,12 @@ public class UserServiceTest {
     void get_success() {
         //given
         given(userRepository.findById(anyLong())).willReturn(Optional.of(User.builder()
-            .username("username")
-            .password("password")
-            .email("email@com")
-            .nickname("nickname")
-            .role(UserRole.USER)
-            .build()));
+                .username("username")
+                .password("password")
+                .email("email@com")
+                .nickname("nickname")
+                .role(UserRole.USER)
+                .build()));
 
         //when
         UserResponseDto response = userService.getUser(1L);
@@ -142,7 +147,7 @@ public class UserServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.getUser(1L))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("회원 삭제 요청 성공")
@@ -150,12 +155,12 @@ public class UserServiceTest {
     void delete_success() {
         //given
         given(userRepository.findById(anyLong())).willReturn(Optional.of(User.builder()
-            .username("username")
-            .password("password")
-            .email("email@com")
-            .nickname("nickname")
-            .role(UserRole.USER)
-            .build()));
+                .username("username")
+                .password("password")
+                .email("email@com")
+                .nickname("nickname")
+                .role(UserRole.USER)
+                .build()));
 
         //when & then
         assertDoesNotThrow(() -> userService.deleteUser(1L));
@@ -170,7 +175,7 @@ public class UserServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.deleteUser(1L))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("회원 예매 조회 요청")
@@ -178,7 +183,8 @@ public class UserServiceTest {
     void get_reservation_success() {
         //given
         given(reservationRepository.findReservations(anyLong()))
-            .willReturn(List.of(new UserReservationResponseDto(), new UserReservationResponseDto()));
+                .willReturn(List.of(new UserReservationResponseDto(),
+                        new UserReservationResponseDto()));
 
         //when
         List<UserReservationResponseDto> response = userService.getReservations(1L);

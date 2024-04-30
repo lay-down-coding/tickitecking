@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ImageController {
 
-  private final ImageService imageService;
+    private final ImageService imageService;
 
-  @PostMapping("/upload")
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> uploadFile(
-      @ModelAttribute ImageRequestDto imageRequest
-  ) {
-    imageService.upload(imageRequest.getFile(), imageRequest.getConcertId());
-    return CommonResponse.ok(null);
-  }
+    @PostMapping("/upload")
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> uploadFile(
+            @ModelAttribute ImageRequestDto imageRequest
+    ) {
+        imageService.upload(imageRequest.getFile(), imageRequest.getConcertId());
+        return CommonResponse.ok(null);
+    }
 }
