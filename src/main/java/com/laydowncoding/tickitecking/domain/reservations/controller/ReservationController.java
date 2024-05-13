@@ -26,26 +26,26 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<CommonResponse<ReservationResponseDto>> createReservation(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long concertId,
-        @RequestBody ReservationRequestDto requestDto) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long concertId,
+            @RequestBody ReservationRequestDto requestDto) {
         ReservationResponseDto response = reservationService.createReservation(
-            userDetails.getUser().getId(), concertId, requestDto);
+                userDetails.getUser().getId(), concertId, requestDto);
         return CommonResponse.ok(response);
     }
 
     @GetMapping
     public ResponseEntity<CommonResponse<ConcertSeatResponseDto>> getConcertSeats(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long concertId) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long concertId) {
         ConcertSeatResponseDto response = reservationService.getConcertSeats(concertId);
         return CommonResponse.ok(response);
     }
 
     @DeleteMapping("/{reservationId}")
     public ResponseEntity<CommonResponse<Void>> deleteReservations(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @PathVariable Long reservationId) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long reservationId) {
         reservationService.deleteReservation(userDetails.getUser().getId(), reservationId);
         return CommonResponse.ok(null);
     }

@@ -1,6 +1,5 @@
 package com.laydowncoding.tickitecking.global.filter;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -11,12 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-  @Override
-  public void commence(HttpServletRequest request,
-      HttpServletResponse response,
-      AuthenticationException authException) throws IOException {
+    @Override
+    public void commence(HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException) throws IOException {
 
-    response.setCharacterEncoding("utf-8");
-    response.sendError(401, "잘못된 접근입니다.");
-  }
+        response.setCharacterEncoding("utf-8");
+        response.sendError(401, "잘못된 접근입니다.");
+    }
 }

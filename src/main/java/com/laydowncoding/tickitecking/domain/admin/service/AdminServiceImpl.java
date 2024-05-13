@@ -32,103 +32,103 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-  private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final JwtUtil jwtUtil;
-  private final RedisService redisService;
-  private final AuditoriumRepository auditoriumRepository;
-  private final SeatRepository seatRepository;
-  private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final RedisService redisService;
+    private final AuditoriumRepository auditoriumRepository;
+    private final SeatRepository seatRepository;
+    private final ReservationRepository reservationRepository;
 
 
-  @Value("${admin.username}")
-  private String adminUsername;
+    @Value("${admin.username}")
+    private String adminUsername;
 
-  @Value("${admin.password}")
-  private String adminPassword;
+    @Value("${admin.password}")
+    private String adminPassword;
 
-  @Value("${admin.email}")
-  private String adminEmail;
+    @Value("${admin.email}")
+    private String adminEmail;
 
-  @PostConstruct
-  @Transactional
-  public void createAdminAccount() {
-    boolean existsAdmin = userRepository.existsByRole(UserRole.ADMIN);
-    if (!existsAdmin) {
-      String encrytedPassword = passwordEncoder.encode(adminPassword);
-      User admin = new User(1L, adminUsername, encrytedPassword, adminEmail, "admin",
-          UserRole.ADMIN);
-      userRepository.save(admin);
-    }
-  }
-
-  @Override
-  public String login(LoginRequestDto loginRequest) {
-    String password = loginRequest.getPassword();
-    User user = userRepository.findByUsername(loginRequest.getUsername())
-        .orElseThrow(() -> new CustomRuntimeException(NOT_FOUND_USER.getMessage()));
-    if (!passwordEncoder.matches(password, user.getPassword()) || !user.getRole()
-        .equals(UserRole.ADMIN)) {
-      throw new CustomRuntimeException(UNVERIFIED_USER.getMessage());
+    @PostConstruct
+    @Transactional
+    public void createAdminAccount() {
+        boolean existsAdmin = userRepository.existsByRole(UserRole.ADMIN);
+        if (!existsAdmin) {
+            String encrytedPassword = passwordEncoder.encode(adminPassword);
+            User admin = new User(1L, adminUsername, encrytedPassword, adminEmail, "admin",
+                    UserRole.ADMIN);
+            userRepository.save(admin);
+        }
     }
 
-    String accessToken = jwtUtil.createAccessToken(user.getId(), loginRequest.getUsername(),
-        UserRole.ADMIN.name());
-    String refreshToken = jwtUtil.createRefreshToken(UserRole.ADMIN.name()).substring(7);
-    redisService.setValuesWithTimeout(user.getUsername(), refreshToken, 7L);
+    @Override
+    public String login(LoginRequestDto loginRequest) {
+        String password = loginRequest.getPassword();
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new CustomRuntimeException(NOT_FOUND_USER.getMessage()));
+        if (!passwordEncoder.matches(password, user.getPassword()) || !user.getRole()
+                .equals(UserRole.ADMIN)) {
+            throw new CustomRuntimeException(UNVERIFIED_USER.getMessage());
+        }
 
-    return accessToken;
-  }
+        String accessToken = jwtUtil.createAccessToken(user.getId(), loginRequest.getUsername(),
+                UserRole.ADMIN.name());
+        String refreshToken = jwtUtil.createRefreshToken(UserRole.ADMIN.name()).substring(7);
+        redisService.setValuesWithTimeout(user.getUsername(), refreshToken, 7L);
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<AdminUserResponseDto> getUsers() {
-    List<User> userList = userRepository.findAll();
-
-    return userList.stream().map(
-        user -> new AdminUserResponseDto(user.getId(), user.getUsername(), user.getEmail(),
-            user.getNickname(),
-            user.getRole().getAuthority())).collect(
-        Collectors.toList());
-  }
-
-  @Override
-  @Transactional
-  public void updateUser(Long userId, AdminUserUpdateRequestDto userUpdateRequest) {
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
-    );
-
-    String encryptedPassword = passwordEncoder.encode(userUpdateRequest.getPassword());
-
-    user.forceUpdate(
-        userUpdateRequest.getUsername(),
-        encryptedPassword,
-        userUpdateRequest.getNickname(),
-        userUpdateRequest.getEmail(),
-        userUpdateRequest.getRole().name()
-    );
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<AuditoriumResponseDto> getAuditoriums() {
-    return auditoriumRepository.getAuditoriumAll();
-  }
-
-  @Override
-  @Transactional
-  public void lockSeat(Long auditoriumId, AdminLockSeatRequestDto requestDto) {
-    List<Seat> seats = seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(
-        auditoriumId, requestDto.getHorizontal(), requestDto.getVertical());
-    for (Seat seat: seats) {
-      seat.toggleLock();
+        return accessToken;
     }
-  }
 
-  @Override
-  @Transactional(readOnly = true)
-  public List<AdminReservationResponseDto> getReservations() {
-    return reservationRepository.getReservationAll();
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public List<AdminUserResponseDto> getUsers() {
+        List<User> userList = userRepository.findAll();
+
+        return userList.stream().map(
+                user -> new AdminUserResponseDto(user.getId(), user.getUsername(), user.getEmail(),
+                        user.getNickname(),
+                        user.getRole().getAuthority())).collect(
+                Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(Long userId, AdminUserUpdateRequestDto userUpdateRequest) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomRuntimeException(NOT_FOUND_USER.getMessage())
+        );
+
+        String encryptedPassword = passwordEncoder.encode(userUpdateRequest.getPassword());
+
+        user.forceUpdate(
+                userUpdateRequest.getUsername(),
+                encryptedPassword,
+                userUpdateRequest.getNickname(),
+                userUpdateRequest.getEmail(),
+                userUpdateRequest.getRole().name()
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AuditoriumResponseDto> getAuditoriums() {
+        return auditoriumRepository.getAuditoriumAll();
+    }
+
+    @Override
+    @Transactional
+    public void lockSeat(Long auditoriumId, AdminLockSeatRequestDto requestDto) {
+        List<Seat> seats = seatRepository.findAllByAuditoriumIdAndHorizontalAndVertical(
+                auditoriumId, requestDto.getHorizontal(), requestDto.getVertical());
+        for (Seat seat : seats) {
+            seat.toggleLock();
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AdminReservationResponseDto> getReservations() {
+        return reservationRepository.getReservationAll();
+    }
 }

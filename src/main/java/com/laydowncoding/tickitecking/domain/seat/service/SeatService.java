@@ -8,15 +8,18 @@ import java.util.List;
 
 public interface SeatService {
 
-    void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId, AuditoriumCapacityDto capacityDto);
+    void createSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+            AuditoriumCapacityDto capacityDto);
 
-    void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId, AuditoriumCapacityDto capacityDto);
+    void updateSeats(List<SeatRequestDto> seatRequestDtos, Long concertId,
+            AuditoriumCapacityDto capacityDto);
 
     void deleteSeats(Long concertId);
 
     void createSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos);
 
-    List<SeatPriceResponseDto> updateSeatPrices(Long concertId, List<SeatPriceRequestDto> seatPriceRequestDtos);
+    List<SeatPriceResponseDto> updateSeatPrices(Long concertId,
+            List<SeatPriceRequestDto> seatPriceRequestDtos);
 
     List<SeatPriceResponseDto> getSeatPrices(Long concertId);
 

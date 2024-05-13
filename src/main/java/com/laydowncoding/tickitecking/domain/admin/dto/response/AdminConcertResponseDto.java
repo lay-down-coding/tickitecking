@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AdminConcertResponseDto {
 
-  private Long id;
-  private String name;
-  private String description;
-  private LocalDateTime startTime;
+    private Long id;
+    private String name;
+    private String description;
+    private LocalDateTime startTime;
 }

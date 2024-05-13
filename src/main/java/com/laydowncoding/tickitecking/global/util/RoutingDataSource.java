@@ -6,10 +6,13 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Slf4j
 public class RoutingDataSource extends AbstractRoutingDataSource {
-  @Override
-  protected Object determineCurrentLookupKey() {
-    String lookupKey = TransactionSynchronizationManager.isCurrentTransactionReadOnly() ? "replica" : "source";
-    log.info("Current DataSource is {}", lookupKey);
-    return lookupKey;
-  }
+
+    @Override
+    protected Object determineCurrentLookupKey() {
+        String lookupKey =
+                TransactionSynchronizationManager.isCurrentTransactionReadOnly() ? "replica"
+                        : "source";
+        log.info("Current DataSource is {}", lookupKey);
+        return lookupKey;
+    }
 }

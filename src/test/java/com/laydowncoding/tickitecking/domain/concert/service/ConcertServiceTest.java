@@ -1,8 +1,14 @@
 package com.laydowncoding.tickitecking.domain.concert.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyList;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
 
 import com.laydowncoding.tickitecking.domain.auditorium.entity.Auditorium;
 import com.laydowncoding.tickitecking.domain.auditorium.repository.AuditoriumRepository;
@@ -57,35 +63,35 @@ public class ConcertServiceTest {
     @BeforeEach
     void setup() {
         concert = Concert.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .companyUserId(1L)
-            .auditoriumId(1L)
-            .build();
+                .name("concertname")
+                .description("description")
+                .startTime(LocalDateTime.now())
+                .companyUserId(1L)
+                .auditoriumId(1L)
+                .build();
         auditorium = Auditorium.builder()
-            .name("auditoriumName")
-            .address("강남구")
-            .maxRow("Z")
-            .maxColumn("10")
-            .companyUserId(1L)
-            .build();
+                .name("auditoriumName")
+                .address("강남구")
+                .maxRow("Z")
+                .maxColumn("10")
+                .companyUserId(1L)
+                .build();
         seatRequestDto = SeatRequestDto.builder()
-            .horizontals(List.of("A"))
-            .grade("G")
-            .build();
+                .horizontals(List.of("A"))
+                .grade("G")
+                .build();
         seatPriceRequestDto = SeatPriceRequestDto.builder()
-            .grade("G")
-            .price(1000.0)
-            .build();
+                .grade("G")
+                .price(1000.0)
+                .build();
         concertRequestDto = ConcertRequestDto.builder()
-            .name("concertname")
-            .description("description")
-            .startTime(LocalDateTime.now())
-            .auditoriumId(1L)
-            .seatList(List.of(seatRequestDto))
-            .seatPrices(List.of(seatPriceRequestDto))
-            .build();
+                .name("concertname")
+                .description("description")
+                .startTime(LocalDateTime.now())
+                .auditoriumId(1L)
+                .seatList(List.of(seatRequestDto))
+                .seatPrices(List.of(seatPriceRequestDto))
+                .build();
     }
 
     @DisplayName("콘서트 생성 - 성공")
@@ -108,7 +114,7 @@ public class ConcertServiceTest {
         given(auditoriumRepository.findById(any())).willReturn(Optional.empty());
         //when & then
         assertThatThrownBy(() -> concertService.createConcert(1L, concertRequestDto))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("콘서트 단건 조회 - 성공")
@@ -134,7 +140,7 @@ public class ConcertServiceTest {
 
         //when & then
         assertThatThrownBy(() -> concertService.getConcert(1L))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("콘서트 전체 조회 - 성공")
@@ -145,7 +151,7 @@ public class ConcertServiceTest {
         AllConcertResponseDto allConcert2 = new AllConcertResponseDto();
         Pageable pageable = PageRequest.of(1, 10);
         Page<AllConcertResponseDto> concertPage = new PageImpl<>(List.of(allConcert1, allConcert2),
-            pageable, 2);
+                pageable, 2);
         given(concertRepository.getAllConcerts(any())).willReturn(concertPage);
 
         //when
@@ -159,7 +165,8 @@ public class ConcertServiceTest {
     @Test
     void getAll_fail() {
         //given
-        given(concertRepository.getAllConcerts(any())).willReturn(new PageImpl<>(Collections.emptyList()));
+        given(concertRepository.getAllConcerts(any())).willReturn(
+                new PageImpl<>(Collections.emptyList()));
 
         //when
         Page<AllConcertResponseDto> response = concertService.getAllConcerts(1, 10);
@@ -175,18 +182,18 @@ public class ConcertServiceTest {
         given(concertRepository.findById(any())).willReturn(Optional.of(concert));
         given(auditoriumRepository.findById(anyLong())).willReturn(Optional.of(auditorium));
         ConcertRequestDto requestDto = ConcertRequestDto.builder()
-            .name("updateName")
-            .description("updateDescription")
-            .startTime(LocalDateTime.now())
-            .auditoriumId(1L)
-            .build();
+                .name("updateName")
+                .description("updateDescription")
+                .startTime(LocalDateTime.now())
+                .auditoriumId(1L)
+                .build();
         //when
         ConcertResponseDto response = concertService.updateConcert(1L, 1L, requestDto);
 
         assertThat(response).isNotNull();
         assertThat(response.getName()).isEqualTo("updateName");
         verify(seatService, times(1)).updateSeats(any(), anyLong(),
-            any(AuditoriumCapacityDto.class));
+                any(AuditoriumCapacityDto.class));
     }
 
     @DisplayName("콘서트 수정 - 실패 회사유저 id가 다름")
@@ -196,15 +203,15 @@ public class ConcertServiceTest {
         given(concertRepository.findById(any())).willReturn(Optional.of(concert));
 
         ConcertRequestDto requestDto = ConcertRequestDto.builder()
-            .name("updateName")
-            .description("updateDescription")
-            .startTime(LocalDateTime.now())
-            .auditoriumId(1L)
-            .build();
+                .name("updateName")
+                .description("updateDescription")
+                .startTime(LocalDateTime.now())
+                .auditoriumId(1L)
+                .build();
         //when & then
         assertThatThrownBy(() ->
-            concertService.updateConcert(2L, 1L, requestDto))
-            .isInstanceOf(CustomRuntimeException.class);
+                concertService.updateConcert(2L, 1L, requestDto))
+                .isInstanceOf(CustomRuntimeException.class);
     }
 
     @DisplayName("콘서트 삭제 - 성공")
@@ -226,6 +233,6 @@ public class ConcertServiceTest {
 
         //when & then
         assertThatThrownBy(() -> concertService.deleteConcert(2L, 1L))
-            .isInstanceOf(CustomRuntimeException.class);
+                .isInstanceOf(CustomRuntimeException.class);
     }
 }

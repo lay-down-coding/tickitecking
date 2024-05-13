@@ -43,19 +43,19 @@ public class ConcertServiceImpl implements ConcertService {
         validateCompanyUserId(auditorium.getCompanyUserId(), companyUserId);
 
         Concert concert = Concert.builder()
-            .name(requestDto.getName())
-            .description(requestDto.getDescription())
-            .startTime(requestDto.getStartTime())
-            .companyUserId(companyUserId)
-            .auditoriumId(requestDto.getAuditoriumId())
-            .build();
+                .name(requestDto.getName())
+                .description(requestDto.getDescription())
+                .startTime(requestDto.getStartTime())
+                .companyUserId(companyUserId)
+                .auditoriumId(requestDto.getAuditoriumId())
+                .build();
         Concert saved = concertRepository.save(concert);
 
         AuditoriumCapacityDto capacityDto = AuditoriumCapacityDto.builder()
-            .auditoriumId(auditorium.getId())
-            .maxColumn(auditorium.getMaxColumn())
-            .maxRow(auditorium.getMaxRow())
-            .build();
+                .auditoriumId(auditorium.getId())
+                .maxColumn(auditorium.getMaxColumn())
+                .maxRow(auditorium.getMaxRow())
+                .build();
 
         seatService.createSeats(requestDto.getSeatList(), saved.getId(), capacityDto);
         seatService.createSeatPrices(saved.getId(), requestDto.getSeatPrices());
@@ -67,69 +67,69 @@ public class ConcertServiceImpl implements ConcertService {
     public ConcertResponseDto getConcert(Long concertId) {
         Concert concert = findConcert(concertId);
         List<SeatPriceResponseDto> seatPriceResponseDtos =
-            seatService.getSeatPrices(concert.getId());
+                seatService.getSeatPrices(concert.getId());
         Auditorium auditorium = findAuditorium(concert.getAuditoriumId());
 
         return ConcertResponseDto.builder()
-            .id(concert.getId())
-            .name(concert.getName())
-            .description(concert.getDescription())
-            .startTime(concert.getStartTime())
-            .companyUserId(concert.getCompanyUserId())
-            .auditoriumId(concert.getAuditoriumId())
-            .auditoriumName(auditorium.getName())
-            .auditoriumAddress(auditorium.getAddress())
-            .auditoriumMaxColumn(auditorium.getMaxColumn())
-            .auditoriumMaxRow(auditorium.getMaxRow())
-            .seatPrices(seatPriceResponseDtos)
-            .build();
+                .id(concert.getId())
+                .name(concert.getName())
+                .description(concert.getDescription())
+                .startTime(concert.getStartTime())
+                .companyUserId(concert.getCompanyUserId())
+                .auditoriumId(concert.getAuditoriumId())
+                .auditoriumName(auditorium.getName())
+                .auditoriumAddress(auditorium.getAddress())
+                .auditoriumMaxColumn(auditorium.getMaxColumn())
+                .auditoriumMaxRow(auditorium.getMaxRow())
+                .seatPrices(seatPriceResponseDtos)
+                .build();
     }
 
     @Override
     @Transactional(readOnly = true)
     @Cacheable(value = "concerts", key = "'all'", cacheManager = "cacheManager", condition = "#page == 1", unless = "#result == null")
     public Page<AllConcertResponseDto> getAllConcerts(int page, int size) {
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         return new RestPage<>(concertRepository.getAllConcerts(pageable));
     }
 
     @Override
     @Caching(evict = {
-        @CacheEvict(value = "concerts", key = "'all'"),
-        @CacheEvict(value = "concerts", key = "#concertId")}
+            @CacheEvict(value = "concerts", key = "'all'"),
+            @CacheEvict(value = "concerts", key = "#concertId")}
     )
     public ConcertResponseDto updateConcert(Long companyUserId, Long concertId,
-        ConcertRequestDto requestDto) {
+            ConcertRequestDto requestDto) {
         Concert concert = findConcert(concertId);
         validateCompanyUserId(concert.getCompanyUserId(), companyUserId);
         Auditorium auditorium = findAuditorium(concert.getAuditoriumId());
 
         AuditoriumCapacityDto capacityDto = AuditoriumCapacityDto.builder()
-            .auditoriumId(auditorium.getId())
-            .maxColumn(auditorium.getMaxColumn())
-            .maxRow(auditorium.getMaxRow())
-            .build();
+                .auditoriumId(auditorium.getId())
+                .maxColumn(auditorium.getMaxColumn())
+                .maxRow(auditorium.getMaxRow())
+                .build();
 
         concert.update(requestDto);
         seatService.updateSeats(requestDto.getSeatList(), concertId, capacityDto);
         List<SeatPriceResponseDto> seatPriceResponseDtos = seatService.updateSeatPrices(concertId,
-            requestDto.getSeatPrices());
+                requestDto.getSeatPrices());
 
         return ConcertResponseDto.builder()
-            .id(concert.getId())
-            .name(concert.getName())
-            .description(concert.getDescription())
-            .startTime(concert.getStartTime())
-            .companyUserId(concert.getCompanyUserId())
-            .auditoriumId(concert.getAuditoriumId())
-            .seatPrices(seatPriceResponseDtos)
-            .build();
+                .id(concert.getId())
+                .name(concert.getName())
+                .description(concert.getDescription())
+                .startTime(concert.getStartTime())
+                .companyUserId(concert.getCompanyUserId())
+                .auditoriumId(concert.getAuditoriumId())
+                .seatPrices(seatPriceResponseDtos)
+                .build();
     }
 
     @Override
     @Caching(evict = {
-        @CacheEvict(value = "concerts", key = "'all'"),
-        @CacheEvict(value = "concerts", key = "#concertId")}
+            @CacheEvict(value = "concerts", key = "'all'"),
+            @CacheEvict(value = "concerts", key = "#concertId")}
     )
     public void deleteConcert(Long companyUserId, Long concertId) {
         Concert concert = findConcert(concertId);
@@ -148,13 +148,13 @@ public class ConcertServiceImpl implements ConcertService {
 
     private Concert findConcert(Long concertId) {
         return concertRepository.findById(concertId).orElseThrow(
-            () -> new CustomRuntimeException(NOT_FOUND_CONCERT.getMessage())
+                () -> new CustomRuntimeException(NOT_FOUND_CONCERT.getMessage())
         );
     }
 
     private Auditorium findAuditorium(Long auditoriumId) {
         return auditoriumRepository.findById(auditoriumId).orElseThrow(
-            () -> new CustomRuntimeException(NOT_FOUND_AUDITORIUM.getMessage())
+                () -> new CustomRuntimeException(NOT_FOUND_AUDITORIUM.getMessage())
         );
     }
 }

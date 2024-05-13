@@ -33,97 +33,97 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-  @Value("${upload.path}")
-  private String uploadPath;
+    @Value("${upload.path}")
+    private String uploadPath;
 
-  @Value("${cloud.aws.s3.bucket}")
-  private String bucket;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
-  private final S3Client s3Client;
+    private final S3Client s3Client;
 
-  private final ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
-  private final ConcertRepository concertRepository;
+    private final ConcertRepository concertRepository;
 
-  @Override
-  @Transactional
-  public void upload(MultipartFile imageFile, Long concertId) {
-    if (imageFile.isEmpty() || Objects.isNull(imageFile.getOriginalFilename())) {
-      throw new CustomRuntimeException(EMPTY_FILE_EXCEPTION.getMessage());
+    @Override
+    @Transactional
+    public void upload(MultipartFile imageFile, Long concertId) {
+        if (imageFile.isEmpty() || Objects.isNull(imageFile.getOriginalFilename())) {
+            throw new CustomRuntimeException(EMPTY_FILE_EXCEPTION.getMessage());
+        }
+
+        Concert concert = concertRepository.findById(concertId).orElseThrow(
+                () -> new CustomRuntimeException(NOT_FOUND_CONCERT.getMessage())
+        );
+
+        Image image = getImage(imageFile, concert.getId());
+        imageRepository.save(image);
     }
 
-    Concert concert = concertRepository.findById(concertId).orElseThrow(
-        () -> new CustomRuntimeException(NOT_FOUND_CONCERT.getMessage())
-    );
+    private Image getImage(MultipartFile imageFile, Long concertId) {
+        try {
+            String originalFileName = imageFile.getOriginalFilename();
+            String extension = validateImageFileExtention(originalFileName);
+            String saveFileName = createSaveFileName(originalFileName);
 
-    Image image = getImage(imageFile, concert.getId());
-    imageRepository.save(image);
-  }
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(uploadPath + saveFileName)
+                    .contentType(String.valueOf(MediaType.MULTIPART_FORM_DATA))
+                    .build();
+            PutObjectResponse response = s3Client
+                    .putObject(putObjectRequest, RequestBody.fromBytes(imageFile.getBytes()));
 
-  private Image getImage(MultipartFile imageFile, Long concertId) {
-    try {
-      String originalFileName = imageFile.getOriginalFilename();
-      String extension = validateImageFileExtention(originalFileName);
-      String saveFileName = createSaveFileName(originalFileName);
+            String filePath = getFilePath(uploadPath + saveFileName);
+            String contentType = imageFile.getContentType();
 
-      PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-          .bucket(bucket)
-          .key(uploadPath + saveFileName)
-          .contentType(String.valueOf(MediaType.MULTIPART_FORM_DATA))
-          .build();
-      PutObjectResponse response = s3Client
-          .putObject(putObjectRequest, RequestBody.fromBytes(imageFile.getBytes()));
-
-      String filePath = getFilePath(uploadPath + saveFileName);
-      String contentType = imageFile.getContentType();
-
-      if (response.sdkHttpResponse().statusText().orElse("FAIL").equals("OK")) {
-        Image image = Image.builder()
-            .originalFileName(originalFileName)
-            .saveFileName(saveFileName)
-            .contentType(contentType)
-            .filePath(filePath)
-            .concertId(concertId)
-            .build();
-        return image;
-      } else {
-        throw new CustomRuntimeException(PUT_OBJECT_EXCEPTION.getMessage());
-      }
-    } catch (IOException | S3Exception | IllegalStateException ie) {
-      throw new RuntimeException(ie.getMessage());
-    }
-  }
-
-  private String getFilePath(String filePath) {
-    return s3Client.utilities().getUrl(
-        GetUrlRequest.builder().bucket(bucket)
-            .key(filePath).build()
-    ).toExternalForm();
-  }
-
-  private String validateImageFileExtention(String originalFilename) {
-    String extension = extractExt(originalFilename);
-    List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
-
-    if (!allowedExtentionList.contains(extension)) {
-      throw new CustomRuntimeException(ImageErrorCode.INVALID_FILE_EXTENSION.getMessage());
+            if (response.sdkHttpResponse().statusText().orElse("FAIL").equals("OK")) {
+                Image image = Image.builder()
+                        .originalFileName(originalFileName)
+                        .saveFileName(saveFileName)
+                        .contentType(contentType)
+                        .filePath(filePath)
+                        .concertId(concertId)
+                        .build();
+                return image;
+            } else {
+                throw new CustomRuntimeException(PUT_OBJECT_EXCEPTION.getMessage());
+            }
+        } catch (IOException | S3Exception | IllegalStateException ie) {
+            throw new RuntimeException(ie.getMessage());
+        }
     }
 
-    return extension;
-  }
-
-  private String createSaveFileName(String originalFilename) {
-    String ext = extractExt(originalFilename);
-    String uuid = UUID.randomUUID().toString();
-    return uuid + "." + ext;
-  }
-
-  private String extractExt(String originalFilename) {
-    int lastDotIndex = originalFilename.lastIndexOf(".");
-    if (lastDotIndex == -1) {
-      throw new CustomRuntimeException(NO_FILE_EXTENSION.getMessage());
+    private String getFilePath(String filePath) {
+        return s3Client.utilities().getUrl(
+                GetUrlRequest.builder().bucket(bucket)
+                        .key(filePath).build()
+        ).toExternalForm();
     }
 
-    return originalFilename.substring(lastDotIndex + 1).toLowerCase();
-  }
+    private String validateImageFileExtention(String originalFilename) {
+        String extension = extractExt(originalFilename);
+        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
+
+        if (!allowedExtentionList.contains(extension)) {
+            throw new CustomRuntimeException(ImageErrorCode.INVALID_FILE_EXTENSION.getMessage());
+        }
+
+        return extension;
+    }
+
+    private String createSaveFileName(String originalFilename) {
+        String ext = extractExt(originalFilename);
+        String uuid = UUID.randomUUID().toString();
+        return uuid + "." + ext;
+    }
+
+    private String extractExt(String originalFilename) {
+        int lastDotIndex = originalFilename.lastIndexOf(".");
+        if (lastDotIndex == -1) {
+            throw new CustomRuntimeException(NO_FILE_EXTENSION.getMessage());
+        }
+
+        return originalFilename.substring(lastDotIndex + 1).toLowerCase();
+    }
 }

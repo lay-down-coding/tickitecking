@@ -29,57 +29,57 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
 
-  private final AdminService adminService;
+    private final AdminService adminService;
 
-  @PostMapping("/login")
-  public ResponseEntity<CommonResponse<Void>> login(
-      @RequestBody LoginRequestDto loginRequest
-  ) {
-    String accessToken = adminService.login(loginRequest);
+    @PostMapping("/login")
+    public ResponseEntity<CommonResponse<Void>> login(
+            @RequestBody LoginRequestDto loginRequest
+    ) {
+        String accessToken = adminService.login(loginRequest);
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.add(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-    return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
-  }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtUtil.AUTHORIZATION_HEADER, accessToken);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).build();
+    }
 
-  @GetMapping("/users")
-  @Secured({"ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<List<AdminUserResponseDto>>> getUsers() {
-    List<AdminUserResponseDto> response = adminService.getUsers();
-    return CommonResponse.ok(response);
-  }
+    @GetMapping("/users")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<List<AdminUserResponseDto>>> getUsers() {
+        List<AdminUserResponseDto> response = adminService.getUsers();
+        return CommonResponse.ok(response);
+    }
 
-  @PutMapping("/users/{userId}")
-  @Secured({"ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> updateUser(
-      @PathVariable Long userId,
-      @RequestBody AdminUserUpdateRequestDto userUpdateRequest
-  ) {
-    adminService.updateUser(userId, userUpdateRequest);
-    return CommonResponse.ok(null);
-  }
+    @PutMapping("/users/{userId}")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> updateUser(
+            @PathVariable Long userId,
+            @RequestBody AdminUserUpdateRequestDto userUpdateRequest
+    ) {
+        adminService.updateUser(userId, userUpdateRequest);
+        return CommonResponse.ok(null);
+    }
 
-  @GetMapping("/auditoriums")
-  @Secured({"ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums() {
-    List<AuditoriumResponseDto> response = adminService.getAuditoriums();
-    return CommonResponse.ok(response);
-  }
+    @GetMapping("/auditoriums")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<List<AuditoriumResponseDto>>> getAuditoriums() {
+        List<AuditoriumResponseDto> response = adminService.getAuditoriums();
+        return CommonResponse.ok(response);
+    }
 
-  @PatchMapping("/auditoriums/{auditoriumId}/seats")
-  @Secured({"ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> lockSeat(
-      @PathVariable Long auditoriumId,
-      @RequestBody AdminLockSeatRequestDto requestDto
-  ) {
-    adminService.lockSeat(auditoriumId, requestDto);
-    return CommonResponse.ok(null);
-  }
+    @PatchMapping("/auditoriums/{auditoriumId}/seats")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> lockSeat(
+            @PathVariable Long auditoriumId,
+            @RequestBody AdminLockSeatRequestDto requestDto
+    ) {
+        adminService.lockSeat(auditoriumId, requestDto);
+        return CommonResponse.ok(null);
+    }
 
-  @GetMapping("/reservations")
-  @Secured({"ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<List<AdminReservationResponseDto>>> getReservations() {
-    List<AdminReservationResponseDto> response = adminService.getReservations();
-    return CommonResponse.ok(response);
-  }
+    @GetMapping("/reservations")
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<List<AdminReservationResponseDto>>> getReservations() {
+        List<AdminReservationResponseDto> response = adminService.getReservations();
+        return CommonResponse.ok(response);
+    }
 }

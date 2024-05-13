@@ -26,51 +26,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/concerts")
 public class ConcertController {
 
-  private final ConcertService concertService;
+    private final ConcertService concertService;
 
-  @PostMapping
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> createConcert(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @RequestBody ConcertRequestDto requestDto) {
-    concertService.createConcert(userDetails.getUser().getId(), requestDto);
-    return CommonResponse.ok(null);
-  }
+    @PostMapping
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> createConcert(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody ConcertRequestDto requestDto) {
+        concertService.createConcert(userDetails.getUser().getId(), requestDto);
+        return CommonResponse.ok(null);
+    }
 
-  @GetMapping("/{concertId}")
-  public ResponseEntity<CommonResponse<ConcertResponseDto>> getConcert(
-      @PathVariable Long concertId) {
-    ConcertResponseDto response = concertService.getConcert(concertId);
-    return CommonResponse.ok(response);
-  }
+    @GetMapping("/{concertId}")
+    public ResponseEntity<CommonResponse<ConcertResponseDto>> getConcert(
+            @PathVariable Long concertId) {
+        ConcertResponseDto response = concertService.getConcert(concertId);
+        return CommonResponse.ok(response);
+    }
 
-  @GetMapping
-  public ResponseEntity<CommonResponse<Page<AllConcertResponseDto>>> getAllConcerts(
-      @RequestParam(required = false) int page,
-      @RequestParam(required = false) int size
-  ) {
-    Page<AllConcertResponseDto> response = concertService.getAllConcerts(page, size);
-    return CommonResponse.ok(response);
-  }
+    @GetMapping
+    public ResponseEntity<CommonResponse<Page<AllConcertResponseDto>>> getAllConcerts(
+            @RequestParam(required = false) int page,
+            @RequestParam(required = false) int size
+    ) {
+        Page<AllConcertResponseDto> response = concertService.getAllConcerts(page, size);
+        return CommonResponse.ok(response);
+    }
 
-  @PutMapping("/{concertId}")
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<ConcertResponseDto>> updateConcert(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @PathVariable Long concertId,
-      @RequestBody ConcertRequestDto requestDto) {
-    ConcertResponseDto responseDto = concertService.updateConcert(userDetails.getUser().getId(),
-        concertId, requestDto);
-    return CommonResponse.ok(responseDto);
-  }
+    @PutMapping("/{concertId}")
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<ConcertResponseDto>> updateConcert(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long concertId,
+            @RequestBody ConcertRequestDto requestDto) {
+        ConcertResponseDto responseDto = concertService.updateConcert(userDetails.getUser().getId(),
+                concertId, requestDto);
+        return CommonResponse.ok(responseDto);
+    }
 
-  @DeleteMapping("/{concertId}")
-  @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
-  public ResponseEntity<CommonResponse<Void>> deleteConcert(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @PathVariable Long concertId) {
-    concertService.deleteConcert(userDetails.getUser().getId(), concertId);
-    return CommonResponse.ok(null);
-  }
+    @DeleteMapping("/{concertId}")
+    @Secured({"ROLE_COMPANY_USER", "ROLE_ADMIN"})
+    public ResponseEntity<CommonResponse<Void>> deleteConcert(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long concertId) {
+        concertService.deleteConcert(userDetails.getUser().getId(), concertId);
+        return CommonResponse.ok(null);
+    }
 }
 

@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TickiteckingApplication {
 
-  public static void main(String[] args) {
-    SpringApplication.run(TickiteckingApplication.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(TickiteckingApplication.class, args);
+    }
 
 }
